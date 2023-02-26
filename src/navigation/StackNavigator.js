@@ -2,7 +2,7 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import Login from "../screens/Login";
 import SignUp from "../screens/SignUp";
-import CompleteProfile from "../screens/CompleteProfile";
+import MenuScreen from "../screens/MenuScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +14,7 @@ export default function StackNavigator() {
             <Stack.Screen name="Welcome" component={WelcomeScreen}/>
             <Stack.Screen name="Login" component={Login}/>
             <Stack.Screen name="SignUp" component={SignUp}/>
-            <Stack.Screen name="CompleteProfile" component={CompleteProfile}/>
+            <Stack.Screen name="Menu" component={MenuScreen}/>
         </Stack.Navigator>
     );
 }

@@ -5,16 +5,16 @@ export default function TopBar(){
     return (
         <View style={styles.container}>
             <View style={styles.icons}>
-                <Icon name="clock" size={30} color='#7E1F24'></Icon>
+                <Icon name="clock" size={30} color='#7E1F24' solid></Icon>
             </View>
             <View style={styles.icons}>
-                <Icon name="comment" size={30} color='#7E1F24'></Icon>
+                <Icon name="comment" size={30} color='#7E1F24' solid></Icon>
             </View>
             <View style={styles.icons}>
-                <Icon name="clock-o" size={30} color='#7E1F24'></Icon>
+                <Icon name="crown" size={30} color='#FFC42D' solid></Icon>
             </View>
             <View style={styles.icons}>
-                <Icon name="clock-o" size={30} color='#7E1F24'></Icon>
+                <Icon name="user" size={30} color='#7E1F24' solid></Icon>
             </View>
         </View>
     )
@@ -22,6 +22,8 @@ export default function TopBar(){
 
 const styles = StyleSheet.create({
     container: {
+        marginTop: 2,
+        backgroundColor: '#fff',
         flexDirection: 'row',
         flex: 1,
     },

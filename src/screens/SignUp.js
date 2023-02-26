@@ -117,7 +117,7 @@ export default function SignUp({navigation}) {
                         <TouchableOpacity
                             onPressIn={handlePressIn}
                             onPressOut={handlePressOut}
-                            onPress={() => navigation.navigate('CompleteProfile')}
+                            onPress={() => navigation.navigate('Menu')}
                             activeOpacity={0.7}
                         >
                             <Text style={[styles.dontHaveAccountText, isPressed && styles.underline]}>
