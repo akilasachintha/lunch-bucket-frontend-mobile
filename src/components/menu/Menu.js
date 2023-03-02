@@ -1,11 +1,14 @@
 import React from 'react';
-import {View, ScrollView, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import ItemList from "../list/ItemList";
+import BasketButton from "./BasketButton";
+import OrderRatingModal from "../modals/OrderRatingModal";
 
-const Menu = ({ itemList, totalCheckedItems, timeLimit }) => {
+const Menu = ({itemList, totalCheckedItems, timeLimit, totalAmount, isVisible, setIsVisible}) => {
     return (
         <View style={styles.bodyContentContainer}>
-            <ScrollView>
+            <ScrollView style={styles.scrollViewContainer}>
+                {isVisible && (<OrderRatingModal isVisible={isVisible} setIsVisible={setIsVisible}/>)}
                 <View>
                     <Text style={styles.cantPlaceAfterText}>You can’t place orders after {timeLimit}</Text>
                 </View>
@@ -15,31 +18,29 @@ const Menu = ({ itemList, totalCheckedItems, timeLimit }) => {
                 {itemList.map((list, index) => (
                     <ItemList
                         key={index}
-                        title={list.title}
+                        title={list.type}
                         items={list.items}
                         handleItemPress={list.handleItemPress}
                     />
                 ))}
             </ScrollView>
-            <View style={styles.priceContainer}>
-                <TouchableOpacity style={styles.priceContainerLeft}>
-                    <Text style={styles.priceContainerLeftText}>View Bucket ({totalCheckedItems})</Text>
-                </TouchableOpacity>
-                <View style={styles.priceContainerRight}>
-                    <Text style={styles.priceContainerRightText}>Rs 400.00</Text>
-                </View>
-            </View>
+            <BasketButton
+                totalCheckedItems={totalCheckedItems}
+                totalAmount={totalAmount}
+            />
         </View>
     );
 };
 
 export default Menu;
 
-
 const styles = StyleSheet.create({
     bodyContentContainer: {
         marginTop: 20,
         flex: 6,
+    },
+    scrollViewContainer: {
+        marginBottom: 20,
     },
     cantPlaceAfterText: {
         textAlign: 'center',
@@ -51,28 +52,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 15,
         color: '#4D4D4D',
-    },
-    priceContainer: {
-        backgroundColor: 'rgba(255, 230, 98, 1)',
-        paddingVertical: 20,
-        flexDirection: 'row',
-    },
-    priceContainerLeft: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    priceContainerRight: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    priceContainerLeftText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#630A10',
-    },
-    priceContainerRightText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#630A10',
     },
 });

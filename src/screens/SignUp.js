@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView} from 'react-native';
+import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import STRINGS from '../common/strings/strings';
 import PATHS from "../common/paths/paths";
 import {useState} from "react";
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
         width: 250,
     },
     bottomContainer: {
-        flex: 3,
+        flex: 3.4,
         paddingHorizontal: 30,
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,

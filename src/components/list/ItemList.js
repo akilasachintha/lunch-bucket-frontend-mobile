@@ -1,33 +1,44 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import { MaterialIcons, AntDesign } from '@expo/vector-icons';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {AntDesign, MaterialIcons} from '@expo/vector-icons';
+import PercentageBar from "../precentageBar/PrecentageBar";
 
-const ListItem = ({ itemName, checked, handleItemPress }) => {
+const ListItem = ({itemName, checked, handleItemPress, percentage}) => {
     return (
-        <TouchableOpacity
-            style={styles.listItemContainer}
-            onPress={handleItemPress}
-        >
-            <View style={styles.listItemLeftContainer}>
-                <Text style={styles.listItemText}>{itemName}</Text>
-            </View>
-            {!checked && (
-                <View style={styles.listItemRightContainer}>
-                    <MaterialIcons name="radio-button-unchecked" size={30}
-                                   color="rgba(57, 57, 57, 0.5)" />
+        <View>
+            <TouchableOpacity
+                style={[styles.listItemContainer, (percentage == null) && {
+                    borderBottomWidth: 2,
+                    borderBottomColor: 'rgba(197,194,194,0.5)',
+                }]}
+                onPress={handleItemPress}
+            >
+                <View style={styles.listItemLeftContainer}>
+                    <Text style={styles.listItemText}>{itemName}</Text>
+                </View>
+                {!checked && (
+                    <View style={styles.listItemRightContainer}>
+                        <MaterialIcons name="radio-button-unchecked" size={30}
+                                       color="rgba(57, 57, 57, 0.5)"/>
+                    </View>
+                )}
+                {checked && (
+                    <View style={styles.listItemRightContainer}>
+                        <AntDesign name="checkcircle" size={24}
+                                   color="rgba(44, 152, 74, 1)"/>
+                    </View>
+                )}
+            </TouchableOpacity>
+            {(percentage != null) && (
+                <View style={styles.percentageContainer}>
+                    <PercentageBar percentage={percentage}/>
                 </View>
             )}
-            {checked && (
-                <View style={styles.listItemRightContainer}>
-                    <AntDesign name="checkcircle" size={24}
-                               color="rgba(44, 152, 74, 1)" />
-                </View>
-            )}
-        </TouchableOpacity>
+        </View>
     );
 };
 
-const ItemList = ({ title, items, handleItemPress }) => {
+const ItemList = ({title, items, handleItemPress}) => {
     return (
         <View>
             <View style={styles.itemTextContainer}>
@@ -40,6 +51,7 @@ const ItemList = ({ title, items, handleItemPress }) => {
                             itemName={item.itemName}
                             checked={item.checked}
                             handleItemPress={() => handleItemPress(index)}
+                            percentage={item.percentage}
                         />
                     </View>
                 ))}
@@ -64,8 +76,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginHorizontal: 40,
-        borderBottomWidth: 2,
-        borderBottomColor: 'rgba(197,194,194,0.5)',
     },
     listItemText: {
         paddingVertical: 20,
@@ -78,5 +88,9 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'flex-end',
         marginRight: 10,
-    }
+    },
+    percentageContainer: {
+        marginHorizontal: 20,
+        marginRight: 100,
+    },
 });

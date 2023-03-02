@@ -1,26 +1,74 @@
-import {StyleSheet, View} from "react-native";
+import {StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useNavigation} from '@react-navigation/native';
+import {SelectedTab} from "../../common/enums/enums";
 
-export default function TopBar(){
+const iconsData = [
+    {
+        name: 'clock',
+        tabName: SelectedTab.PREVIOUS,
+        screenName: 'Basket',
+    },
+    {
+        name: 'comment',
+        tabName: SelectedTab.CHAT,
+        screenName: 'Chat',
+    },
+    {
+        name: 'crown',
+        tabName: SelectedTab.MAIN,
+        screenName: null,
+    },
+    {
+        name: 'user',
+        tabName: SelectedTab.PROFILE,
+        screenName: 'Profile',
+    },
+];
+
+function TabIcon({name, tabName, screenName, selectedTab, onPress}) {
+    const navigation = useNavigation();
+
+    const color = selectedTab === tabName ? '#FFC42D' : '#7E1F24';
+
+    const handlePress = () => {
+        if (screenName) {
+            navigation.navigate(screenName);
+        }
+        onPress && onPress();
+    };
+
     return (
-        <View style={styles.container}>
-            <View style={styles.icons}>
-                <Icon name="clock" size={30} color='#7E1F24' solid></Icon>
-            </View>
-            <View style={styles.icons}>
-                <Icon name="comment" size={30} color='#7E1F24' solid></Icon>
-            </View>
-            <View style={styles.icons}>
-                <Icon name="crown" size={30} color='#FFC42D' solid></Icon>
-            </View>
-            <View style={styles.icons}>
-                <Icon name="user" size={30} color='#7E1F24' solid></Icon>
+        <TouchableOpacity style={styles.icons} onPress={handlePress}>
+            <Icon name={name} size={30} color={color} solid/>
+        </TouchableOpacity>
+    );
+}
+
+export default function TopBar({selectedTab}) {
+    return (
+        <View style={styles.topBarContainer}>
+            <View style={styles.container}>
+                {iconsData.map((iconData, index) => (
+                    <TabIcon
+                        key={index}
+                        name={iconData.name}
+                        tabName={iconData.tabName}
+                        screenName={iconData.screenName}
+                        selectedTab={selectedTab}
+                    />
+                ))}
             </View>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
+    topBarContainer: {
+        flex: 1,
+        marginTop: StatusBar.currentHeight + 10,
+        marginBottom: 10,
+    },
     container: {
         marginTop: 2,
         backgroundColor: '#fff',
@@ -30,7 +78,7 @@ const styles = StyleSheet.create({
     icons: {
         flex: 1,
         margin: 2,
-        justifyContent:'center',
+        justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
 });

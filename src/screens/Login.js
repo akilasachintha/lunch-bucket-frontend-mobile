@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, Image, SafeAreaView} from 'react-native';
+import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../common/strings/strings';
 import PATHS from "../common/paths/paths";
 import {useState} from "react";
@@ -32,7 +32,7 @@ export default function Login({navigation}) {
         console.log(values);
 
         try {
-            navigation.navigate('Welcome');
+            navigation.navigate('Basket');
             console.log('Try');
         } catch (error) {
             console.log(error);
