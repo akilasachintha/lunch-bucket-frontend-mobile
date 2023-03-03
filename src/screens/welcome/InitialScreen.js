@@ -1,22 +1,43 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import PATHS from '../common/paths/paths';
+import PATHS from '../../common/paths/paths';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const InitialScreen = () => {
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
 
-    useEffect(() => {
-        Animated.timing(slideAnim, {
-            toValue: 1,
-            duration: 6000,
-            useNativeDriver: true,
-        }).start();
+    const navigateToWelcomeScreen = useCallback(() => {
+        navigation.navigate('Welcome');
+    }, [navigation]);
 
-        setTimeout(() => {
-            navigation.navigate('Welcome');
-        }, 8000); // navigate after 8 seconds
+    const navigateToLoginScreen = useCallback(() => {
+        navigation.navigate('Login');
+    }, [navigation]);
+
+    useEffect(() => {
+        const checkIfVisited = async () => {
+            try {
+                const visited = await AsyncStorage.getItem('@visited');
+
+                Animated.timing(slideAnim, {
+                    toValue: 1,
+                    duration: 6000,
+                    useNativeDriver: true,
+                }).start();
+
+                if (visited) {
+                    setTimeout(navigateToLoginScreen, 7000);
+                } else {
+                    await AsyncStorage.setItem('@visited', 'true');
+                    setTimeout(navigateToWelcomeScreen, 7000);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        checkIfVisited().catch(console.error);
     }, []);
 
     return (
@@ -51,7 +72,7 @@ const InitialScreen = () => {
             </View>
             <View style={styles.bottomTextContainer}>
                 <Text style={styles.bottomText}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
+                    Lorem ipsum dolor sit amet, consecrate disciplining elite. Done
                 </Text>
             </View>
         </SafeAreaView>

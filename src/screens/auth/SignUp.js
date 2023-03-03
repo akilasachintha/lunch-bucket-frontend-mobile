@@ -1,38 +1,51 @@
-import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import STRINGS from '../common/strings/strings';
-import PATHS from "../common/paths/paths";
+import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import STRINGS from '../../common/strings/strings';
+import PATHS from "../../common/paths/paths";
 import {useState} from "react";
 import {Formik} from "formik";
 import * as Yup from "yup";
-import FormSubmitButton from "../components/form/FormSubmitButton";
-import FormFields from "../components/form/FormFields";
-import OtherSignInUpButton from "../components/otherSignInUpButton/OtherSIgnInUpButton";
-import LinkButton from "../components/linkButton/LinkButton";
+import FormSubmitButton from "../../components/form/FormSubmitButton";
+import FormFields from "../../components/form/FormFields";
+import OtherSignInUpButton from "../../components/otherSignInUpButton/OtherSIgnInUpButton";
 
 const validationSchema = Yup.object().shape({
+    username: Yup.string()
+        .required('Username is required'),
     email: Yup.string()
         .email('Invalid email address')
         .required('Email is required'),
     password: Yup.string()
         .min(8, 'Password must be at least 8 characters')
         .required('Password is required'),
+    confirmPassword: Yup.string()
+        .min(8, 'Password must be at least 8 characters')
+        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .required('Confirm password is required'),
 });
 
 const fields = [
+    {placeholder: STRINGS.username, name: 'username', required: true},
     {placeholder: STRINGS.email, name: 'email', required: true},
     {placeholder: STRINGS.password, name: 'password', required: true, secureTextEntry: true, isEyeEnabled: true},
+    {placeholder: STRINGS.confirmPassword, name: 'confirmPassword', required: true, secureTextEntry: true},
 ];
 
-export default function Login({navigation}) {
+export default function SignUp({navigation}) {
+    const [isPressed, setIsPressed] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const initialValues = {email: '', password: ''};
+    const initialValues = {
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    };
 
     const handleSubmit = async (values, actions) => {
         setIsSubmitting(true);
         console.log(values);
 
         try {
-            navigation.navigate('Basket');
+            navigation.navigate('Welcome');
             console.log('Try');
         } catch (error) {
             console.log(error);
@@ -43,6 +56,13 @@ export default function Login({navigation}) {
         }
     };
 
+    const handlePressIn = () => {
+        setIsPressed(true);
+    };
+
+    const handlePressOut = () => {
+        setIsPressed(false);
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -50,7 +70,7 @@ export default function Login({navigation}) {
                 <View style={styles.headerContainer}>
                     <Image
                         style={styles.headerImage}
-                        source={PATHS.signIn}
+                        source={PATHS.signUp}
                     />
                 </View>
                 <View style={styles.bottomContainer}>
@@ -77,7 +97,7 @@ export default function Login({navigation}) {
                                     </View>
 
                                     <FormSubmitButton
-                                        buttonText={"Sign In"}
+                                        buttonText={"Sign Up"}
                                         isValid={isValid}
                                         handleSubmit={handleSubmit}
                                         isSubmitting={isSubmitting}/>
@@ -86,23 +106,23 @@ export default function Login({navigation}) {
                         </Formik>
                     </View>
                     <View>
-                        <LinkButton
-                            text={STRINGS.forgotPassword}
-                            style={styles.linkButton}
-                            onPress={() => navigation.navigate('SignUp')}
-                        />
-                        <Text style={styles.linkButton}>{STRINGS.or}</Text>
+                        <Text style={styles.dontHaveAccountText}>{STRINGS.or}</Text>
                     </View>
                     <View>
                         <OtherSignInUpButton iconName="google" signInText="Sign In with Google"/>
                         <OtherSignInUpButton iconName="facebook" signInText="Sign In with Facebook"/>
                     </View>
                     <View>
-                        <LinkButton
-                            text={STRINGS.dontHaveAccountText}
-                            style={styles.linkButton}
-                            onPress={() => navigation.navigate('SignUp')}
-                        />
+                        <TouchableOpacity
+                            onPressIn={handlePressIn}
+                            onPressOut={handlePressOut}
+                            onPress={() => navigation.navigate('Login')}
+                            activeOpacity={0.7}
+                        >
+                            <Text style={[styles.dontHaveAccountText, isPressed && styles.underline]}>
+                                {STRINGS.alreadyHaveAccount}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
@@ -112,25 +132,24 @@ export default function Login({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
-       flex: 1,
+        flex: 1,
     },
     mainContainer: {
         flex: 1,
-        backgroundColor: '#FCF0C8',
+        backgroundColor: '#7E1F24',
     },
     headerContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fcf0c8',
         flex: 1,
     },
     headerImage: {
         flex: 1,
         marginTop: 15,
-        width: 450,
+        width: 250,
     },
     bottomContainer: {
-        flex: 2,
+        flex: 3.4,
         paddingHorizontal: 30,
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
@@ -144,7 +163,7 @@ const styles = StyleSheet.create({
         marginVertical: 25,
         marginTop: 40,
     },
-    linkButton: {
+    dontHaveAccountText: {
         color: '#630A10',
         textAlign: 'center',
         paddingHorizontal: 10,

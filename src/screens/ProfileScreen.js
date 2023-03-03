@@ -1,11 +1,11 @@
-import TopBar from "../components/topBar/TopBar";
 import TopHeader from "../components/topHeader/TopHeader";
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import TextInputField from "../components/inputField/TextInputField";
-import {SelectedTab as selectedTab} from "../common/enums/enums";
+import StaticTopBar from "../components/topBar/StaticTopBar";
+import BottomButton from "../components/buttons/BottomButton";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required('Username is required'),
@@ -54,7 +54,7 @@ export default function ProfileScreen() {
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <TopBar selectedTab={selectedTab.PROFILE}/>
+            <StaticTopBar/>
             <TopHeader headerText="Profile" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <Formik
@@ -98,14 +98,7 @@ export default function ProfileScreen() {
                                     />
                                 ))}
                             </ScrollView>
-                            <View style={styles.viewItemContainer}>
-                                <TouchableOpacity
-                                    style={styles.viewItemContainerTextContainer}
-                                    onPress={handleSubmit}
-                                >
-                                    <Text style={styles.viewItemContainerText}> Done </Text>
-                                </TouchableOpacity>
-                            </View>
+                            <BottomButton onPress={handleSubmit} buttonText="Done"/>
                         </View>
                     )}
                 </Formik>
@@ -127,20 +120,6 @@ const styles = StyleSheet.create({
     },
     scrollViewContainer: {
         marginBottom: 20,
-    },
-    viewItemContainer: {
-        backgroundColor: 'rgba(255, 230, 98, 1)',
-        paddingVertical: 20,
-        flexDirection: 'row',
-    },
-    viewItemContainerTextContainer: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    viewItemContainerText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#630A10',
     },
     fieldHeaderContainer: {
         marginHorizontal: 30,

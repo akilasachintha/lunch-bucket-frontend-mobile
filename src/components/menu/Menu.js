@@ -3,6 +3,7 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import ItemList from "../list/ItemList";
 import BasketButton from "./BasketButton";
 import OrderRatingModal from "../modals/OrderRatingModal";
+import PromotionButton from "../promotions/PromotionButton";
 
 const Menu = ({itemList, totalCheckedItems, timeLimit, totalAmount, isVisible, setIsVisible}) => {
     return (
@@ -28,6 +29,7 @@ const Menu = ({itemList, totalCheckedItems, timeLimit, totalAmount, isVisible, s
                 totalCheckedItems={totalCheckedItems}
                 totalAmount={totalAmount}
             />
+            <PromotionButton/>
         </View>
     );
 };

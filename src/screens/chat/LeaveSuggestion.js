@@ -2,14 +2,14 @@ import TopHeader from "../../components/topHeader/TopHeader";
 import {SafeAreaView, StyleSheet, TextInput, TouchableOpacity, View} from "react-native";
 import React from "react";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
-import TopBar from "../../components/topBar/TopBar";
+import StaticTopBar from "../../components/topBar/StaticTopBar";
 
 export default function LeaveSuggestion() {
     const sendIcon = <MaterialCommunityIcons name="send" size={40} color='#630A10'/>
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <TopBar/>
+            <StaticTopBar/>
             <View style={styles.container}>
                 <TopHeader headerText="Leave a Suggestion" backButtonPath="Chat"/>
                 <View style={styles.bodyContainer}>

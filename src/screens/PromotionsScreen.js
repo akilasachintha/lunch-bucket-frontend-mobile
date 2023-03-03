@@ -1,7 +1,7 @@
 import {FlatList, SafeAreaView, StyleSheet, View} from "react-native";
-import TopBar from "../components/topBar/TopBar";
 import TopHeader from "../components/topHeader/TopHeader";
 import PromotionCard from "../components/promotions/PromotionCard";
+import StaticTopBar from "../components/topBar/StaticTopBar";
 
 const promotions = [
     {
@@ -37,7 +37,7 @@ export default function PromotionsScreen() {
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <TopBar/>
+            <StaticTopBar/>
             <TopHeader headerText="Promotions" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <View style={styles.cardContainer}>

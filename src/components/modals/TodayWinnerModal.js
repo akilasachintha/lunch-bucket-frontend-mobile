@@ -37,7 +37,9 @@ export default function TodayWinnerModal({isVisible, setIsVisible}) {
 
 const styles = StyleSheet.create({
     container: {
+        position: 'absolute',
         flex: 1,
+        zIndex: 1,
     },
     background: {
         flex: 1,

@@ -45,7 +45,7 @@ function TabIcon({name, tabName, screenName, selectedTab, onPress}) {
     );
 }
 
-export default function TopBar({selectedTab}) {
+export default function DynamicTopBar({selectedTab}) {
     return (
         <View style={styles.topBarContainer}>
             <View style={styles.container}>

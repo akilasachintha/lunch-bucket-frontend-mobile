@@ -1,15 +1,18 @@
-import React from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import TopBar from "../topBar/TopBar";
+import React, {useState} from 'react';
+import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import DynamicTopBar from "../topBar/DynamicTopBar";
 import TopHeader from "../topHeader/TopHeader";
 import PATHS from "../../common/paths/paths";
+import PromotionAppliedModal from "../modals/PromotionAppliedModal";
+import BottomButton from "../buttons/BottomButton";
 
 const PromotionDetails = ({route}) => {
+    const [isVisible, setIsVisible] = useState(false);
     const {promotion} = route.params;
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <TopBar/>
+            <DynamicTopBar/>
             <View style={styles.container}>
                 <TopHeader headerText={"Promotion " + promotion.id} backButtonPath="Promotion"/>
                 <View style={styles.bodyContainer}>
@@ -23,6 +26,7 @@ const PromotionDetails = ({route}) => {
                                 style={styles.promotionImage}
                             />
                         </View>
+                        {isVisible && <PromotionAppliedModal isVisible={isVisible} setIsVisible={setIsVisible}/>}
                         <View>
                             <Text style={styles.promotionDescription}>{promotion.description}</Text>
                         </View>
@@ -30,13 +34,7 @@ const PromotionDetails = ({route}) => {
                             <Text style={styles.validityText}>{promotion.description}</Text>
                         </View>
                     </View>
-                    <View style={styles.viewItemContainer}>
-                        <TouchableOpacity
-                            style={styles.viewItemContainerTextContainer}
-                        >
-                            <Text style={styles.viewItemContainerText}> Place Order </Text>
-                        </TouchableOpacity>
-                    </View>
+                    <BottomButton buttonText="Apply" onPress={() => setIsVisible(true)}/>
                 </View>
             </View>
         </SafeAreaView>
@@ -87,20 +85,6 @@ const styles = StyleSheet.create({
         marginVertical: 80,
         color: '#7C7C7C',
         textAlign: 'center',
-    },
-    viewItemContainer: {
-        backgroundColor: 'rgba(255, 230, 98, 1)',
-        paddingVertical: 20,
-        flexDirection: 'row',
-    },
-    viewItemContainerTextContainer: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    viewItemContainerText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#630A10',
     },
 });
 

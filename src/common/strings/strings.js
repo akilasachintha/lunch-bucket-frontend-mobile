@@ -1,9 +1,9 @@
 const STRINGS = {
     lunchBucketCreateAnAccount: "Create an account",
     welcomeBack: "Welcome Back!",
-    welcome3: "Fast Delivery",
-    welcome1: "Cheap.",
-    welcome2: "Quality and Healthy.",
+    welcome3Text: "Fast Delivery",
+    welcome1Text: "Cheap.",
+    welcome2Text: "Quality and Healthy.",
     welcome2Content: "nibh tellus molestie nunc non",
     welcome3Content: "nunc scelerisque viverra mauris in ",
     welcome1content: "fringilla est ullamcorper eger nulla",

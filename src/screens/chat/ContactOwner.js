@@ -1,10 +1,10 @@
 import TopHeader from "../../components/topHeader/TopHeader";
 import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
-import TopBar from "../../components/topBar/TopBar";
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import React, {useRef, useState} from 'react';
+import StaticTopBar from "../../components/topBar/StaticTopBar";
 
 export default function ContactOwner() {
     const [messages, setMessages] = useState([]);
@@ -25,7 +25,7 @@ export default function ContactOwner() {
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <TopBar/>
+            <StaticTopBar/>
             <Formik
                 style={styles.container}
                 initialValues={initialValues}

@@ -1,7 +1,7 @@
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {AntDesign} from '@expo/vector-icons';
 
-export default function OrderPlaceSuccessfulModal({isVisible, setIsVisible}) {
+export default function PromotionAppliedModal({isVisible, setIsVisible}) {
     return (
         <View style={styles.container}>
             <Modal visible={isVisible} transparent>
@@ -14,10 +14,10 @@ export default function OrderPlaceSuccessfulModal({isVisible, setIsVisible}) {
                             <AntDesign name="checkcircle" size={80} color="rgba(56, 207, 98, 1)"/>
                         </View>
                         <View style={styles.modalTopTextContainer}>
-                            <Text style={styles.modalTopText}>Your order was placed successfully</Text>
+                            <Text style={styles.modalTopText}>Promotion Applied</Text>
                         </View>
                         <View style={styles.modalBottomTextContainer}>
-                            <Text style={styles.modalBottomText}>You can change your order until 10AM.</Text>
+                            <Text style={styles.modalBottomText}>20% of for orders above Rs. 800.00</Text>
                         </View>
                     </View>
                 </TouchableOpacity>

@@ -1,13 +1,14 @@
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import TopBar from "../components/topBar/TopBar";
+import {SafeAreaView, ScrollView, StyleSheet, View} from "react-native";
 import {Fontisto} from '@expo/vector-icons';
-import BasketItem from "../components/basketItem/BasketItem";
+import BasketItem from "../../components/basketItem/BasketItem";
 import {useNavigation} from "@react-navigation/native";
-import TopHeader from "../components/topHeader/TopHeader";
-import BorderButton from "../components/borderButton/BorderButton";
-import TodayWinnerModal from "../components/modals/TodayWinnerModal";
+import TopHeader from "../../components/topHeader/TopHeader";
+import BorderButton from "../../components/borderButton/BorderButton";
+import TodayWinnerModal from "../../components/modals/TodayWinnerModal";
 import React, {useState} from "react";
-import {SelectedTab as selectedTab} from "../common/enums/enums";
+import StaticTopBar from "../../components/topBar/StaticTopBar";
+import PromotionButton from "../../components/promotions/PromotionButton";
+import BottomButton from "../../components/buttons/BottomButton";
 
 export default function BasketScreen() {
     const [isVisible, setIsVisible] = useState(true);
@@ -17,24 +18,18 @@ export default function BasketScreen() {
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <TopBar selectedTab={selectedTab.PREVIOUS}/>
+            {isVisible && <TodayWinnerModal isVisible={isVisible} setIsVisible={setIsVisible}/>}
+            <StaticTopBar/>
             <TopHeader headerText="Your Bucket" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView>
-                    {isVisible && <TodayWinnerModal isVisible={isVisible} setIsVisible={setIsVisible}/>}
                     <BasketItem mealName="Meal 1"/>
                     <BasketItem mealName="Meal 2"/>
                     <BasketItem mealName="Meal 3"/>
                 </ScrollView>
                 <BorderButton text="Add Another Meal" onPress={() => navigation.navigate('Promotion')} icon={plusIcon}/>
-                <View style={styles.viewItemContainer}>
-                    <TouchableOpacity
-                        style={styles.viewItemContainerTextContainer}
-                        onPress={() => navigation.navigate('Checkout')}
-                    >
-                        <Text style={styles.viewItemContainerText}> Proceed to Order </Text>
-                    </TouchableOpacity>
-                </View>
+                <BottomButton buttonText="Proceed to Order" onPress={() => navigation.navigate('Checkout')}/>
+                <PromotionButton/>
             </View>
         </SafeAreaView>
     );
@@ -65,23 +60,5 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         color: '#630A10',
         fontWeight: 'bold',
-    },
-    viewItemContainer: {
-        backgroundColor: 'rgba(255, 230, 98, 1)',
-        paddingVertical: 20,
-        flexDirection: 'row',
-    },
-    viewItemContainerTextContainer: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    priceContainerRight: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    viewItemContainerText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#630A10',
     },
 });

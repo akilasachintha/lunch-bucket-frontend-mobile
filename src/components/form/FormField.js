@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TextInput, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
+import {dynamicFont} from "../../common/responsive/fontScale";
 
 const EyeIcon = ({onPress, visible, error, onBlur}) => {
     return (
@@ -74,15 +75,14 @@ const FormField = ({
     );
 };
 
-
 const styles = StyleSheet.create({
     inputContainer: {
-        marginBottom: 15,
+        marginBottom: '5%',
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#FFFFFF',
-        paddingLeft: 20,
-        paddingVertical: 6,
+        paddingLeft: '7%',
+        paddingVertical: '2%',
         borderRadius: 10,
         borderWidth: 2,
         borderColor: '#630A10',
@@ -90,24 +90,26 @@ const styles = StyleSheet.create({
     inputField: {
         color: '#630A10',
         flex: 1,
+        fontSize: dynamicFont(12),
     },
     inputFieldError: {
         marginBottom: 0,
         borderColor: 'red',
     },
     inputFieldCorrect: { // new style
-        marginBottom: 15,
+        marginBottom: '5%',
     },
     error: {
         marginVertical: 4,
         color: 'red',
+        fontSize: dynamicFont(10),
     },
     iconContainer: {
         flexDirection: 'row',
         alignItems: 'center',
     },
     icon: {
-        marginHorizontal: 4,
+        marginHorizontal: '2%',
     },
 });
 

@@ -1,36 +1,20 @@
-import {SafeAreaView, StyleSheet, TextInput, TouchableOpacity, View} from "react-native";
-import TopBar from "../../components/topBar/TopBar";
+import {SafeAreaView, StyleSheet, View} from "react-native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import React from "react";
 import BorderButton from "../../components/borderButton/BorderButton";
-import {MaterialCommunityIcons} from '@expo/vector-icons';
 import {useNavigation} from "@react-navigation/native";
-import {SelectedTab} from "../../common/enums/enums";
+import StaticTopBar from "../../components/topBar/StaticTopBar";
 
 export default function ChatScreen() {
     const navigation = useNavigation();
-    const sendIcon = <MaterialCommunityIcons name="send" size={40} color='#630A10'/>
-
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <TopBar selectedTab={SelectedTab.CHAT}/>
+            <StaticTopBar/>
             <View style={styles.container}>
-                <TopHeader headerText="Chat" backButtonPath="Chat"/>
+                <TopHeader headerText="Chat" backButtonPath="Menu"/>
                 <View style={styles.bodyContainer}>
                     <BorderButton text="Leave a Suggestion" onPress={() => navigation.navigate('LeaveSuggestion')}/>
                     <BorderButton text="Chat with the Owner" onPress={() => navigation.navigate('ContactOwner')}/>
-                </View>
-                <View style={styles.chatBox}>
-                    <TextInput
-                        editable
-                        multiline
-                        numberOfLines={4}
-                        placeholder={"Type your message here"}
-                        style={styles.chatBoxTextInput}
-                    />
-                    <TouchableOpacity style={styles.sendIcon}>
-                        {sendIcon}
-                    </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>

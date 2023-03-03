@@ -1,12 +1,13 @@
-import TopBar from "../components/topBar/TopBar";
 import {Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useMemo, useState} from "react";
-import Menu from "../components/menu/Menu";
+import Menu from "../../components/menu/Menu";
+import StaticTopBar from "../../components/topBar/StaticTopBar";
 
 export default function MenuScreen() {
     const [lunch, setLunch] = useState(true);
     const [isVisible, setIsVisible] = useState(true);
 
+    // Objects for the menu
     const [vegetableItems, setVegetableItems] = useState([
         {id: 1, type: 'Vegetable', itemName: 'Dhal', checked: false},
         {id: 2, type: 'Vegetable', itemName: 'Sambol', checked: false},
@@ -20,7 +21,7 @@ export default function MenuScreen() {
         {id: 4, type: 'Stew', itemName: 'Irish Stew', checked: false},
     ]);
     const [meatItems, setMeatItems] = useState([
-        {id: 1, type: 'Meat', itemName: 'Chicken', checked: false, percentage: 40},
+        {id: 1, type: 'Meat', itemName: 'Chicken', checked: false, percentage: 100},
         {id: 2, type: 'Meat', itemName: 'Pork', checked: false, percentage: 60},
         {id: 3, type: 'Meat', itemName: 'Beef', checked: false, percentage: 70},
         {id: 4, type: 'Meat', itemName: 'Potatoes', checked: false, percentage: 75},
@@ -58,7 +59,6 @@ export default function MenuScreen() {
             } else {
                 newItems[index].checked = true;
             }
-
             setItems(newItems);
         };
         return {type, items, handleItemPress};
@@ -95,7 +95,7 @@ export default function MenuScreen() {
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <TopBar/>
+            <StaticTopBar/>
             <View style={styles.bodyTopBar}>
                 <TouchableOpacity style={lunchStyles} onPress={() => setLunch(true)}>
                     <Text style={styles.lunchContainerText}>Lunch</Text>
@@ -138,7 +138,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     bodyTopBar: {
-        flex: 1,
         backgroundColor: '#7E1F24',
         flexDirection: 'row',
         borderTopLeftRadius: 20,

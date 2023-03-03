@@ -1,10 +1,11 @@
 import {useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import TopBar from "../components/topBar/TopBar";
 import {useNavigation} from "@react-navigation/native";
-import CheckoutItem from "../components/checkoutItem/CheckoutItem";
-import TopHeader from "../components/topHeader/TopHeader";
-import OrderPlaceSuccessfulModal from "../components/modals/OrderPlaceSuccessfulModal";
+import CheckoutItem from "../../components/checkoutItem/CheckoutItem";
+import TopHeader from "../../components/topHeader/TopHeader";
+import OrderPlaceSuccessfulModal from "../../components/modals/OrderPlaceSuccessfulModal";
+import StaticTopBar from "../../components/topBar/StaticTopBar";
+import BottomButton from "../../components/buttons/BottomButton";
 
 export default function Checkout() {
     const [isVisible, setIsVisible] = useState(false);
@@ -12,16 +13,16 @@ export default function Checkout() {
 
     const handleCheckout = () => {
         setIsVisible(true);
-        navigation.navigate('Checkout');
+        if (!isVisible) navigation.navigate('Checkout');
     };
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <TopBar/>
-            <TopHeader headerText="Order Details" backButtonPath="Menu"/>
+            {isVisible && <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible}/>}
+            <StaticTopBar/>
+            <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>
                 <ScrollView>
-                    {isVisible && <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible}/>}
                     <CheckoutItem mealName="Meal 1" count={4} price={500}/>
                     <CheckoutItem mealName="Meal 2" count={1} price={400}/>
                     <CheckoutItem mealName="Meal 3" count={2} price={300}/>
@@ -40,14 +41,7 @@ export default function Checkout() {
                         <Text style={styles.totalAmountRightContainer}>Rs 850.00</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.viewItemContainer}>
-                    <TouchableOpacity
-                        style={styles.viewItemContainerTextContainer}
-                        onPress={handleCheckout}
-                    >
-                        <Text style={styles.viewItemContainerText}> Place Order </Text>
-                    </TouchableOpacity>
-                </View>
+                <BottomButton buttonText="Place Order" onPress={handleCheckout}/>
             </View>
         </SafeAreaView>
     )
@@ -124,19 +118,5 @@ const styles = StyleSheet.create({
         color: '#7E1F24',
         fontWeight: 'bold',
         textAlign: 'right'
-    },
-    viewItemContainer: {
-        backgroundColor: 'rgba(255, 230, 98, 1)',
-        paddingVertical: 20,
-        flexDirection: 'row',
-    },
-    viewItemContainerTextContainer: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    viewItemContainerText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#630A10',
     },
 });

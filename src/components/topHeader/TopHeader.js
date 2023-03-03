@@ -22,7 +22,6 @@ export default function TopHeader({headerText, backButtonPath}) {
 const styles = StyleSheet.create({
     bodyTopBar: {
         backgroundColor: '#7E1F24',
-        flex: 1,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         flexDirection: 'row',

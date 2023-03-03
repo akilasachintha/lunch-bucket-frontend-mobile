@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {dynamicFont} from "../../common/responsive/fontScale";
 
 const OtherSignInUpButton = ({ iconName, signInText }) => {
     return (
@@ -18,19 +19,19 @@ export default OtherSignInUpButton;
 const styles = StyleSheet.create({
     otherSIgnInButton: {
         borderColor: '#630A10',
-        marginTop: 15,
+        marginTop: '3%',
         borderWidth: 2,
         flexDirection: 'row',
         borderRadius: 25,
-        padding: 10,
+        paddingVertical: '3%',
         alignItems: 'center',
         justifyContent: 'center',
     },
     icon: {
-        marginRight: 20,
+        marginRight: '5%',
     },
     otherSignInText: {
-        fontSize: 16,
+        fontSize: dynamicFont(11),
         color: '#630A10',
     },
 });
