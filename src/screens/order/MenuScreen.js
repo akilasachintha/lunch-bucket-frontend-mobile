@@ -1,55 +1,72 @@
 import {Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Menu from "../../components/menu/Menu";
 import StaticTopBar from "../../components/topBar/StaticTopBar";
+import {
+    getDinnerMeetMenu,
+    getDinnerStewMenu,
+    getDinnerVegetableMenu,
+    getLunchMeetMenu,
+    getLunchStewMenu,
+    getLunchVegetableMenu
+} from "../../services/menuService";
 
 export default function MenuScreen() {
     const [lunch, setLunch] = useState(true);
     const [isVisible, setIsVisible] = useState(true);
 
     // Objects for the menu
-    const [vegetableItems, setVegetableItems] = useState([
-        {id: 1, type: 'Vegetable', itemName: 'Dhal', checked: false},
-        {id: 2, type: 'Vegetable', itemName: 'Sambol', checked: false},
-        {id: 3, type: 'Vegetable', itemName: 'Mashoom', checked: false},
-        {id: 4, type: 'Vegetable', itemName: 'Potatoes', checked: false},
-    ]);
-    const [stewItems, setStewItems] = useState([
-        {id: 1, type: 'Stew', itemName: 'Chicken Stew', checked: false},
-        {id: 2, type: 'Stew', itemName: 'Pork Stew', checked: false},
-        {id: 3, type: 'Stew', itemName: 'Vegetable Stew', checked: false},
-        {id: 4, type: 'Stew', itemName: 'Irish Stew', checked: false},
-    ]);
-    const [meatItems, setMeatItems] = useState([
-        {id: 1, type: 'Meat', itemName: 'Chicken', checked: false, percentage: 100},
-        {id: 2, type: 'Meat', itemName: 'Pork', checked: false, percentage: 60},
-        {id: 3, type: 'Meat', itemName: 'Beef', checked: false, percentage: 70},
-        {id: 4, type: 'Meat', itemName: 'Potatoes', checked: false, percentage: 75},
-    ]);
-    const [dinnerVegetableItems, setDinnerVegetableItems] = useState([
-        {id: 1, type: 'Vegetable', itemName: 'Dhal', checked: false},
-        {id: 2, type: 'Vegetable', itemName: 'Sambol', checked: false},
-        {id: 3, type: 'Vegetable', itemName: 'Mashoom', checked: false},
-        {id: 4, type: 'Vegetable', itemName: 'Potatoes', checked: false},
-    ]);
-    const [dinnerStewItems, setDinnerStewItems] = useState([
-        {id: 1, type: 'Stew', itemName: 'Chicken Stew', checked: false},
-        {id: 2, type: 'Stew', itemName: 'Pork Stew', checked: false},
-        {id: 3, type: 'Stew', itemName: 'Vegetable Stew', checked: false},
-        {id: 4, type: 'Stew', itemName: 'Irish Stew', checked: false},
-    ]);
-    const [dinnerMeatItems, setDinnerMeatItems] = useState([
-        {id: 1, type: 'Meat', itemName: 'Chicken', checked: false},
-        {id: 2, type: 'Meat', itemName: 'Pork', checked: false},
-        {id: 3, type: 'Meat', itemName: 'Beef', checked: false},
-        {id: 4, type: 'Meat', itemName: 'Potatoes', checked: false},
-    ]);
+    const [vegetableItems, setVegetableItems] = useState([]);
+    const [stewItems, setStewItems] = useState([]);
+    const [meatItems, setMeatItems] = useState([]);
+
+    const [dinnerVegetableItems, setDinnerVegetableItems] = useState([]);
+    const [dinnerStewItems, setDinnerStewItems] = useState([]);
+    const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
+
+    async function fetchLunchMenuData() {
+        try {
+            const meetMenuLunch = await getLunchMeetMenu();
+            const stewMenuLunch = await getLunchStewMenu();
+            const vegetableMenuLunch = await getLunchVegetableMenu();
+
+            setMeatItems(meetMenuLunch);
+            setStewItems(stewMenuLunch);
+            setVegetableItems(vegetableMenuLunch);
+
+        } catch (error) {
+            console.log("Error fetching lunch menu:", error.message);
+        }
+    }
+
+    async function fetchDinnerMenuData() {
+        try {
+            const meetMenuDinner = await getDinnerMeetMenu();
+            const stewMenuDinner = await getDinnerStewMenu();
+            const vegetableMenuDinner = await getDinnerVegetableMenu();
+
+            setDinnerMeatItems(meetMenuDinner);
+            setDinnerStewItems(stewMenuDinner);
+            setDinnerVegetableItems(vegetableMenuDinner);
+
+        } catch (error) {
+            console.log("Error fetching lunch menu:", error.message);
+        }
+    }
+
+    // Functions for the menu
+    useEffect(() => {
+        fetchLunchMenuData();
+        fetchDinnerMenuData();
+
+    }, []);
+
 
     const createItemListWithType = (type, items, setItems, maxCount) => {
         const handleItemPress = (index) => {
             const newItems = [...items];
             const itemChecked = newItems[index].checked;
-            const itemCount = newItems.filter(item => item.checked && item.type === type).length;
+            const itemCount = newItems.filter(item => item.checked && item.foodType === type).length;
 
             if (itemChecked) {
                 newItems[index].checked = false;
@@ -65,7 +82,7 @@ export default function MenuScreen() {
     };
 
     const lunchItemList = [
-        createItemListWithType("Vegetable", vegetableItems, setVegetableItems, 2),
+        createItemListWithType("Vegetable", vegetableItems, setVegetableItems, 1),
         createItemListWithType("Stew", stewItems, setStewItems, 1),
         createItemListWithType("Meat", meatItems, setMeatItems, 1),
     ];

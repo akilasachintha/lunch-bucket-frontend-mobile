@@ -48,7 +48,7 @@ export default function ItemList({title, items, handleItemPress}) {
                 {items.map((item, index) => (
                     <View key={item.id}>
                         <ListItem
-                            itemName={item.itemName}
+                            itemName={item.type}
                             checked={item.checked}
                             handleItemPress={() => handleItemPress(index)}
                             percentage={item.percentage}

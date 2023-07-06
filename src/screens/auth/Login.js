@@ -1,6 +1,6 @@
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import STRINGS from '../../common/strings/strings';
-import PATHS from "../../common/paths/paths";
+import STRINGS from '../../helpers/strings/strings';
+import PATHS from "../../helpers/paths/paths";
 import {useState} from "react";
 import {Formik} from "formik";
 import * as Yup from "yup";
@@ -8,7 +8,7 @@ import FormSubmitButton from "../../components/form/FormSubmitButton";
 import FormFields from "../../components/form/FormFields";
 import OtherSignInUpButton from "../../components/otherSignInUpButton/OtherSIgnInUpButton";
 import LinkButton from "../../components/linkButton/LinkButton";
-import {dynamicFont} from "../../common/responsive/fontScale";
+import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()

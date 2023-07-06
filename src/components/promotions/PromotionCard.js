@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import PATHS from "../../common/paths/paths";
+import PATHS from "../../helpers/paths/paths";
 
 const PromotionCard = ({promotion}) => {
     const navigation = useNavigation();

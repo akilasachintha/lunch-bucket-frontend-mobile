@@ -1,6 +1,6 @@
 import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import STRINGS from '../../common/strings/strings';
-import PATHS from "../../common/paths/paths";
+import STRINGS from '../../helpers/strings/strings';
+import PATHS from "../../helpers/paths/paths";
 import {useState} from "react";
 import {Formik} from "formik";
 import * as Yup from "yup";

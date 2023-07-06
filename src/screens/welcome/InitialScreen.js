@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import PATHS from '../../common/paths/paths';
+import PATHS from '../../helpers/paths/paths';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const InitialScreen = () => {

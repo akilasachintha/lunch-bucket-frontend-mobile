@@ -1,7 +1,7 @@
 import {StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
-import {SelectedTab} from "../../common/enums/enums";
+import {SelectedTab} from "../../helpers/enums/enums";
 
 const iconsData = [
     {

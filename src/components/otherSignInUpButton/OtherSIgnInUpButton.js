@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {dynamicFont} from "../../common/responsive/fontScale";
+import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const OtherSignInUpButton = ({ iconName, signInText }) => {
     return (

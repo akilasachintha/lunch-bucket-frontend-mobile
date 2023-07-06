@@ -1,7 +1,7 @@
 import Swiper from 'react-native-swiper';
 import {StyleSheet} from 'react-native';
-import STRINGS from "../../common/strings/strings";
-import PATHS from "../../common/paths/paths";
+import STRINGS from "../../helpers/strings/strings";
+import PATHS from "../../helpers/paths/paths";
 import WelcomeSlide from "../../components/welcomeSlide/WelcomeSlide";
 
 const slides = [

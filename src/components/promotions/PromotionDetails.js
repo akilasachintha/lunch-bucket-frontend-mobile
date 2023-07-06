@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import DynamicTopBar from "../topBar/DynamicTopBar";
 import TopHeader from "../topHeader/TopHeader";
-import PATHS from "../../common/paths/paths";
+import PATHS from "../../helpers/paths/paths";
 import PromotionAppliedModal from "../modals/PromotionAppliedModal";
 import BottomButton from "../buttons/BottomButton";
 

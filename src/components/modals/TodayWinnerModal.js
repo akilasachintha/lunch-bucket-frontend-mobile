@@ -1,6 +1,6 @@
 import React from 'react';
 import {Image, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import PATHS from "../../common/paths/paths";
+import PATHS from "../../helpers/paths/paths";
 
 export default function TodayWinnerModal({isVisible, setIsVisible}) {
 
