@@ -1,4 +1,4 @@
-import {Dimensions, PixelRatio, Platform} from "react-native";
+import {Dimensions, PixelRatio, Platform} from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 const SCREEN_WIDTH = Math.min(width, height);
@@ -16,5 +16,7 @@ const BASE_FONT_SIZE = 1;
 
 export function dynamicFont(size) {
     const newSize = Math.round(BASE_FONT_SIZE * scale * size);
-    return Platform.OS === 'ios' ? PixelRatio.roundToNearestPixel(newSize) : Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
+    return Platform.OS === 'ios' ?
+        PixelRatio.roundToNearestPixel(newSize) :
+        Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
 }

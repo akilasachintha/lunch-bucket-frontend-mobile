@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 export default function CheckoutItem({mealName, count, price}) {
     return (
@@ -17,7 +17,6 @@ export default function CheckoutItem({mealName, count, price}) {
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     shadowProp: {

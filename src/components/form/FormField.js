@@ -18,16 +18,16 @@ const EyeIcon = ({onPress, visible, error, onBlur}) => {
     );
 };
 
-const FormField = ({
-                       placeholder,
-                       onChangeText,
-                       onBlur,
-                       value,
-                       error,
-                       secureTextEntry,
-                       isEyeEnabled,
-                       isCorrect,
-                   }) => {
+export default function FormField({
+                                      placeholder,
+                                      onChangeText,
+                                      onBlur,
+                                      value,
+                                      error,
+                                      secureTextEntry,
+                                      isEyeEnabled,
+                                      isCorrect,
+                                  }) {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [inputValue, setInputValue] = useState(value);
 
@@ -112,6 +112,4 @@ const styles = StyleSheet.create({
         marginHorizontal: '2%',
     },
 });
-
-export default FormField;
 

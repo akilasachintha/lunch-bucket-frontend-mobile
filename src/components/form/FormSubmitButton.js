@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {dynamicFont} from "../../common/responsive/fontScale";
 
-const FormSubmitButton = ({handleSubmit, isSubmitting, buttonText, isValid, error, onBlur}) => {
+const FormSubmitButton = ({handleSubmit, buttonText, isValid}) => {
     const inputStyles = [
         styles.signInText,
         !isValid ? styles.signInTextError : null,
@@ -10,7 +10,7 @@ const FormSubmitButton = ({handleSubmit, isSubmitting, buttonText, isValid, erro
 
     return (
         <View style={styles.signInButtonContainer}>
-            <TouchableOpacity onPress={handleSubmit} disabled={!isValid} >
+            <TouchableOpacity onPress={handleSubmit} disabled={!isValid}>
                 <Text style={inputStyles}>
                     {buttonText}
                 </Text>

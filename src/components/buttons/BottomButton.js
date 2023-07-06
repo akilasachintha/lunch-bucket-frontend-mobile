@@ -1,9 +1,6 @@
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {useNavigation} from "@react-navigation/native";
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 export default function BottomButton({buttonText, onPress}) {
-    const navigation = useNavigation();
-
     return (
         <View style={styles.viewItemContainer}>
             <TouchableOpacity

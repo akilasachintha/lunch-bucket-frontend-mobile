@@ -1,6 +1,6 @@
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {AntDesign, Fontisto} from "@expo/vector-icons";
-import {useState} from "react";
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {AntDesign, Fontisto} from '@expo/vector-icons';
+import {useState} from 'react';
 
 export default function BasketItem({mealName}) {
     const [count, setCount] = useState(0);
@@ -89,7 +89,6 @@ export default function BasketItem({mealName}) {
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     shadowProp: {

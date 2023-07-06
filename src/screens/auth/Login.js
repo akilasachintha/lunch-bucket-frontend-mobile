@@ -10,7 +10,6 @@ import OtherSignInUpButton from "../../components/otherSignInUpButton/OtherSIgnI
 import LinkButton from "../../components/linkButton/LinkButton";
 import {dynamicFont} from "../../common/responsive/fontScale";
 
-
 const validationSchema = Yup.object().shape({
     email: Yup.string()
         .email('Invalid email address')

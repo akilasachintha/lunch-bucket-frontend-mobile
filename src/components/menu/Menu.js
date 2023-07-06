@@ -10,6 +10,9 @@ const Menu = ({itemList, totalCheckedItems, timeLimit, totalAmount, isVisible, s
         <View style={styles.bodyContentContainer}>
             <ScrollView style={styles.scrollViewContainer}>
                 {isVisible && (<OrderRatingModal isVisible={isVisible} setIsVisible={setIsVisible}/>)}
+                <View style={styles.timerContainer}>
+                    <Text style={styles.timerText}>1 hour and 59 sec</Text>
+                </View>
                 <View>
                     <Text style={styles.cantPlaceAfterText}>You can’t place orders after {timeLimit}</Text>
                 </View>
@@ -38,7 +41,6 @@ export default Menu;
 
 const styles = StyleSheet.create({
     bodyContentContainer: {
-        marginTop: 20,
         flex: 6,
     },
     scrollViewContainer: {
@@ -54,5 +56,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 15,
         color: '#4D4D4D',
+    },
+    timerContainer: {
+        backgroundColor : 'rgba(255, 230, 98, 1)',
+        paddingTop: 10,
+        paddingBottom: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
+        marginBottom: 20,
     },
 });

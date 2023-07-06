@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TouchableOpacity} from "react-native";
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
 export default function BorderButton({text, onPress, icon}) {
     return (
@@ -10,15 +10,6 @@ export default function BorderButton({text, onPress, icon}) {
 }
 
 const styles = StyleSheet.create({
-    safeAreaContainer: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    bodyContainer: {
-        paddingTop: 20,
-        flex: 10,
-        justifyContent: 'center',
-    },
     borderButtonContainer: {
         flexDirection: "row",
         paddingVertical: 10,

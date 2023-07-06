@@ -38,7 +38,7 @@ const ListItem = ({itemName, checked, handleItemPress, percentage}) => {
     );
 };
 
-const ItemList = ({title, items, handleItemPress}) => {
+export default function ItemList({title, items, handleItemPress}) {
     return (
         <View>
             <View style={styles.itemTextContainer}>
@@ -59,8 +59,6 @@ const ItemList = ({title, items, handleItemPress}) => {
         </View>
     );
 };
-
-export default ItemList;
 
 const styles = StyleSheet.create({
     itemTextContainer: {
