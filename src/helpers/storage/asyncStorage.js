@@ -4,7 +4,7 @@ const addDataToLocalStorage = async (key, value) => {
     try {
         await AsyncStorage.setItem(key, value);
     } catch (e) {
-        console.log("Error :: AsyncStorage :: addDataToLocalStorage :: " + e.message);
+        log("error", "AsyncStorage", "addDataToLocalStorage", e.message, "asyncStorage.js");
     }
 };
 
@@ -15,7 +15,7 @@ const getDataFromLocalStorage = async (key) => {
             return value;
         }
     } catch (e) {
-        console.log("Error :: AsyncStorage :: getDataFromLocalStorage :: " + e.message);
+        log("error", "AsyncStorage", "getDataFromLocalStorage", e.message, "asyncStorage.js");
         return null;
     }
 };
@@ -24,7 +24,7 @@ const removeDataFromLocalStorage = async (key) => {
     try {
         await AsyncStorage.removeItem(key);
     } catch (e) {
-        console.log("Error :: AsyncStorage :: removeDataFromLocalStorage :: " + e.message);
+        log("error", "AsyncStorage", "removeDataFromLocalStorage", e.message, "asyncStorage.js");
     }
 };
 

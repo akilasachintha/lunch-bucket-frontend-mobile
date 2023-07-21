@@ -55,8 +55,6 @@ export async function handleCheckoutService() {
             return ERROR_STATUS.ERROR;
         }
 
-        console.log("checkoutMenu", checkoutMenu);
-
         const result = await setOrderController(checkoutMenu);
         const data = await result.data;
 

@@ -22,7 +22,6 @@ const OrderRatingModal = ({isVisible, setIsVisible}) => {
 
     const initialValues = {rating: 0, review: ''};
     const handleDonePress = (values, {resetForm}) => {
-        console.log(values);
         resetForm();
         setIsVisible(false);
     };

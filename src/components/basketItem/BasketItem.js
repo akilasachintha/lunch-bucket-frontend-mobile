@@ -82,7 +82,6 @@ export default function BasketItem({mealName, mealId, items, setBasket}) {
     }, []);
 
     const handleEditMealPress = () => {
-        console.log("mealId", mealId);
         navigation.navigate('EditMenu', {mealId});
     }
 

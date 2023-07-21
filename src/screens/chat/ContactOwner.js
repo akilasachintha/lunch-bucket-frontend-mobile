@@ -19,7 +19,6 @@ export default function ContactOwner() {
     const handleOnSubmit = (values, {resetForm}) => {
         setMessages([...messages, values.message]);
         scrollViewRef.current.scrollToEnd({animated: true});
-        console.log(values);
         resetForm();
     };
 

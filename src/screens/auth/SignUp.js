@@ -44,11 +44,9 @@ export default function SignUp({navigation}) {
 
     const handleSubmit = async (values, actions) => {
         setIsSubmitting(true);
-        console.log(values);
 
         try {
             const result = await registerService(values.email, values.password);
-            console.log(result);
             if (result === "success") {
                 showToast('success', 'Successfully Registered');
                 navigation.navigate('Login');
