@@ -177,8 +177,6 @@ export default function MenuScreen({navigation}) {
                             const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
                             const stew = checkedStews.length >= 1 ? checkedStews[0].food_id : null;
 
-                            console.log(vegi1, vegi2, stew, item.food_id);
-
                             const newPercentage = await getDinnerStewPercentageService(vegi1, vegi2, stew, item.food_id);
 
                             return {

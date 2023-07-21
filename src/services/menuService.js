@@ -203,10 +203,8 @@ export async function getByMealIdFromBasketService(mealId) {
         existingBasket = JSON.parse(existingBasket || '{}');
 
         const meal = existingBasket.meal.find((meal) => meal.id.toString() === mealId);
-        console.log(meal);
 
         if (meal) {
-            console.log(meal);
             return meal;
         } else {
             log('info', 'service', 'getByMealIdFromBasketService', 'Meal not found', 'menuService.js');
@@ -226,12 +224,10 @@ export async function updateBasketFromId(mealId, updatedMeal) {
             const mealIndex = existingBasket.meal.findIndex((meal) => meal.id === mealId);
 
             if (mealIndex !== -1) {
-                // Update the meal with the given mealId
                 existingBasket.meal[mealIndex].items = [...updatedMeal];
 
                 const jsonValue = JSON.stringify(existingBasket);
                 await addDataToLocalStorage('basket', jsonValue);
-                console.log(existingBasket);
 
                 log('info', 'service', 'updateBasketFromId', SUCCESS_STATUS.SUCCESS, 'menuService.js');
                 return SUCCESS_STATUS.SUCCESS;

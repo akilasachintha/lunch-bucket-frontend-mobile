@@ -29,7 +29,6 @@ export default function BasketScreen() {
             }
 
             basketItems = JSON.parse(basketItems);
-            log("info", "BasketScreen", "fetchBasketItems | basketItems", basketItems, "BasketScreen.js");
             setBasket(basketItems);
 
         } catch (error) {

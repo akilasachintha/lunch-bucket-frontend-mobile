@@ -28,7 +28,7 @@ export default function Timer({title, disableTime}) {
     ];
 
     const renderTimerText = () => {
-        const time = title === "Lunch" ? (disableTime ? "4 PM" : "10 AM") : "4 PM";
+        const time = title === "Lunch" ? (disableTime ? "4 PM" : "10 AM") : (disableTime ? "10 AM" : "4 PM");
         return (
             <Text style={styles.timerLeftText}>
                 You can{disableTime ? " not" : ""} place {title} orders until {time}
