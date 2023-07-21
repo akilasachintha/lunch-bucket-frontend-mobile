@@ -3,55 +3,65 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {AntDesign, MaterialIcons} from '@expo/vector-icons';
 import PercentageBar from "../precentageBar/PrecentageBar";
 
-const ListItem = ({itemName, checked, handleItemPress, percentage}) => {
+const ListItem = ({itemName, checked, handleItemPress, percentage, disabled}) => {
     return (
         <View>
             <TouchableOpacity
-                style={[styles.listItemContainer, (percentage == null) && {
-                    borderBottomWidth: 2,
-                    borderBottomColor: 'rgba(197,194,194,0.5)',
-                }]}
+                style={[
+                    styles.listItemContainer,
+                    percentage == null && {
+                        borderBottomWidth: 2,
+                        borderBottomColor: 'rgba(197,194,194,0.5)',
+                    },
+                ]}
                 onPress={handleItemPress}
+                disabled={disabled}
             >
                 <View style={styles.listItemLeftContainer}>
                     <Text style={styles.listItemText}>{itemName}</Text>
+                    {percentage != null && percentage > 0 && (
+                        <PercentageBar percentage={percentage}/>
+                    )}
                 </View>
-                {!checked && (
+                {!checked && !disabled && (
                     <View style={styles.listItemRightContainer}>
-                        <MaterialIcons name="radio-button-unchecked" size={30}
-                                       color="rgba(57, 57, 57, 0.5)"/>
+                        <MaterialIcons
+                            name="radio-button-unchecked"
+                            size={30}
+                            color="rgba(57, 57, 57, 0.5)"
+                        />
                     </View>
                 )}
-                {checked && (
+                {checked && !disabled && (
                     <View style={styles.listItemRightContainer}>
-                        <AntDesign name="checkcircle" size={24}
-                                   color="rgba(44, 152, 74, 1)"/>
+                        <AntDesign name="checkcircle" size={24} color="rgba(44, 152, 74, 1)"/>
                     </View>
+                )}
+                {disabled && (
+                    <View style={styles.listItemRightContainer}/>
                 )}
             </TouchableOpacity>
-            {(percentage != null) && (
-                <View style={styles.percentageContainer}>
-                    <PercentageBar percentage={percentage}/>
-                </View>
-            )}
         </View>
     );
 };
 
-export default function ItemList({title, items, handleItemPress}) {
+export default function ItemList({title, items, handleItemPress, disableCheckbox}) {
     return (
         <View>
-            <View style={styles.itemTextContainer}>
-                <Text style={styles.itemText}>{title}</Text>
-            </View>
+            {items && items.length > 0 && (
+                <View style={styles.itemTextContainer}>
+                    <Text style={styles.itemText}>{title}</Text>
+                </View>
+            )}
             <View>
-                {items.map((item, index) => (
+                {items && items.length > 0 && items.map((item, index) => (
                     <View key={item.id}>
                         <ListItem
                             itemName={item.type}
                             checked={item.checked}
                             handleItemPress={() => handleItemPress(index)}
                             percentage={item.percentage}
+                            disabled={disableCheckbox}
                         />
                     </View>
                 ))}
@@ -72,23 +82,20 @@ const styles = StyleSheet.create({
     },
     listItemContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
         marginHorizontal: 40,
     },
     listItemText: {
-        paddingVertical: 20,
+        paddingVertical: 18,
         fontSize: 18,
     },
     listItemLeftContainer: {
-        flex: 2,
+        flex: 8,
+        flexDirection: 'column',
+        alignItems: 'flex-start',
     },
     listItemRightContainer: {
         flex: 1,
         alignItems: 'flex-end',
-        marginRight: 10,
-    },
-    percentageContainer: {
-        marginHorizontal: 20,
-        marginRight: 100,
+        justifyContent: 'center',
     },
 });

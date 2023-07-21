@@ -1,7 +1,7 @@
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from "../../helpers/paths/paths";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Formik} from "formik";
 import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
@@ -9,6 +9,9 @@ import FormFields from "../../components/form/FormFields";
 import OtherSignInUpButton from "../../components/otherSignInUpButton/OtherSIgnInUpButton";
 import LinkButton from "../../components/linkButton/LinkButton";
 import {dynamicFont} from "../../helpers/responsive/fontScale";
+import {loginService} from "../../services/authService";
+import {useToast} from "../../helpers/toast/Toast";
+import {log} from "../../helpers/logs/log";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -27,22 +30,38 @@ const fields = [
 export default function Login({navigation}) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const initialValues = {email: '', password: ''};
+    const [toastMessage, setToastMessage] = useState(null);
+    const {showToast} = useToast();
 
     const handleSubmit = async (values, actions) => {
         setIsSubmitting(true);
-        console.log(values);
 
         try {
-            navigation.navigate('Menu');
-            console.log('Try');
+            const result = await loginService(values.email, values.password);
+            if (result === "success") {
+                navigation.navigate('Menu');
+            } else {
+                showToast('error', 'Email or Password is incorrect');
+                log("error", "Login", "handleSubmit", "Email or Password is incorrect", "Login.js");
+            }
         } catch (error) {
-            console.log(error);
+            log("error", "Login", "handleSubmit", error.message, "Login.js");
+            setToastMessage("Login Failed");
         } finally {
-            console.log('Finally');
             actions.setSubmitting(false);
             setIsSubmitting(false);
         }
     };
+
+    useEffect(() => {
+        if (toastMessage) {
+            const timeout = setTimeout(() => {
+                setToastMessage(null);
+            }, 3000);
+
+            return () => clearTimeout(timeout);
+        }
+    }, [toastMessage]);
 
     return (
         <SafeAreaView style={styles.container}>

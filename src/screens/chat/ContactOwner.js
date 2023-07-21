@@ -83,8 +83,7 @@ const styles = StyleSheet.create({
         flex: 10,
     },
     bodyContainer: {
-        paddingTop: 20,
-        flex: 9,
+        flex: 10,
         justifyContent: 'flex-end',
     },
     scrollViewContainer: {},
@@ -105,19 +104,18 @@ const styles = StyleSheet.create({
         color: '#630A10',
     },
     chatBox: {
-        flex: 1,
-        marginVertical: 20,
+        marginVertical: 10,
         marginLeft: 20,
         flexDirection: 'row',
+        justifyContent: 'flex-end',
     },
     chatBoxTextInput: {
         borderRadius: 20,
         borderWidth: 2,
         borderColor: '#a1a1a1',
-        padding: 10,
         paddingLeft: 20,
         fontSize: 14,
-        flex: 6,
+        flex: 5,
     },
     sendIcon: {
         justifyContent: 'center',
@@ -134,7 +132,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 30,
         borderTopRightRadius: 30,
         alignSelf: 'flex-end',
-        maxWidth: '80%',
+        maxWidth: '90%',
     },
     messageContainerText: {
         fontSize: 18,

@@ -1,20 +1,90 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {AntDesign, Fontisto} from '@expo/vector-icons';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
+import {removeMealFromBasketService} from "../../services/menuService";
+import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
+import {log} from "../../helpers/logs/log";
+import {useNavigation} from "@react-navigation/native";
 
-export default function BasketItem({mealName}) {
-    const [count, setCount] = useState(0);
+export default function BasketItem({mealName, mealId, items, setBasket}) {
+    const [count, setCount] = useState(1);
     const [onClicked, setOnClicked] = useState(true);
+    const navigation = useNavigation();
 
-    const handleMinusPress = () => {
-        if (count > 0) {
-            setCount(count - 1);
+    const handleMinusPress = async () => {
+        const updatedCount = count !== 0 ? count - 1 : 0;
+        setCount(updatedCount);
+
+        if (updatedCount <= 0) {
+            await removeMealFromBasketService(mealId);
+            await fetchBasket();
+        } else {
+            await updateBasketCount(mealId, updatedCount);
+            await fetchBasket();
         }
     };
 
-    const handlePlusPress = () => {
-        setCount(count + 1);
+    const handlePlusPress = async () => {
+        const updatedCount = count + 1;
+        setCount(updatedCount);
+        await updateBasketCount(mealId, updatedCount);
+        await fetchBasket();
     };
+
+    const updateBasketCount = async (mealId, count) => {
+        try {
+            let basketItems = await getDataFromLocalStorage('basket');
+            basketItems = JSON.parse(basketItems);
+
+            if (basketItems?.meal?.length > 0) {
+                basketItems.meal = basketItems.meal.map((item) => {
+                    if (item.id === mealId) {
+                        return {
+                            ...item,
+                            count: count,
+                            totalPrice: item.unitPrice * count,
+                        };
+                    }
+                    return item;
+                });
+                const jsonValue = JSON.stringify(basketItems);
+                await addDataToLocalStorage('basket', jsonValue);
+            }
+        } catch (error) {
+            log("Error :: BasketScreen :: updateBasketCount :: ", error.message, "BasketItem.js");
+        }
+    };
+
+    const fetchBasket = async () => {
+        try {
+            let basketItems = await getDataFromLocalStorage('basket');
+            basketItems = JSON.parse(basketItems);
+
+            if (basketItems?.meal?.length > 0) {
+                basketItems.meal = basketItems.meal.map((item) => {
+                    if (item.id === mealId) {
+                        setCount(item.count);
+                    }
+                    return item;
+                });
+            }
+
+            setBasket(basketItems);
+        } catch (error) {
+            log("Error :: BasketScreen :: fetchBasket :: ", error.message, "BasketItem.js");
+        }
+    };
+
+    useEffect(() => {
+        fetchBasket().catch((error) =>
+            log("Error :: BasketScreen :: useEffect :: ", error.message, "BasketItem.js")
+        );
+    }, []);
+
+    const handleEditMealPress = () => {
+        console.log("mealId", mealId);
+        navigation.navigate('EditMenu', {mealId});
+    }
 
     return (
         <View>
@@ -64,6 +134,7 @@ export default function BasketItem({mealName}) {
                         </TouchableOpacity>
                         <View style={styles.editButtonContainer}>
                             <TouchableOpacity
+                                onPress={handleEditMealPress}
                                 style={styles.editButtonTextContainer}
                             >
                                 <AntDesign name="edit" size={14} color="black"/>
@@ -71,18 +142,11 @@ export default function BasketItem({mealName}) {
                         </View>
                     </TouchableOpacity>
                     <View style={[styles.itemListContainer, styles.elevation, styles.shadowProp]}>
-                        <View style={styles.listItemContainer}>
-                            <Text style={styles.listItemContainerText}>Dhal</Text>
-                        </View>
-                        <View style={styles.listItemContainer}>
-                            <Text style={styles.listItemContainerText}>Sambol</Text>
-                        </View>
-                        <View style={styles.listItemContainer}>
-                            <Text style={styles.listItemContainerText}>Mushoom</Text>
-                        </View>
-                        <View style={styles.listItemContainer}>
-                            <Text style={styles.listItemContainerText}>Potatoes</Text>
-                        </View>
+                        {items && items.length > 0 && items.map((item) => (
+                            <View key={item.id} style={styles.listItemContainer}>
+                                <Text style={styles.listItemContainerText}>{item.type}</Text>
+                            </View>
+                        ))}
                     </View>
                 </View>
             )}

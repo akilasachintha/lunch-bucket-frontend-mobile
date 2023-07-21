@@ -1,35 +1,75 @@
 import {SafeAreaView, ScrollView, StyleSheet, View} from "react-native";
 import {Fontisto} from '@expo/vector-icons';
 import BasketItem from "../../components/basketItem/BasketItem";
-import {useNavigation} from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import BorderButton from "../../components/borderButton/BorderButton";
-import TodayWinnerModal from "../../components/modals/TodayWinnerModal";
 import React, {useState} from "react";
 import StaticTopBar from "../../components/topBar/StaticTopBar";
-import PromotionButton from "../../components/promotions/PromotionButton";
 import BottomButton from "../../components/buttons/BottomButton";
+import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
+import {log} from "../../helpers/logs/log";
+import {useToast} from "../../helpers/toast/Toast";
 
 export default function BasketScreen() {
-    const [isVisible, setIsVisible] = useState(true);
+    const [basket, setBasket] = useState({});
 
     const navigation = useNavigation();
     const plusIcon = <Fontisto name="plus-a" size={18} color="#7E1F24"/>;
 
+    const {showToast} = useToast();
+
+    const fetchBasket = async () => {
+        try {
+            let basketItems = await getDataFromLocalStorage('basket');
+
+            if (!basketItems) {
+                log("error", "BasketScreen", "fetchBasketItems | basketItems", basketItems, "BasketScreen.js");
+                return;
+            }
+
+            basketItems = JSON.parse(basketItems);
+            log("info", "BasketScreen", "fetchBasketItems | basketItems", basketItems, "BasketScreen.js");
+            setBasket(basketItems);
+
+        } catch (error) {
+            log("error", "BasketScreen", "fetchBasketItems", error.message, "BasketScreen.js");
+        }
+    };
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchBasket().catch((error) =>
+                log("error", "BasketScreen", "useFocusEffect", error.message, "BasketScreen.js")
+            );
+        }, [])
+    );
+
+    const handleProceedToOrder = () => {
+        if (basket && basket.meal && basket.meal.length > 0) {
+            navigation.navigate('Checkout');
+        } else {
+            showToast("error", "Please add at least one meal to proceed.");
+        }
+    }
+
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            {isVisible && <TodayWinnerModal isVisible={isVisible} setIsVisible={setIsVisible}/>}
+            {/*{isVisible && <TodayWinnerModal isVisible={isVisible} setIsVisible={setIsVisible}/>}*/}
             <StaticTopBar/>
             <TopHeader headerText="Your Bucket" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView>
-                    <BasketItem mealName="Meal 1"/>
-                    <BasketItem mealName="Meal 2"/>
-                    <BasketItem mealName="Meal 3"/>
+                    {
+                        basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal) => (
+                            <BasketItem key={meal.id} index={meal.id} mealName={meal.name} mealId={meal.id}
+                                        items={meal.items} setBasket={setBasket}/>
+                        ))
+                    }
                 </ScrollView>
-                <BorderButton text="Add Another Meal" onPress={() => navigation.navigate('Promotion')} icon={plusIcon}/>
-                <BottomButton buttonText="Proceed to Order" onPress={() => navigation.navigate('Checkout')}/>
-                <PromotionButton/>
+                <BorderButton text="Add Meal" onPress={() => navigation.navigate('Menu')}
+                              icon={plusIcon}/>
+                <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder}/>
             </View>
         </SafeAreaView>
     );

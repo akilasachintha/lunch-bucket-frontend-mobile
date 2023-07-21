@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 8,
         flexDirection: 'row',
-        marginHorizontal: 20,
+        marginRight: "15%",
     },
     percentageGreenContainer: {
         backgroundColor: 'rgba(44, 152, 74, 0.82)',

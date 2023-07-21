@@ -8,7 +8,7 @@ export default function StaticTopBar() {
     return (
         <View style={styles.topBarContainer}>
             <View style={styles.container}>
-                <TouchableOpacity style={styles.icons} onPress={() => navigation.navigate('Basket')}>
+                <TouchableOpacity style={styles.icons} onPress={() => navigation.navigate('OrdersList')}>
                     <Icon name="clock" size={30} color='#7E1F24' solid></Icon>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.icons} onPress={() => navigation.navigate('Chat')}>
@@ -28,8 +28,7 @@ export default function StaticTopBar() {
 const styles = StyleSheet.create({
     topBarContainer: {
         flex: 1,
-        marginTop: StatusBar.currentHeight + 10,
-        marginBottom: 10,
+        paddingTop: StatusBar.currentHeight || 0,
     },
     container: {
         marginTop: 2,

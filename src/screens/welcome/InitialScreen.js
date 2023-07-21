@@ -1,47 +1,58 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import PATHS from '../../helpers/paths/paths';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {StatusBar} from 'expo-status-bar';
+import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 
 const InitialScreen = () => {
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
-
-    const navigateToWelcomeScreen = useCallback(() => {
-        navigation.navigate('Welcome');
-    }, [navigation]);
-
-    const navigateToLoginScreen = useCallback(() => {
-        navigation.navigate('Login');
-    }, [navigation]);
+    const isFocused = useIsFocused();
 
     useEffect(() => {
         const checkIfVisited = async () => {
             try {
                 const visited = await AsyncStorage.getItem('@visited');
+                let loginStatus = await getDataFromLocalStorage('loginStatus');
+                if (!loginStatus) loginStatus = false;
+                if (loginStatus === "true") loginStatus = true;
 
-                Animated.timing(slideAnim, {
-                    toValue: 1,
-                    duration: 6000,
-                    useNativeDriver: true,
-                }).start();
+                if (isFocused) {
+                    Animated.timing(slideAnim, {
+                        toValue: 1,
+                        duration: 6000,
+                        useNativeDriver: true,
+                    }).start();
 
-                if (visited) {
-                    setTimeout(navigateToLoginScreen, 7000);
-                } else {
-                    await AsyncStorage.setItem('@visited', 'true');
-                    setTimeout(navigateToWelcomeScreen, 7000);
+                    if (visited) {
+                        setTimeout(() => {
+                            slideAnim.setValue(0);
+                            if (loginStatus) {
+                                navigation.navigate('Menu');
+                            } else {
+                                navigation.navigate('Login');
+                            }
+                        }, 7000);
+                    } else {
+                        await AsyncStorage.setItem('@visited', 'true');
+                        setTimeout(() => {
+                            slideAnim.setValue(0);
+                            navigation.navigate('Welcome');
+                        }, 7000);
+                    }
                 }
             } catch (error) {
                 console.error(error);
             }
-        }
+        };
         checkIfVisited().catch(console.error);
-    }, []);
+    }, [isFocused]);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
+            <StatusBar style=""/>
             <View style={styles.titleContainer}>
                 <Text style={styles.titleText}>Lunch Bucket</Text>
             </View>
@@ -61,7 +72,7 @@ const InitialScreen = () => {
                                 {
                                     translateX: slideAnim.interpolate({
                                         inputRange: [0, 1],
-                                        outputRange: [-50, 350],
+                                        outputRange: [-60, 350],
                                     }),
                                 },
                             ],

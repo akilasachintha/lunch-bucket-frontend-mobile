@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from "@react-navigation/native";
 import CheckoutItem from "../../components/checkoutItem/CheckoutItem";
@@ -6,15 +6,82 @@ import TopHeader from "../../components/topHeader/TopHeader";
 import OrderPlaceSuccessfulModal from "../../components/modals/OrderPlaceSuccessfulModal";
 import StaticTopBar from "../../components/topBar/StaticTopBar";
 import BottomButton from "../../components/buttons/BottomButton";
+import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
+import {log} from "../../helpers/logs/log";
+import {handleCheckoutService} from "../../services/checkoutService";
+import {ERROR_STATUS} from "../../errorLogs/errorStatus";
+import {useToast} from "../../helpers/toast/Toast";
 
 export default function Checkout() {
     const [isVisible, setIsVisible] = useState(false);
-    const navigation = useNavigation();
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [basket, setBasket] = useState({});
 
-    const handleCheckout = () => {
-        setIsVisible(true);
-        if (!isVisible) navigation.navigate('Checkout');
+    const navigation = useNavigation();
+    const {showToast} = useToast();
+
+    const fetchCheckout = async () => {
+        try {
+            const result = await handleCheckoutService();
+            if (result === ERROR_STATUS.ERROR) {
+                log("error", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");
+                showToast("error", "Order Limit is over. Please try again later.");
+            } else {
+                log("success", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");
+                return true; // Indicate successful order placement
+            }
+        } catch (error) {
+            log("error", "CheckoutScreen", "fetchCheckout", error.message, "CheckoutScreen.js");
+            return false; // Indicate failed order placement
+        }
+    }
+
+    const handleCheckout = async () => {
+        try {
+            const orderPlacedSuccessfully = await fetchCheckout();
+
+            if (orderPlacedSuccessfully) {
+                // Show the OrderPlaceSuccessfulModal for 5 seconds
+                setIsVisible(true);
+
+                // Navigate to OrdersList screen after 5 seconds
+                setTimeout(() => {
+                    setIsVisible(false);
+                    navigation.navigate('OrdersList');
+                }, 4000);
+            }
+        } catch (error) {
+            log("error", "CheckoutScreen", "handleCheckout", error.message, "CheckoutScreen.js");
+        }
     };
+
+    const fetchBasket = async () => {
+        try {
+            let basketItems = await getDataFromLocalStorage('basket');
+            if (!basketItems) return;
+
+            basketItems = JSON.parse(basketItems);
+            if (basketItems && basketItems.meal && basketItems.meal.length > 0) {
+                let totalAmount = 0;
+
+                basketItems.meal.forEach((meal) => {
+                    totalAmount += meal.totalPrice;
+                });
+
+                basketItems.totalPrice = totalAmount;
+                setTotalAmount(totalAmount);
+            }
+            setBasket(basketItems);
+        } catch (error) {
+            log("error", "CheckoutScreen", "fetchBasket", error.message, "CheckoutScreen.js");
+        }
+    };
+
+    useEffect(() => {
+        fetchBasket().catch(
+            (error) => log("error", "CheckoutScreen", "useEffect", error.message, "CheckoutScreen.js"),
+        );
+    }, []);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
@@ -22,23 +89,20 @@ export default function Checkout() {
             <StaticTopBar/>
             <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>
-                <ScrollView>
-                    <CheckoutItem mealName="Meal 1" count={4} price={500}/>
-                    <CheckoutItem mealName="Meal 2" count={1} price={400}/>
-                    <CheckoutItem mealName="Meal 3" count={2} price={300}/>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    {basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal) => (
+                        <CheckoutItem key={meal.id} index={meal.id} mealName={meal.name} mealId={meal.id}
+                                      count={meal.count} price={meal.totalPrice}/>
+                    ))}
                 </ScrollView>
                 <View style={styles.amountListContainer}>
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.amountLeftContainer}>Total Bill Amount</Text>
-                        <Text style={styles.amountRightContainer}>Rs 800.00</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.amountContainer}>
-                        <Text style={styles.deliveryAmountLeftContainer}>Delivery</Text>
-                        <Text style={styles.amountRightContainer}>Rs 50.00</Text>
+                        <Text style={styles.amountRightContainer}>Rs {totalAmount}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.totalAmountLeftContainer}>Total Amount</Text>
-                        <Text style={styles.totalAmountRightContainer}>Rs 850.00</Text>
+                        <Text style={styles.totalAmountRightContainer}>Rs {totalAmount}</Text>
                     </TouchableOpacity>
                 </View>
                 <BottomButton buttonText="Place Order" onPress={handleCheckout}/>
@@ -53,7 +117,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     bodyContainer: {
-        paddingTop: 20,
         flex: 10,
     },
     bodyTopBar: {
@@ -83,8 +146,7 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     amountListContainer: {
-        marginVertical: 10,
-        marginBottom: 40,
+        paddingVertical: "5%",
     },
     amountContainer: {
         flexDirection: "row",

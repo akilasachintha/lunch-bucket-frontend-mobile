@@ -7,10 +7,12 @@ import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
 import FormFields from "../../components/form/FormFields";
 import OtherSignInUpButton from "../../components/otherSignInUpButton/OtherSIgnInUpButton";
+import {registerService} from "../../services/authService";
+import {useToast} from "../../helpers/toast/Toast";
+import {log} from "../../helpers/logs/log";
+import {StatusBar} from "expo-status-bar";
 
 const validationSchema = Yup.object().shape({
-    username: Yup.string()
-        .required('Username is required'),
     email: Yup.string()
         .email('Invalid email address')
         .required('Email is required'),
@@ -24,7 +26,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const fields = [
-    {placeholder: STRINGS.username, name: 'username', required: true},
     {placeholder: STRINGS.email, name: 'email', required: true},
     {placeholder: STRINGS.password, name: 'password', required: true, secureTextEntry: true, isEyeEnabled: true},
     {placeholder: STRINGS.confirmPassword, name: 'confirmPassword', required: true, secureTextEntry: true},
@@ -34,23 +35,31 @@ export default function SignUp({navigation}) {
     const [isPressed, setIsPressed] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const initialValues = {
-        username: '',
         email: '',
         password: '',
         confirmPassword: '',
     };
+    const [toastMessage, setToastMessage] = useState(null);
+    const {showToast} = useToast();
 
     const handleSubmit = async (values, actions) => {
         setIsSubmitting(true);
         console.log(values);
 
         try {
-            navigation.navigate('Welcome');
-            console.log('Try');
+            const result = await registerService(values.email, values.password);
+            console.log(result);
+            if (result === "success") {
+                showToast('success', 'Successfully Registered');
+                navigation.navigate('Login');
+            } else {
+                showToast('error', 'Register Failed');
+                log("error", "Login", "handleSubmit", "Register Failed", "SignUp.js");
+            }
         } catch (error) {
-            console.log(error);
+            setToastMessage("Login Failed");
+            log("error", "Login", "handleSubmit", error.message, "SignUp.js");
         } finally {
-            console.log('Finally');
             actions.setSubmitting(false);
             setIsSubmitting(false);
         }
@@ -66,6 +75,7 @@ export default function SignUp({navigation}) {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar style="light"/>
             <View style={styles.mainContainer}>
                 <View style={styles.headerContainer}>
                     <Image
@@ -161,14 +171,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: 25,
-        marginTop: 40,
+        marginTop: 20,
     },
     dontHaveAccountText: {
         color: '#630A10',
         textAlign: 'center',
         paddingHorizontal: 10,
         paddingBottom: 0,
-        paddingVertical: 25,
+        paddingVertical: 15,
         marginBottom: 5,
         fontSize: 13
     },

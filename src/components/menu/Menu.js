@@ -1,38 +1,53 @@
 import React from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import ItemList from "../list/ItemList";
-import BasketButton from "./BasketButton";
-import OrderRatingModal from "../modals/OrderRatingModal";
-import PromotionButton from "../promotions/PromotionButton";
+import ItemList from '../list/ItemList';
+import BasketButton from './BasketButton';
+import Timer from "../timer/Timer";
 
-const Menu = ({itemList, totalCheckedItems, timeLimit, totalAmount, isVisible, setIsVisible}) => {
+const Menu = ({
+                  itemList,
+                  title,
+                  totalCheckedItemsCount,
+                  totalAmount,
+                  totalCheckedItems,
+                  remainingTime,
+                  remainingTimeColor,
+                  disableTime,
+                  editMenu = false,
+                  mealId = 0,
+              }) => {
+
     return (
         <View style={styles.bodyContentContainer}>
-            <ScrollView style={styles.scrollViewContainer}>
-                {isVisible && (<OrderRatingModal isVisible={isVisible} setIsVisible={setIsVisible}/>)}
-                <View style={styles.timerContainer}>
-                    <Text style={styles.timerText}>1 hour and 59 sec</Text>
-                </View>
-                <View>
-                    <Text style={styles.cantPlaceAfterText}>You can’t place orders after {timeLimit}</Text>
-                </View>
+            <Timer remainingTime={remainingTime}
+                   remainingTimeColor={remainingTimeColor}
+                   title={title}
+                   disableTime={disableTime}/>
+            <ScrollView style={styles.scrollViewContainer} showsVerticalScrollIndicator={false}>
                 <View>
                     <Text style={styles.pickUpDishesText}>You can pick up to 5 dishes.</Text>
                 </View>
-                {itemList.map((list, index) => (
-                    <ItemList
-                        key={index}
-                        title={list.type}
-                        items={list.items}
-                        handleItemPress={list.handleItemPress}
-                    />
-                ))}
+                <View style={styles.itemContainer}>
+                    {itemList?.length > 0 &&
+                        itemList.map((list, index) => (
+                            <ItemList
+                                key={index}
+                                title={list.type}
+                                items={list.items}
+                                disableCheckbox={list.disableCheckbox}
+                                handleItemPress={list.handleItemPress}
+                            />
+                        ))}
+                </View>
             </ScrollView>
             <BasketButton
+                totalCheckedItemsCount={totalCheckedItemsCount}
                 totalCheckedItems={totalCheckedItems}
                 totalAmount={totalAmount}
+                venue={title}
+                editMenu={editMenu}
+                mealId={mealId}
             />
-            <PromotionButton/>
         </View>
     );
 };
@@ -43,26 +58,14 @@ const styles = StyleSheet.create({
     bodyContentContainer: {
         flex: 6,
     },
-    scrollViewContainer: {
-        marginBottom: 20,
+    itemContainer: {
+        paddingBottom: '3%',
     },
-    cantPlaceAfterText: {
-        textAlign: 'center',
-        fontSize: 18,
-        color: '#630A10',
-    },
+    scrollViewContainer: {},
     pickUpDishesText: {
-        marginTop: 30,
         textAlign: 'center',
         fontSize: 15,
+        paddingTop: '5%',
         color: '#4D4D4D',
-    },
-    timerContainer: {
-        backgroundColor : 'rgba(255, 230, 98, 1)',
-        paddingTop: 10,
-        paddingBottom: 10,
-        paddingLeft: 20,
-        paddingRight: 20,
-        marginBottom: 20,
     },
 });
