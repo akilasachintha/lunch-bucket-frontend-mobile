@@ -34,7 +34,7 @@ const Menu = ({
                                 key={index}
                                 title={list.type}
                                 items={list.items}
-                                disableCheckbox={list.disableCheckbox}
+                                disableCheckbox={disableTime}
                                 handleItemPress={list.handleItemPress}
                             />
                         ))}
