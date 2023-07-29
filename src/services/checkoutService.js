@@ -10,6 +10,8 @@ export async function handleCheckoutService() {
             getDataFromLocalStorage("customerId"),
         ]);
 
+        log("info", "checkoutService", "handleCheckoutService | basket", JSON.parse(basket), "checkoutService.js");
+
         if (!basket) {
             log("error", "checkoutService", "handleCheckoutService | basket", basket, "checkoutService.js");
             return ERROR_STATUS.ERROR;
@@ -38,16 +40,18 @@ export async function handleCheckoutService() {
             basketItems.meal.forEach((meal) => {
                 checkoutMenu.orders.push({
                     order_type: "non_vegi",
-                    vege1: meal.items[0]?.id || "",
-                    vege2: meal.items[1]?.id || "",
-                    meat: meal.items[2]?.id || "",
-                    stew: meal.items[3]?.id || "",
+                    rice: meal.items[0]?.type || "",
+                    vege1: meal.items[1]?.type || "",
+                    vege2: meal.items[2]?.type || "",
+                    meat: meal.items[3]?.type || "",
+                    stew: meal.items[4]?.type || "",
                     packet_amount: meal.count,
                     order_status: 'pending',
                     meal: meal.venue,
                     customer_id: customerId,
                     comment: "",
                     price: meal.totalPrice,
+                    potion: false,
                 });
             });
         } else {
@@ -56,21 +60,22 @@ export async function handleCheckoutService() {
         }
 
         const result = await setOrderController(checkoutMenu);
+        log("info", "checkoutService", "handleCheckoutService | result", result, "checkoutService.js")
         const data = await result.data;
 
         if (result === ERROR_STATUS.ERROR) {
-            log("error", "checkoutService", "addCheckoutMenuService | result", result, "checkoutService.js");
+            log("error", "checkoutService", "handleCheckoutService | result", result, "checkoutService.js");
             return ERROR_STATUS.ERROR;
         } else if (data.state === false) {
-            log("error", "checkoutService", "addCheckoutMenuService", data.data, "checkoutService.js");
+            log("error", "checkoutService", "handleCheckoutService", data.data, "checkoutService.js");
             return ERROR_STATUS.ERROR;
         } else {
-            log("success", "checkoutService", "addCheckoutMenuService", data.data, "checkoutService.js");
+            log("success", "checkoutService", "handleCheckoutService", data.data, "checkoutService.js");
             await removeDataFromLocalStorage("basket");
             return SUCCESS_STATUS.SUCCESS;
         }
     } catch (error) {
-        log("error", "checkoutService", "addCheckoutMenuService", error.message, "checkoutService.js");
+        log("error", "checkoutService", "handleCheckoutService", error.message, "checkoutService.js");
         return ERROR_STATUS.ERROR;
     }
 }

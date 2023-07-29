@@ -24,11 +24,13 @@ export default function MenuScreen({navigation}) {
     // Lunch
     const [lunch, setLunch] = useState(true);
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
+    const [lunchRiceItems, setLunchRiceItems] = useState([]);
     const [lunchVegetableItems, setLunchVegetableItems] = useState([]);
     const [lunchStewItems, setLunchStewItems] = useState([]);
     const [lunchMeatItems, setLunchMeatItems] = useState([]);
 
     // Dinner
+    const [dinnerRiceItems, setDinnerRiceItems] = useState([]);
     const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState(false);
     const [dinnerVegetableItems, setDinnerVegetableItems] = useState([]);
     const [dinnerStewItems, setDinnerStewItems] = useState([]);
@@ -39,9 +41,12 @@ export default function MenuScreen({navigation}) {
             setLoading(true);
 
             // Clear values
+            setLunchRiceItems([]);
             setLunchVegetableItems([]);
             setLunchStewItems([]);
             setLunchMeatItems([]);
+
+            setDinnerRiceItems([]);
             setDinnerVegetableItems([]);
             setDinnerStewItems([]);
             setDinnerMeatItems([]);
@@ -49,9 +54,12 @@ export default function MenuScreen({navigation}) {
             // Fetch Menu data
             try {
                 const menuData = await fetchMenuData();
+                setLunchRiceItems(menuData.riceMenuLunch);
                 setLunchMeatItems(menuData.meetMenuLunch);
                 setLunchStewItems(menuData.stewMenuLunch);
                 setLunchVegetableItems(menuData.vegetableMenuLunch);
+
+                setDinnerRiceItems(menuData.riceMenuDinner);
                 setDinnerMeatItems(menuData.meetMenuDinner);
                 setDinnerStewItems(menuData.stewMenuDinner);
                 setDinnerVegetableItems(menuData.vegetableMenuDinner);
@@ -242,12 +250,14 @@ export default function MenuScreen({navigation}) {
     };
 
     const lunchItemList = [
+        createItemListWithType("Rice", lunchRiceItems, setLunchRiceItems, 1, disableLunchCheckbox),
         createItemListWithType("Vegetable", lunchVegetableItems, setLunchVegetableItems, 2, disableLunchCheckbox),
         createItemListWithType("Stew", lunchStewItems, setLunchStewItems, 1, disableLunchCheckbox),
         createItemListWithType("Meat", lunchMeatItems, setLunchMeatItems, 1, disableLunchCheckbox),
     ];
 
     const dinnerItemList = [
+        createItemListWithType("Rice", dinnerRiceItems, setDinnerRiceItems, 1, disableDinnerCheckbox),
         createItemListWithType("Vegetable", dinnerVegetableItems, setDinnerVegetableItems, 2, disableDinnerCheckbox),
         createItemListWithType("Stew", dinnerStewItems, setDinnerStewItems, 1, disableDinnerCheckbox),
         createItemListWithType("Meat", dinnerMeatItems, setDinnerMeatItems, 1, disableDinnerCheckbox),

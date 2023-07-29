@@ -1,34 +1,66 @@
 import {SafeAreaView, ScrollView, StyleSheet, View} from "react-native";
-import {Fontisto} from '@expo/vector-icons';
-import BasketItem from "../../components/basketItem/BasketItem";
-import {useNavigation} from "@react-navigation/native";
 import TopHeader from "../../components/topHeader/TopHeader";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import StaticTopBar from "../../components/topBar/StaticTopBar";
+import {deleteOrderService, getOrdersService} from "../../services/ordersService";
+import {log} from "../../helpers/logs/log";
+import OrderItem from "../../components/orderItem/OrderItem";
+import AnimatedLoadingSpinner from "../../components/loading/LoadingSkelteon";
 
 export default function ListOrdersScreen() {
-    const [basket, setBasket] = useState({});
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const navigation = useNavigation();
-    const plusIcon = <Fontisto name="plus-a" size={18} color="#7E1F24"/>;
+    const fetchOrders = async () => {
+        setLoading(true);
+        const response = await getOrdersService();
+        log("info", "ListOrdersScreen", "fetchOrders", response, "ListOrdersScreen.jsx");
+        setOrders(response);
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        fetchOrders().catch((error) => {
+            log("error", "ListOrdersScreen", "useEffect", error.message, "ListOrdersScreen.jsx");
+        });
+    }, []);
+
+    const handleDeleteOrder = async (orderId) => {
+        try {
+            await deleteOrderService(orderId);
+            await fetchOrders();
+        } catch (error) {
+            log('error', 'ListOrdersScreen', 'handleDeleteOrder', error.message, 'ListOrdersScreen.jsx');
+        }
+    };
+
+    if (loading) {
+        return (
+            <SafeAreaView style={styles.safeAreaContainer}>
+                <StaticTopBar/>
+                <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
+                <View style={styles.bodyContainerLoading}>
+                    <AnimatedLoadingSpinner/>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            {/*{isVisible && <TodayWinnerModal isVisible={isVisible} setIsVisible={setIsVisible}/>}*/}
             <StaticTopBar/>
             <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView>
-                    {
-                        basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal) => (
-                            <BasketItem key={meal.id} index={meal.id} mealName={meal.name} mealId={meal.id}
-                                        items={meal.items} setBasket={setBasket}/>
-                        ))
-                    }
+                    {orders && orders.length > 0 && orders.map((order) => (
+                        <OrderItem key={order.order_id} mealName={`Order ${order.order_id}`} items={order.items}
+                                   id={order.id}
+                                   count={order.packet_amount} category={order.category} type={order.type}
+                                   orderType={order.order_type}
+                                   onDeleteOrder={() => handleDeleteOrder(order.id)}
+                        />
+                    ))}
                 </ScrollView>
-                {/*<BorderButton text="Add Another Meal" onPress={() => navigation.navigate('Menu')}*/}
-                {/*              icon={plusIcon}/>*/}
-                {/*<BottomButton buttonText="Proceed to Order" onPress={() => navigation.navigate('Checkout')}/>*/}
             </View>
         </SafeAreaView>
     );
@@ -41,6 +73,10 @@ const styles = StyleSheet.create({
     },
     bodyContainer: {
         paddingTop: 20,
+        flex: 10,
+    },
+    bodyContainerLoading: {
+        paddingTop: 5,
         flex: 10,
     },
     addAnotherMealContainer: {

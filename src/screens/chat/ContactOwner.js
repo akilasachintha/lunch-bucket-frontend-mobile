@@ -3,11 +3,17 @@ import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity,
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import StaticTopBar from "../../components/topBar/StaticTopBar";
+import {
+    createNewConversationService,
+    getChatsService,
+    sendMessageToConversationService
+} from "../../services/chatService";
+import {log} from "../../helpers/logs/log";
 
 export default function ContactOwner() {
-    const [messages, setMessages] = useState([]);
+    const [chatList, setChatList] = useState([]);
     const scrollViewRef = useRef();
     const sendIcon = <MaterialCommunityIcons name="send" size={40} color="#630A10"/>;
 
@@ -16,17 +22,61 @@ export default function ContactOwner() {
     });
 
     const initialValues = {message: ''};
-    const handleOnSubmit = (values, {resetForm}) => {
-        setMessages([...messages, values.message]);
+
+    // Function to fetch the latest chat data
+    const fetchLatestChatData = async () => {
+        try {
+            const updatedChatData = await getChatsService();
+            const formattedChatList = updatedChatData.map((chat) => ({
+                id: chat.id,
+                expanded: false,
+                messages: chat.messages,
+            }));
+            setChatList(formattedChatList);
+            log("success", "screen", "ContactOwner | fetchLatestChatData", updatedChatData, "ContactOwner.js");
+        } catch (error) {
+            log("error", "screen", "ContactOwner | fetchLatestChatData", error.message, "ContactOwner.js");
+        }
+    };
+
+    useEffect(() => {
+        // Fetch the initial chat data when the component mounts
+        fetchLatestChatData();
+    }, []);
+
+    const handleOnSubmit = async (values, {resetForm}) => {
+        const newMessage = {message: values.message, sender: "user"};
+        const chatIndex = chatList.findIndex((chat) => chat.expanded === true);
+
+        if (chatIndex !== -1) {
+            const expandedChat = chatList[chatIndex];
+            const updatedMessages = [...expandedChat.messages, newMessage];
+            const updatedChatList = [...chatList];
+            updatedChatList[chatIndex] = {...expandedChat, messages: updatedMessages};
+            setChatList(updatedChatList);
+
+            const {id} = expandedChat;
+            const result = await sendMessageToConversationService(id, values.message);
+        } else {
+            const result = await createNewConversationService(values.message);
+        }
+
         scrollViewRef.current.scrollToEnd({animated: true});
         resetForm();
+    };
+
+    const handleToggleExpand = (chatIndex) => {
+        setChatList((prevChatList) => {
+            const updatedChatList = [...prevChatList];
+            updatedChatList[chatIndex].expanded = !updatedChatList[chatIndex].expanded;
+            return updatedChatList;
+        });
     };
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <StaticTopBar/>
             <Formik
-                style={styles.container}
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={handleOnSubmit}
@@ -35,17 +85,41 @@ export default function ContactOwner() {
                     <View style={styles.container}>
                         <TopHeader headerText="Chat with Owner" backButtonPath="Chat"/>
                         <View style={styles.bodyContainer}>
-                            <ScrollView style={styles.scrollViewContainer}
-                                        ref={scrollViewRef}
-                                        onContentSizeChange={() => scrollViewRef.current.scrollToEnd()}
+                            <ScrollView
+                                style={styles.scrollViewContainer}
+                                ref={scrollViewRef}
+                                onContentSizeChange={() => scrollViewRef.current.scrollToEnd()}
                             >
-                                {
-                                    messages.map((message, index) => (
-                                        <View key={index} style={styles.messageContainer}>
-                                            <Text style={styles.messageContainerText}>{message}</Text>
-                                        </View>
-                                    ))
-                                }
+                                {chatList && chatList.map((chat, index) => (
+                                    <View key={index} style={styles.messageContainer}>
+                                        <TouchableOpacity onPress={() => handleToggleExpand(index)}>
+                                            <Text
+                                                style={styles.messageContainerHeaderText}>Conversation {index + 1}</Text>
+                                            {!chat.expanded && (
+                                                <Text
+                                                    style={styles.messageContainerBottomText}>{chat.messages[0].message}</Text>
+                                            )}
+                                        </TouchableOpacity>
+                                        {chat.expanded && (
+                                            <View style={styles.conversationContainer}>
+                                                {chat && chat.messages && chat.messages.length > 0 && chat.messages.map((msg, msgIndex) => (
+                                                    <View key={msgIndex} style={styles.conversationContainerMessage}>
+                                                        <Text style={[
+                                                            styles.messageContainerText,
+                                                            msg.sender === "user" ? styles.userMessageSender : styles.adminMessageSender,
+                                                        ]}>{msg.sender}</Text>
+                                                        <Text style={[
+                                                            styles.messageContainerText,
+                                                            msg.sender === "user" ? styles.userMessage : styles.adminMessage,
+                                                        ]}>
+                                                            {msg.message}
+                                                        </Text>
+                                                    </View>
+                                                ))}
+                                            </View>
+                                        )}
+                                    </View>
+                                ))}
                             </ScrollView>
                         </View>
                         <View style={styles.chatBox}>
@@ -82,61 +156,97 @@ const styles = StyleSheet.create({
         flex: 10,
     },
     bodyContainer: {
-        flex: 10,
+        flex: 1,
         justifyContent: 'flex-end',
     },
     scrollViewContainer: {},
-    borderButtonContainer: {
-        flexDirection: "row",
-        paddingVertical: 10,
-        marginVertical: 10,
-        marginHorizontal: 60,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderColor: '#630A10',
-        borderWidth: 2,
-        borderRadius: 40,
-    },
-    borderButtonContainerText: {
-        fontSize: 18,
-        marginLeft: 10,
-        color: '#630A10',
-    },
     chatBox: {
-        marginVertical: 10,
-        marginLeft: 20,
         flexDirection: 'row',
         justifyContent: 'flex-end',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
     },
     chatBoxTextInput: {
+        flex: 1,
         borderRadius: 20,
         borderWidth: 2,
         borderColor: '#a1a1a1',
         paddingLeft: 20,
         fontSize: 14,
-        flex: 5,
     },
     sendIcon: {
         justifyContent: 'center',
-        flex: 1,
-        marginHorizontal: 10,
+        marginLeft: 10,
     },
     messageContainer: {
-        backgroundColor: '#FCF0C8',
-        marginVertical: 5,
+        backgroundColor: '#f5efde',
+        marginVertical: 6,
         marginHorizontal: 20,
         paddingVertical: 12,
-        paddingHorizontal: 30,
-        borderTopLeftRadius: 30,
-        borderBottomLeftRadius: 30,
-        borderTopRightRadius: 30,
-        alignSelf: 'flex-end',
-        maxWidth: '90%',
+        paddingHorizontal: 20,
+        borderRadius: 10,
+    },
+    messageContainerHeaderText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        color: '#630A10',
+    },
+    messageContainerBottomText: {
+        fontSize: 14,
+        color: '#630A10',
     },
     messageContainerText: {
-        fontSize: 18,
-        flexWrap: 'wrap',
+        fontSize: 16,
         color: 'rgba(94, 94, 94, 1)',
-
+    },
+    conversationContainerMessage: {
+        //  marginVertical: 5,
+        // backgroundColor: '#fff',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 20,
+    },
+    userMessage: {
+        paddingVertical: 6,
+        alignSelf: 'flex-end',
+        backgroundColor: '#630A10',
+        color: '#fff',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+    },
+    userMessageSender: {
+        alignSelf: 'flex-end',
+        fontSize: 12,
+        color: '#630A10',
+        marginBottom: 5,
+    },
+    adminMessage: {
+        alignSelf: 'flex-start',
+        paddingVertical: 6,
+        backgroundColor: '#e0e0e0',
+        color: '#000',
+        borderRadius: 10,
+        paddingHorizontal: 10,
+    },
+    adminMessageSender: {
+        alignSelf: 'flex-start',
+        fontSize: 12,
+        color: '#000',
+        marginBottom: 5,
+    },
+    refreshButton: {
+        alignSelf: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 20,
+        backgroundColor: '#630A10',
+        borderRadius: 10,
+        marginTop: 10,
+    },
+    refreshButtonText: {
+        color: '#fff',
+        fontSize: 16,
     },
 });

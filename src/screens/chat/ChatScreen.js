@@ -13,7 +13,7 @@ export default function ChatScreen() {
             <View style={styles.container}>
                 <TopHeader headerText="Chat" backButtonPath="Menu"/>
                 <View style={styles.bodyContainer}>
-                    <BorderButton text="Leave a Suggestion" onPress={() => navigation.navigate('LeaveSuggestion')}/>
+                    {/*<BorderButton text="Leave a Suggestion" onPress={() => navigation.navigate('LeaveSuggestion')}/>*/}
                     <BorderButton text="Chat with the Owner" onPress={() => navigation.navigate('ContactOwner')}/>
                 </View>
             </View>

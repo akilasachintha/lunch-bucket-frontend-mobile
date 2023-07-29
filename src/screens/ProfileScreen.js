@@ -6,51 +6,51 @@ import * as Yup from 'yup';
 import TextInputField from "../components/inputField/TextInputField";
 import StaticTopBar from "../components/topBar/StaticTopBar";
 import BottomButton from "../components/buttons/BottomButton";
+import {useEffect, useState} from "react";
+import {getUserDetailsService} from "../services/userProfileService";
+import {log} from "../helpers/logs/log";
+import {logoutService} from "../services/authService";
 
 const validationSchema = Yup.object().shape({
-    username: Yup.string().required('Username is required'),
     email: Yup.string().email('Invalid email').required('Email is required'),
-    password: Yup.string()
-        .min(8, 'Password must be at least 8 characters')
-        .required('Password is required'),
-    contact: Yup.string()
-        .matches(/^[0-9]{10}$/, 'Invalid contact number')
-        .required('Contact is required'),
-    number: Yup.string().required('Number is required'),
-    street: Yup.string().required('Street is required'),
-    city: Yup.string().required('City is required'),
 });
-
-const fields = [
-    {name: 'username', label: 'Username', placeholder: 'user123',},
-    {name: 'email', label: 'Email', placeholder: 'example@example.com',},
-    {name: 'password', label: 'Password', placeholder: '********',},
-    {name: 'contact', label: 'Contact', placeholder: '1234567890',},
-];
-
-const addressFields = [
-    {name: 'number', label: 'Number', placeholder: '1/2',},
-    {name: 'street', label: 'Street', placeholder: 'Flower Road',},
-    {name: 'city', label: 'City', placeholder: 'Colombo 7',},
-];
 
 export default function ProfileScreen() {
     const navigation = useNavigation();
+    const [userData, setUserData] = useState({});
 
     const initialValues = {
-        username: '',
         email: '',
-        password: '',
-        contact: '',
-        number: '',
-        street: '',
-        city: '',
     };
 
     const handleSubmit = async (values, actions, {resetForm}) => {
         navigation.navigate('Checkout');
         resetForm();
     };
+
+    const handleLogout = async () => {
+        await logoutService();
+        navigation.navigate('Welcome');
+    }
+
+    const fetchUserData = async () => {
+        const result = await getUserDetailsService();
+        setUserData(result);
+        log("info", "screen", "ProfileScreen | result", result, "ProfileScreen.js");
+    }
+
+
+    useEffect(() => {
+        fetchUserData().catch(
+            (error) => {
+                log("error", "screen", "ProfileScreen", error.message, "ProfileScreen.js");
+            }
+        );
+    }, []);
+
+    const fields = [
+        {name: 'email', label: 'Email', placeholder: userData && userData.user && userData.user.email,},
+    ];
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
@@ -68,23 +68,7 @@ export default function ProfileScreen() {
                                 <View style={styles.fieldHeaderContainer}>
                                     <Text style={styles.fieldHeaderContainerText}>Personal Details</Text>
                                 </View>
-                                {fields.map((field) => (
-                                    <TextInputField
-                                        key={field.name}
-                                        label={field.label}
-                                        placeholder={field.placeholder}
-                                        placeholderTextColor="#ce6d74"
-                                        value={values[field.name]}
-                                        onChangeText={handleChange(field.name)}
-                                        onBlur={() => setFieldTouched(field.name)}
-                                        touched={touched[field.name]}
-                                        error={errors[field.name]}
-                                    />
-                                ))}
-                                <View style={styles.fieldHeaderContainer}>
-                                    <Text style={styles.fieldHeaderContainerText}>Delivery Address</Text>
-                                </View>
-                                {addressFields.map((field) => (
+                                {fields && fields.map((field) => (
                                     <TextInputField
                                         key={field.name}
                                         label={field.label}
@@ -98,7 +82,8 @@ export default function ProfileScreen() {
                                     />
                                 ))}
                             </ScrollView>
-                            <BottomButton onPress={handleSubmit} buttonText="Done"/>
+                            {/*<BottomButton onPress={handleSubmit} buttonText="Done"/>*/}
+                            <BottomButton onPress={handleLogout} buttonText="Logout"/>
                         </View>
                     )}
                 </Formik>

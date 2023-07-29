@@ -57,3 +57,16 @@ export async function registerService(email, password) {
         return ERROR_STATUS.ERROR;
     }
 }
+
+export async function logoutService() {
+    try {
+        await addDataToLocalStorage('token', "");
+        await addDataToLocalStorage('customerId', "");
+        await addDataToLocalStorage('loginStatus', "");
+        log("success", "service", "logoutService", "Logout Success", "authService.js");
+        return SUCCESS_STATUS.SUCCESS;
+    } catch (error) {
+        log("error", "service", "logoutService", error.message, "authService.js");
+        return ERROR_STATUS.ERROR;
+    }
+}

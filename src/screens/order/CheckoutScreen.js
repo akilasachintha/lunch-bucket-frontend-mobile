@@ -28,11 +28,11 @@ export default function Checkout() {
                 showToast("error", "Order Limit is over. Please try again later.");
             } else {
                 log("success", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");
-                return true; // Indicate successful order placement
+                return true;
             }
         } catch (error) {
             log("error", "CheckoutScreen", "fetchCheckout", error.message, "CheckoutScreen.js");
-            return false; // Indicate failed order placement
+            return false;
         }
     }
 
@@ -41,10 +41,8 @@ export default function Checkout() {
             const orderPlacedSuccessfully = await fetchCheckout();
 
             if (orderPlacedSuccessfully) {
-                // Show the OrderPlaceSuccessfulModal for 5 seconds
                 setIsVisible(true);
 
-                // Navigate to OrdersList screen after 5 seconds
                 setTimeout(() => {
                     setIsVisible(false);
                     navigation.navigate('OrdersList');

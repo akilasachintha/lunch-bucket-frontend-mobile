@@ -33,6 +33,27 @@ export async function getLunchMeetMenuService() {
     }
 }
 
+export async function getLunchRiceMenuService() {
+    try {
+        const result = await getLunchMenuController();
+
+        if (result === "error") {
+            return [];
+        } else {
+            return await result.data.data.rice_menu_lunch.map((item) => ({
+                ...item,
+                checked: false,
+                disableCheckbox: true,
+                foodType: 'Rice',
+                percentage: 0,
+            }));
+        }
+    } catch (error) {
+        log("error", "service", "getLunchMeetMenuService", error.message, "menuService.js");
+        return [];
+    }
+}
+
 export async function getLunchVegetableMenuService() {
     try {
         const result = await getLunchMenuController();
@@ -89,6 +110,25 @@ export async function getDinnerMeetMenuService() {
                 ...item,
                 checked: false,
                 foodType: 'Meat',
+            }));
+        }
+    } catch (error) {
+        log("error", "service", "getDinnerMeetMenuService", error.message, "menuService.js");
+        return [];
+    }
+}
+
+export async function getDinnerRiceMenuService() {
+    try {
+        const result = await getDinnerMenuController();
+
+        if (result === "error") {
+            return [];
+        } else {
+            return await result.data.data.rice_menu_dinner.map((item) => ({
+                ...item,
+                checked: false,
+                foodType: 'Rice',
             }));
         }
     } catch (error) {
@@ -246,25 +286,33 @@ export async function updateBasketFromId(mealId, updatedMeal) {
 export async function fetchMenuData() {
     try {
         const [
+            riceMenuLunch,
             meetMenuLunch,
             stewMenuLunch,
             vegetableMenuLunch,
+
+            riceMenuDinner,
             meetMenuDinner,
             stewMenuDinner,
             vegetableMenuDinner,
         ] = await Promise.all([
+            getLunchRiceMenuService(),
             getLunchMeetMenuService(),
             getLunchStewMenuService(),
             getLunchVegetableMenuService(),
+
+            getDinnerRiceMenuService(),
             getDinnerMeetMenuService(),
             getDinnerStewMenuService(),
             getDinnerVegetableMenuService(),
         ]);
 
         return {
+            riceMenuLunch,
             meetMenuLunch,
             stewMenuLunch,
             vegetableMenuLunch,
+            riceMenuDinner,
             meetMenuDinner,
             stewMenuDinner,
             vegetableMenuDinner,
