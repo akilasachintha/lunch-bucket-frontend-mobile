@@ -14,7 +14,6 @@ export default function ListOrdersScreen() {
     const fetchOrders = async () => {
         setLoading(true);
         const response = await getOrdersService();
-        log("info", "ListOrdersScreen", "fetchOrders", response, "ListOrdersScreen.jsx");
         setOrders(response);
         setLoading(false);
     }
@@ -52,8 +51,8 @@ export default function ListOrdersScreen() {
             <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView>
-                    {orders && orders.length > 0 && orders.map((order) => (
-                        <OrderItem key={order.order_id} mealName={`Order ${order.order_id}`} items={order.items}
+                    {orders && orders.length > 0 && orders.map((order, index) => (
+                        <OrderItem key={order.id} mealName={`Order ${index + 1}`} items={order.items}
                                    id={order.id}
                                    count={order.packet_amount} category={order.category} type={order.type}
                                    orderType={order.order_type}

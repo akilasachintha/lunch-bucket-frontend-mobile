@@ -6,7 +6,7 @@ import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/stor
 import {log} from "../../helpers/logs/log";
 import {useNavigation} from "@react-navigation/native";
 
-export default function BasketItem({mealName, mealId, items, setBasket}) {
+export default function BasketItem({mealName, mealId, items, setBasket, isSpecial = false}) {
     const [count, setCount] = useState(1);
     const [onClicked, setOnClicked] = useState(true);
     const navigation = useNavigation();
@@ -37,6 +37,7 @@ export default function BasketItem({mealName, mealId, items, setBasket}) {
             basketItems = JSON.parse(basketItems);
 
             if (basketItems?.meal?.length > 0) {
+                console.log("basketItems.meal", basketItems.meal);
                 basketItems.meal = basketItems.meal.map((item) => {
                     if (item.id === mealId) {
                         return {
@@ -131,14 +132,18 @@ export default function BasketItem({mealName, mealId, items, setBasket}) {
                         >
                             <Fontisto name="plus-a" size={14} color="black"/>
                         </TouchableOpacity>
-                        <View style={styles.editButtonContainer}>
-                            <TouchableOpacity
-                                onPress={handleEditMealPress}
-                                style={styles.editButtonTextContainer}
-                            >
-                                <AntDesign name="edit" size={14} color="black"/>
-                            </TouchableOpacity>
-                        </View>
+                        {
+                            !isSpecial && (
+                                <View style={styles.editButtonContainer}>
+                                    <TouchableOpacity
+                                        onPress={handleEditMealPress}
+                                        style={styles.editButtonTextContainer}
+                                    >
+                                        <AntDesign name="edit" size={14} color="black"/>
+                                    </TouchableOpacity>
+                                </View>
+                            )
+                        }
                     </TouchableOpacity>
                     <View style={[styles.itemListContainer, styles.elevation, styles.shadowProp]}>
                         {items && items.length > 0 && items.map((item) => (

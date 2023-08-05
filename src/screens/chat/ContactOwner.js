@@ -29,6 +29,7 @@ export default function ContactOwner() {
             const updatedChatData = await getChatsService();
             const formattedChatList = updatedChatData.map((chat) => ({
                 id: chat.id,
+                view_admin_state: chat.view_admin_state,
                 expanded: false,
                 messages: chat.messages,
             }));
@@ -41,7 +42,9 @@ export default function ContactOwner() {
 
     useEffect(() => {
         // Fetch the initial chat data when the component mounts
-        fetchLatestChatData();
+        fetchLatestChatData().catch(
+            (error) => log("error", "screen", "ContactOwner | useEffect", error.message, "ContactOwner.js"),
+        );
     }, []);
 
     const handleOnSubmit = async (values, {resetForm}) => {
@@ -59,6 +62,9 @@ export default function ContactOwner() {
             const result = await sendMessageToConversationService(id, values.message);
         } else {
             const result = await createNewConversationService(values.message);
+            fetchLatestChatData().catch(
+                (error) => log("error", "screen", "ContactOwner | handleOnSubmit", error.message, "ContactOwner.js"),
+            );
         }
 
         scrollViewRef.current.scrollToEnd({animated: true});
@@ -93,8 +99,13 @@ export default function ContactOwner() {
                                 {chatList && chatList.map((chat, index) => (
                                     <View key={index} style={styles.messageContainer}>
                                         <TouchableOpacity onPress={() => handleToggleExpand(index)}>
-                                            <Text
-                                                style={styles.messageContainerHeaderText}>Conversation {index + 1}</Text>
+                                            <View style={styles.conversationTitleContainer}>
+                                                <Text
+                                                    style={styles.messageContainerHeaderText}>Conversation {index + 1}</Text>
+                                                {chat && chat.view_admin_state && (
+                                                    <View style={styles.roundedIcon}></View>
+                                                )}
+                                            </View>
                                             {!chat.expanded && (
                                                 <Text
                                                     style={styles.messageContainerBottomText}>{chat.messages[0].message}</Text>
@@ -160,6 +171,11 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     scrollViewContainer: {},
+    conversationTitleContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
     chatBox: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
@@ -249,4 +265,10 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
     },
+    roundedIcon: {
+        width: 10,
+        height: 10,
+        borderRadius: 15,
+        backgroundColor: '#419d02',
+    }
 });

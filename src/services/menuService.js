@@ -11,7 +11,6 @@ import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
 import {getUTCDateTime} from "./timeService";
 import {log} from "../helpers/logs/log";
 
-
 export async function getLunchMeetMenuService() {
     try {
         const result = await getLunchMenuController();
@@ -33,6 +32,34 @@ export async function getLunchMeetMenuService() {
     }
 }
 
+export async function getLunchSpecialMenuService() {
+    try {
+        const result = await getLunchMenuController();
+
+        if (result === "error") {
+            return [];
+        } else {
+            return result.data.data.special_menu_lunch.map((item) => {
+                const categoryWithChecked = item.category.map((categoryItem) => ({
+                    ...categoryItem,
+                    checked: false,
+                }));
+
+                return {
+                    ...item,
+                    category: categoryWithChecked,
+                    disableCheckbox: true,
+                    foodType: 'Special',
+                    percentage: 0,
+                };
+            });
+        }
+    } catch (error) {
+        log("error", "service", "getLunchMeetMenuService", error.message, "menuService.js");
+        return [];
+    }
+}
+
 export async function getLunchRiceMenuService() {
     try {
         const result = await getLunchMenuController();
@@ -40,7 +67,7 @@ export async function getLunchRiceMenuService() {
         if (result === "error") {
             return [];
         } else {
-            return await result.data.data.rice_menu_lunch.map((item) => ({
+            return await result.data.data?.rice_menu_lunch.map((item) => ({
                 ...item,
                 checked: false,
                 disableCheckbox: true,
@@ -118,6 +145,25 @@ export async function getDinnerMeetMenuService() {
     }
 }
 
+export async function getDinnerSpecialMenuService() {
+    try {
+        const result = await getDinnerMenuController();
+
+        if (result === "error") {
+            return [];
+        } else {
+            return await result.data.data.special_menu_dinner.map((item) => ({
+                ...item,
+                checked: false,
+                foodType: 'Special',
+            }));
+        }
+    } catch (error) {
+        log("error", "service", "getDinnerMeetMenuService", error.message, "menuService.js");
+        return [];
+    }
+}
+
 export async function getDinnerRiceMenuService() {
     try {
         const result = await getDinnerMenuController();
@@ -176,7 +222,7 @@ export async function getDinnerStewMenuService() {
     }
 }
 
-export async function setMenuBasketService(totalCheckedItems, totalAmount, venue) {
+export async function setMenuBasketService(totalCheckedItems, totalAmount, venue, isVegi, isSpecial) {
     try {
         const {data: {datetime}} = await getUTCDateTime();
         const currentDateTime = new Date(datetime);
@@ -185,22 +231,49 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
         let existingBasket = JSON.parse(await getDataFromLocalStorage('basket') || '{}');
 
         if (totalCheckedItems.length > 0) {
-            const mealNumber = existingBasket.meal?.length > 0 ? existingBasket.meal.length + 1 : 1;
-            const id = new Date().getTime().toString();
+            let mealNumber = existingBasket.meal?.length > 0 ? existingBasket.meal.length + 1 : 1;
 
-            const meal = {
-                id: id,
-                name: 'Meal ' + mealNumber,
-                items: totalCheckedItems,
-                date: currentDateTime.toISOString(),
-                count: 1,
-                unitPrice: totalAmount,
-                totalPrice: totalAmount,
-                venue: venue,
-            };
+            if (isSpecial) {
+                for (const item of totalCheckedItems) {
+                    const id = new Date().getTime().toString();
 
-            existingBasket.meal = existingBasket.meal || [];
-            existingBasket.meal.push(meal);
+                    const meal = {
+                        id: id + item.index,
+                        name: 'Meal ' + mealNumber,
+                        items: [item],
+                        date: currentDateTime.toISOString(),
+                        count: 1,
+                        unitPrice: item.price,
+                        totalPrice: item.price,
+                        venue: venue,
+                        isVegi: isVegi,
+                        isSpecial: isSpecial,
+                    };
+
+                    existingBasket.meal = existingBasket.meal || [];
+                    existingBasket.meal.push(meal);
+                    mealNumber++;
+                }
+            } else {
+                const id = new Date().getTime().toString();
+
+                const meal = {
+                    id: id,
+                    name: 'Meal ' + mealNumber,
+                    items: totalCheckedItems,
+                    date: currentDateTime.toISOString(),
+                    count: 1,
+                    unitPrice: totalAmount,
+                    totalPrice: totalAmount,
+                    venue: venue,
+                    isVegi: isVegi,
+                    isSpecial: isSpecial,
+                };
+
+                existingBasket.meal = existingBasket.meal || [];
+                existingBasket.meal.push(meal);
+            }
+
             existingBasket.venue = venue;
         }
 
@@ -286,21 +359,25 @@ export async function updateBasketFromId(mealId, updatedMeal) {
 export async function fetchMenuData() {
     try {
         const [
+            specialMenuLunch,
             riceMenuLunch,
             meetMenuLunch,
             stewMenuLunch,
             vegetableMenuLunch,
 
+            specialMenuDinner,
             riceMenuDinner,
             meetMenuDinner,
             stewMenuDinner,
             vegetableMenuDinner,
         ] = await Promise.all([
+            getLunchSpecialMenuService(),
             getLunchRiceMenuService(),
             getLunchMeetMenuService(),
             getLunchStewMenuService(),
             getLunchVegetableMenuService(),
 
+            getDinnerSpecialMenuService(),
             getDinnerRiceMenuService(),
             getDinnerMeetMenuService(),
             getDinnerStewMenuService(),
@@ -308,10 +385,12 @@ export async function fetchMenuData() {
         ]);
 
         return {
+            specialMenuLunch,
             riceMenuLunch,
             meetMenuLunch,
             stewMenuLunch,
             vegetableMenuLunch,
+            specialMenuDinner,
             riceMenuDinner,
             meetMenuDinner,
             stewMenuDinner,

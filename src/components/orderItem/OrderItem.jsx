@@ -41,11 +41,6 @@ export default function OrderItem({id, mealName, count, orderType, items, catego
                             <Text style={styles.countText}>{count}</Text>
                         </View>
                         <View style={styles.editButtonContainer}>
-                            {/*<TouchableOpacity*/}
-                            {/*    style={styles.editButtonTextContainer}*/}
-                            {/*>*/}
-                            {/*    <AntDesign name="edit" size={14} color="black"/>*/}
-                            {/*</TouchableOpacity>*/}
                             <TouchableOpacity onPress={handleDeleteOrder} style={styles.deleteButtonTextContainer}>
                                 <MaterialIcons name="delete-forever" size={24} color="black"/>
                             </TouchableOpacity>
@@ -70,14 +65,23 @@ export default function OrderItem({id, mealName, count, orderType, items, catego
                                 <View style={styles.listItemContainer}>
                                     <Text style={styles.listItemContainerText}>{items.vege2}</Text>
                                 </View>
+                                {items.vege3 && (
+                                    <View style={styles.listItemContainer}>
+                                        <Text style={styles.listItemContainerText}>{items.vege3}</Text>
+                                    </View>
+                                )}
+                                {
+                                    items.vege4 && (
+                                        <View style={styles.listItemContainer}>
+                                            <Text style={styles.listItemContainerText}>{items.vege4}</Text>
+                                        </View>
+                                    )
+                                }
                                 {items.meat && (
                                     <View style={styles.listItemContainer}>
                                         <Text style={styles.listItemContainerText}>{items.meat}</Text>
                                     </View>
                                 )}
-                                <View style={styles.listItemContainer}>
-                                    <Text style={styles.listItemContainerText}>{items.stew}</Text>
-                                </View>
                             </View>
                         )}
                     </View>

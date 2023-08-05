@@ -1,54 +1,55 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useRef} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/native';
 import PATHS from '../../helpers/paths/paths';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StatusBar} from 'expo-status-bar';
-import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
+import {getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
+import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const InitialScreen = () => {
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
 
-    useEffect(() => {
-        const checkIfVisited = async () => {
-            try {
-                const visited = await AsyncStorage.getItem('@visited');
-                let loginStatus = await getDataFromLocalStorage('loginStatus');
-                if (!loginStatus) loginStatus = false;
-                if (loginStatus === "true") loginStatus = true;
+    useFocusEffect(
+        React.useCallback(() => {
+            const checkIfVisited = async () => {
+                try {
+                    const visited = await AsyncStorage.getItem('@visited');
+                    let loginStatus = await getDataFromLocalStorage('loginStatus');
 
-                if (isFocused) {
-                    Animated.timing(slideAnim, {
-                        toValue: 1,
-                        duration: 6000,
-                        useNativeDriver: true,
-                    }).start();
+                    if (isFocused) {
+                        Animated.timing(slideAnim, {
+                            toValue: 1,
+                            duration: 6000,
+                            useNativeDriver: true,
+                        }).start();
 
-                    if (visited) {
-                        setTimeout(() => {
-                            slideAnim.setValue(0);
-                            if (loginStatus) {
-                                navigation.navigate('Menu');
-                            } else {
-                                navigation.navigate('Login');
-                            }
-                        }, 7000);
-                    } else {
-                        await AsyncStorage.setItem('@visited', 'true');
-                        setTimeout(() => {
-                            slideAnim.setValue(0);
-                            navigation.navigate('Welcome');
-                        }, 7000);
+                        if (visited) {
+                            setTimeout(() => {
+                                slideAnim.setValue(0);
+                                if (loginStatus === 'true') {
+                                    navigation.navigate('Menu');
+                                } else {
+                                    navigation.navigate('Login');
+                                }
+                            }, 7000);
+                        } else {
+                            await AsyncStorage.setItem('@visited', 'true');
+                            setTimeout(() => {
+                                slideAnim.setValue(0);
+                                navigation.navigate('Welcome');
+                            }, 7000);
+                        }
                     }
+                } catch (error) {
+                    console.error(error);
                 }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-        checkIfVisited().catch(console.error);
-    }, [isFocused]);
+            };
+            checkIfVisited().catch(console.error);
+        }, [isFocused])
+    );
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
@@ -83,7 +84,7 @@ const InitialScreen = () => {
             </View>
             <View style={styles.bottomTextContainer}>
                 <Text style={styles.bottomText}>
-                    Lorem ipsum dolor sit amet, consecrate disciplining elite. Done
+                    Meal Supplier You Can Trust. It's all about your meal. Your Meal Matters Us
                 </Text>
             </View>
         </SafeAreaView>
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
         marginTop: 50,
     },
     titleText: {
-        fontSize: 40,
+        fontSize: dynamicFont(24),
         fontWeight: 'bold',
         color: '#7E1F24',
     },
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     bottomText: {
-        fontSize: 18,
+        fontSize: dynamicFont(12),
         textAlign: 'center',
         color: '#630A10',
     },

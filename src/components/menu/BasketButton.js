@@ -2,27 +2,52 @@ import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {setMenuBasketService, updateBasketFromId} from "../../services/menuService";
 import {useToast} from "../../helpers/toast/Toast";
+import {useState} from "react";
 
-const BasketButton = ({totalCheckedItemsCount, totalAmount, totalCheckedItems, venue, editMenu, mealId}) => {
+const BasketButton = ({
+                          totalCheckedItemsCount,
+                          totalSpecialPrice,
+                          isSpecial,
+                          totalAmount,
+                          totalCheckedItems,
+                          venue,
+                          editMenu,
+                          mealId,
+                          isVegi,
+                          totalCheckedSpecialItemsCount,
+                          totalCheckedSpecialItems
+                      }) => {
     const navigation = useNavigation();
     const {showToast} = useToast();
 
     const handleBasketPress = async () => {
-        if (totalCheckedItemsCount > 0 && totalCheckedItemsCount < 4) {
-            showToast("warning", "Need to select 4 items to proceed");
-        } else {
+        // at least one special meal means no ordinary meals
+        if (totalCheckedSpecialItemsCount > 0 && totalCheckedItemsCount <= 0) {
+            const basketItems = totalCheckedSpecialItems.filter(item => item.checked === true);
+
+            if (editMenu && mealId > 0) {
+                await updateBasketFromId(mealId, basketItems);
+                showToast("success", "Basket updated successfully");
+                navigation.navigate('Basket');
+            } else {
+                await setMenuBasketService(basketItems, totalAmount, venue, isVegi, true);
+                navigation.navigate('Basket');
+            }
+            // at least one ordinary meal and no special meals
+        } else if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount < 0 || totalCheckedItemsCount > 4)) {
             const basketItems = totalCheckedItems.filter(item => item.checked === true);
             if (editMenu && mealId > 0) {
                 await updateBasketFromId(mealId, basketItems);
                 showToast("success", "Basket updated successfully");
                 navigation.navigate('Basket');
             } else {
-                await setMenuBasketService(basketItems, totalAmount, venue);
+                await setMenuBasketService(basketItems, totalAmount, venue, isVegi, false);
                 navigation.navigate('Basket');
             }
+        } else {
+            navigation.navigate('Basket');
         }
     }
-
     return (
         <View style={styles.priceContainer}>
             <TouchableOpacity
@@ -32,21 +57,21 @@ const BasketButton = ({totalCheckedItemsCount, totalAmount, totalCheckedItems, v
                 {
                     !editMenu ? (
                         <Text style={styles.priceContainerLeftText}>View Basket {
-                            totalCheckedItemsCount > 0 && `(${totalCheckedItemsCount})`
+                            (totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && `(${totalCheckedItemsCount + totalCheckedSpecialItemsCount})`
                         }
                         </Text>
                     ) : (
                         <Text style={styles.priceContainerLeftText}>Update Basket {
-                            totalCheckedItemsCount > 0 && `(${totalCheckedItemsCount})`
+                            (totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && `(${totalCheckedItemsCount + totalCheckedSpecialItemsCount})`
                         }
                         </Text>
                     )
                 }
             </TouchableOpacity>
             {
-                totalCheckedItemsCount > 0 && (
+                (totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && (
                     <View style={styles.priceContainerRight}>
-                        <Text style={styles.priceContainerRightText}>Rs {totalAmount}</Text>
+                        <Text style={styles.priceContainerRightText}>Rs {totalAmount + totalSpecialPrice}</Text>
                     </View>
                 )
             }

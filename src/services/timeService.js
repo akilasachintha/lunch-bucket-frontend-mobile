@@ -4,6 +4,7 @@ import {log} from "../helpers/logs/log";
 const getUTCDateTime = async () => {
     try {
         const response = await axios.get('https://worldtimeapi.org/api/timezone/utc');
+        log("info", "service", "timeService", "getUTCDateTime", response.data.datetime);
         if (response.status === 200) {
             return response;
         }
@@ -23,8 +24,8 @@ const fetchRemainingTimes = async (
         let response = await getUTCDateTime();
         let currentTime = new Date(response.data.datetime);
 
-        const timeLimitDateLunch = new Date(response.data.datetime);
-        const timeLimitDateDinner = new Date(response.data.datetime);
+        const timeLimitDateLunch = new Date(response?.data?.datetime);
+        const timeLimitDateDinner = new Date(response?.data?.datetime);
 
         const currentUTCHours = currentTime.getUTCHours();
         const currentUTCMinutes = currentTime.getUTCMinutes();

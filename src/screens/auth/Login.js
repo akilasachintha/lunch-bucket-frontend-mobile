@@ -1,12 +1,11 @@
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from "../../helpers/paths/paths";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Formik} from "formik";
 import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
 import FormFields from "../../components/form/FormFields";
-import OtherSignInUpButton from "../../components/otherSignInUpButton/OtherSIgnInUpButton";
 import LinkButton from "../../components/linkButton/LinkButton";
 import {dynamicFont} from "../../helpers/responsive/fontScale";
 import {loginService} from "../../services/authService";
@@ -30,7 +29,6 @@ const fields = [
 export default function Login({navigation}) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const initialValues = {email: '', password: ''};
-    const [toastMessage, setToastMessage] = useState(null);
     const {showToast} = useToast();
 
     const handleSubmit = async (values, actions) => {
@@ -46,22 +44,12 @@ export default function Login({navigation}) {
             }
         } catch (error) {
             log("error", "Login", "handleSubmit", error.message, "Login.js");
-            setToastMessage("Login Failed");
+            showToast('error', error.message);
         } finally {
             actions.setSubmitting(false);
             setIsSubmitting(false);
         }
     };
-
-    useEffect(() => {
-        if (toastMessage) {
-            const timeout = setTimeout(() => {
-                setToastMessage(null);
-            }, 3000);
-
-            return () => clearTimeout(timeout);
-        }
-    }, [toastMessage]);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -113,10 +101,6 @@ export default function Login({navigation}) {
                         <Text style={styles.linkButton}>{STRINGS.or}</Text>
                     </View>
                     <View>
-                        <OtherSignInUpButton iconName="google" signInText="Sign In with Google"/>
-                        <OtherSignInUpButton iconName="facebook" signInText="Sign In with Facebook"/>
-                    </View>
-                    <View>
                         <LinkButton
                             text={STRINGS.dontHaveAccountText}
                             style={styles.linkButton}
@@ -131,7 +115,7 @@ export default function Login({navigation}) {
 
 const styles = StyleSheet.create({
     container: {
-       flex: 1,
+        flex: 1,
     },
     mainContainer: {
         flex: 1,
@@ -145,10 +129,10 @@ const styles = StyleSheet.create({
     headerImage: {
         flex: 1,
         marginTop: '5%',
-        width: '80%',
+        width: '100%',
     },
     bottomContainer: {
-        flex: 2.4,
+        flex: 1.5,
         paddingHorizontal: '8%',
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
@@ -156,10 +140,10 @@ const styles = StyleSheet.create({
     },
     welcomeBackText: {
         color: '#7E1F24',
-        fontSize: dynamicFont(18),
+        fontSize: dynamicFont(20),
         fontWeight: 'bold',
         textAlign: 'center',
-        marginVertical: '8%',
+        marginVertical: '10%',
     },
     linkButton: {
         color: '#630A10',
@@ -167,7 +151,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: '5%',
         paddingBottom: 0,
         paddingVertical: '7%',
-        fontSize: dynamicFont(8),
+        fontSize: dynamicFont(10),
     },
     underline: {
         textDecorationLine: 'underline',

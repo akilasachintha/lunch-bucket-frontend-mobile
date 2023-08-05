@@ -5,6 +5,7 @@ import {log} from "../helpers/logs/log";
 
 export async function setOrderController(data) {
     try {
+        console.log(data);
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
@@ -19,6 +20,8 @@ export async function setOrderController(data) {
                 }
             }
         );
+
+        console.log(response);
 
         if (response.status === 200) {
             log("info", "controller", "setOrderController", response.data, "checkoutController.js");

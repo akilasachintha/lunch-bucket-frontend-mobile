@@ -22,6 +22,7 @@ export default function BasketScreen() {
     const fetchBasket = async () => {
         try {
             let basketItems = await getDataFromLocalStorage('basket');
+            log("info", "BasketScreen", "fetchBasketItems | basketItems", JSON.stringify(basketItems), "BasketScreen.js")
 
             if (!basketItems) {
                 log("error", "BasketScreen", "fetchBasketItems | basketItems", basketItems, "BasketScreen.js");
@@ -29,6 +30,7 @@ export default function BasketScreen() {
             }
 
             basketItems = JSON.parse(basketItems);
+            log("info", "BasketScreen", "fetchBasketItems | basketItems", basketItems, "BasketScreen.js");
             setBasket(basketItems);
 
         } catch (error) {
@@ -54,15 +56,14 @@ export default function BasketScreen() {
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            {/*{isVisible && <TodayWinnerModal isVisible={isVisible} setIsVisible={setIsVisible}/>}*/}
             <StaticTopBar/>
             <TopHeader headerText="Your Bucket" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView>
                     {
-                        basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal) => (
-                            <BasketItem key={meal.id} index={meal.id} mealName={meal.name} mealId={meal.id}
-                                        items={meal.items} setBasket={setBasket}/>
+                        basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal, index) => (
+                            <BasketItem key={index} index={meal.id} mealName={meal.name} mealId={meal.id}
+                                        items={meal.items} setBasket={setBasket} isSpecial={meal.isSpecial}/>
                         ))
                     }
                 </ScrollView>

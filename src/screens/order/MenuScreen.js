@@ -20,16 +20,20 @@ export default function MenuScreen({navigation}) {
     // Common
     const [isVisible, setIsVisible] = useState(true);
     const [loading, setLoading] = useState(true);
+    const [isVegiLunch, setIsVegiLunch] = useState(false);
+    const [isVegiDinner, setIsVegiDinner] = useState(false);
 
     // Lunch
     const [lunch, setLunch] = useState(true);
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
+    const [lunchSpecialItems, setLunchSpecialItems] = useState([]);
     const [lunchRiceItems, setLunchRiceItems] = useState([]);
     const [lunchVegetableItems, setLunchVegetableItems] = useState([]);
     const [lunchStewItems, setLunchStewItems] = useState([]);
     const [lunchMeatItems, setLunchMeatItems] = useState([]);
 
     // Dinner
+    const [dinnerSpecialItems, setDinnerSpecialItems] = useState([]);
     const [dinnerRiceItems, setDinnerRiceItems] = useState([]);
     const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState(false);
     const [dinnerVegetableItems, setDinnerVegetableItems] = useState([]);
@@ -41,11 +45,14 @@ export default function MenuScreen({navigation}) {
             setLoading(true);
 
             // Clear values
+            setLunchSpecialItems([]);
+            setLunchSpecialItems([]);
             setLunchRiceItems([]);
             setLunchVegetableItems([]);
             setLunchStewItems([]);
             setLunchMeatItems([]);
 
+            setDinnerSpecialItems([]);
             setDinnerRiceItems([]);
             setDinnerVegetableItems([]);
             setDinnerStewItems([]);
@@ -54,11 +61,13 @@ export default function MenuScreen({navigation}) {
             // Fetch Menu data
             try {
                 const menuData = await fetchMenuData();
+                setLunchSpecialItems(menuData.specialMenuLunch);
                 setLunchRiceItems(menuData.riceMenuLunch);
                 setLunchMeatItems(menuData.meetMenuLunch);
                 setLunchStewItems(menuData.stewMenuLunch);
                 setLunchVegetableItems(menuData.vegetableMenuLunch);
 
+                setDinnerSpecialItems(menuData.specialMenuDinner);
                 setDinnerRiceItems(menuData.riceMenuDinner);
                 setDinnerMeatItems(menuData.meetMenuDinner);
                 setDinnerStewItems(menuData.stewMenuDinner);
@@ -263,6 +272,16 @@ export default function MenuScreen({navigation}) {
         createItemListWithType("Meat", dinnerMeatItems, setDinnerMeatItems, 1, disableDinnerCheckbox),
     ];
 
+    const lunchVegiItemList = [
+        createItemListWithType("Rice", lunchRiceItems, setLunchRiceItems, 1, disableLunchCheckbox),
+        createItemListWithType("Vegetable", lunchVegetableItems, setLunchVegetableItems, 4, disableLunchCheckbox),
+    ];
+
+    const dinnerVegiItemList = [
+        createItemListWithType("Rice", dinnerRiceItems, setDinnerRiceItems, 1, disableDinnerCheckbox),
+        createItemListWithType("Vegetable", dinnerVegetableItems, setDinnerVegetableItems, 4, disableDinnerCheckbox),
+    ];
+
     const getTotalCheckedItemsCount = (itemLists) => {
         if (itemLists.length === 0) return 0;
 
@@ -275,6 +294,27 @@ export default function MenuScreen({navigation}) {
             }
         }, 0);
     };
+
+    const getTotalCheckedSpecialItemsCount = (specialMenu) => {
+        if (!specialMenu || specialMenu.length === 0) return 0;
+
+        return specialMenu.reduce((total, item) => {
+            if (item.category && item.category.length > 0) {
+                const checkedItemsCount = item.category.filter(subItem => subItem.checked).length;
+                return total + checkedItemsCount;
+            } else {
+                return total;
+            }
+        }, 0);
+    };
+
+    const totalCheckedSpecialLunchItemsCount = useMemo(() => {
+        return getTotalCheckedSpecialItemsCount(lunchSpecialItems);
+    }, [lunchSpecialItems]);
+
+    const totalCheckedSpecialDinnerItemsCount = useMemo(() => {
+        return getTotalCheckedSpecialItemsCount(dinnerSpecialItems);
+    }, [dinnerSpecialItems]);
 
     const getTotalCheckedItems = (itemLists) => {
         if (itemLists.length === 0) return [];
@@ -289,13 +329,26 @@ export default function MenuScreen({navigation}) {
         }, []);
     };
 
+    const getTotalCheckedSpecialItems = (specialMenu) => {
+        if (!specialMenu || specialMenu.length === 0) return [];
+
+        return specialMenu.reduce((total, item) => {
+            if (item.category && item.category.length > 0) {
+                const checkedItems = item.category.filter(subItem => subItem.checked);
+                return [...total, ...checkedItems];
+            } else {
+                return total;
+            }
+        }, []);
+    };
+
     const totalCheckedLunchItemsCount = useMemo(() => {
         return getTotalCheckedItemsCount(lunchItemList);
-    }, [lunchVegetableItems, lunchStewItems, lunchMeatItems]);
+    }, [lunchRiceItems, lunchVegetableItems, lunchStewItems, lunchMeatItems]);
 
     const totalCheckedDinnerItemsCount = useMemo(() => {
         return getTotalCheckedItemsCount(dinnerItemList);
-    }, [dinnerVegetableItems, dinnerMeatItems, dinnerStewItems]);
+    }, [dinnerRiceItems, dinnerVegetableItems, dinnerMeatItems, dinnerStewItems]);
 
     const calculateTotalPrice = (itemList) => {
         let totalPrice = 0;
@@ -309,11 +362,11 @@ export default function MenuScreen({navigation}) {
 
     const lunchTotalPrice = useMemo(() => {
         return calculateTotalPrice(getTotalCheckedItems(lunchItemList));
-    }, [lunchVegetableItems, lunchStewItems, lunchMeatItems]);
+    }, [lunchRiceItems, lunchVegetableItems, lunchStewItems, lunchMeatItems]);
 
     const dinnerTotalPrice = useMemo(() => {
         return calculateTotalPrice(getTotalCheckedItems(dinnerItemList));
-    }, [dinnerVegetableItems, dinnerMeatItems, dinnerStewItems]);
+    }, [dinnerRiceItems, dinnerVegetableItems, dinnerMeatItems, dinnerStewItems]);
 
     const handleDisabledMenu = async () => {
         try {
@@ -345,7 +398,6 @@ export default function MenuScreen({navigation}) {
             }
         );
     }, []);
-
 
     const lunchStyles = [styles.lunchContainer, !lunch && styles.lunchContainerNotSelected];
     const dinnerStyles = [styles.dinnerContainer, lunch && styles.dinnerContainerNotSelected];
@@ -386,10 +438,16 @@ export default function MenuScreen({navigation}) {
                 <View style={styles.bodyContainer}>
                     {lunch && (
                         <Menu
+                            specialMenu={lunchSpecialItems}
                             title="Lunch"
-                            itemList={lunchItemList}
+                            totalCheckedSpecialItemsCount={totalCheckedSpecialLunchItemsCount}
+                            setSpecialMenu={setLunchSpecialItems}
+                            isVegi={isVegiLunch}
+                            setIsVegi={setIsVegiLunch}
+                            itemList={isVegiLunch ? lunchVegiItemList : lunchItemList}
                             totalCheckedItemsCount={totalCheckedLunchItemsCount}
                             totalCheckedItems={getTotalCheckedItems(lunchItemList)}
+                            totalCheckedSpecialItems={getTotalCheckedSpecialItems(lunchSpecialItems)}
                             totalAmount={lunchTotalPrice}
                             isVisible={isVisible}
                             setIsVisible={setIsVisible}
@@ -399,9 +457,15 @@ export default function MenuScreen({navigation}) {
                     {!lunch && (
                         <Menu
                             title="Dinner"
-                            itemList={dinnerItemList}
+                            specialMenu={dinnerSpecialItems}
+                            totalCheckedSpecialItemsCount={totalCheckedSpecialDinnerItemsCount}
+                            setSpecialMenu={setDinnerSpecialItems}
+                            isVegi={isVegiDinner}
+                            setIsVegi={setIsVegiDinner}
+                            itemList={isVegiDinner ? dinnerVegiItemList : dinnerItemList}
                             totalCheckedItemsCount={totalCheckedDinnerItemsCount}
                             totalCheckedItems={getTotalCheckedItems(dinnerItemList)}
+                            totalCheckedSpecialItems={getTotalCheckedSpecialItems(dinnerSpecialItems)}
                             totalAmount={dinnerTotalPrice}
                             isVisible={isVisible}
                             setIsVisible={setIsVisible}

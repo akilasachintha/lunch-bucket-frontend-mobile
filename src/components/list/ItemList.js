@@ -19,6 +19,9 @@ const ListItem = ({itemName, checked, handleItemPress, percentage, disabled}) =>
             >
                 <View style={styles.listItemLeftContainer}>
                     <Text style={styles.listItemText}>{itemName}</Text>
+                    {
+
+                    }
                     {percentage != null && percentage > 0 && (
                         <PercentageBar percentage={percentage}/>
                     )}
@@ -45,7 +48,7 @@ const ListItem = ({itemName, checked, handleItemPress, percentage, disabled}) =>
     );
 };
 
-export default function ItemList({title, items, handleItemPress, disableCheckbox}) {
+export default function ItemList({title, items, specialItems, handleItemPress, disableCheckbox}) {
     return (
         <View>
             {items && items.length > 0 && (
@@ -54,7 +57,8 @@ export default function ItemList({title, items, handleItemPress, disableCheckbox
                 </View>
             )}
             <View>
-                {items && items.length > 0 && items.map((item, index) => (
+                {items && items.length > 0
+                    && items.map((item, index) => (
                     <View key={item.id}>
                         <ListItem
                             itemName={item.type}

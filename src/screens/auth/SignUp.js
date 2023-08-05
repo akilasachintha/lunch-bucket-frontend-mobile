@@ -6,11 +6,11 @@ import {Formik} from "formik";
 import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
 import FormFields from "../../components/form/FormFields";
-import OtherSignInUpButton from "../../components/otherSignInUpButton/OtherSIgnInUpButton";
 import {registerService} from "../../services/authService";
 import {useToast} from "../../helpers/toast/Toast";
 import {log} from "../../helpers/logs/log";
 import {StatusBar} from "expo-status-bar";
+import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -18,17 +18,31 @@ const validationSchema = Yup.object().shape({
         .required('Email is required'),
     password: Yup.string()
         .min(8, 'Password must be at least 8 characters')
+        .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character'
+        )
         .required('Password is required'),
     confirmPassword: Yup.string()
         .min(8, 'Password must be at least 8 characters')
         .oneOf([Yup.ref('password'), null], 'Passwords must match')
         .required('Confirm password is required'),
+    contactNo: Yup.string()
+        .required('Contact No is required')
+        .matches(/^[0-9]{10}$/, 'Contact No must be exactly 10 digits and start with 0'),
 });
 
 const fields = [
     {placeholder: STRINGS.email, name: 'email', required: true},
+    {placeholder: 'Contact No', name: 'contactNo', required: true, secureTextEntry: false},
     {placeholder: STRINGS.password, name: 'password', required: true, secureTextEntry: true, isEyeEnabled: true},
-    {placeholder: STRINGS.confirmPassword, name: 'confirmPassword', required: true, secureTextEntry: true},
+    {
+        placeholder: STRINGS.confirmPassword,
+        name: 'confirmPassword',
+        required: true,
+        secureTextEntry: true,
+        isEyeEnabled: true
+    },
 ];
 
 export default function SignUp({navigation}) {
@@ -36,10 +50,11 @@ export default function SignUp({navigation}) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const initialValues = {
         email: '',
+        contactNo: '',
         password: '',
         confirmPassword: '',
     };
-    const [toastMessage, setToastMessage] = useState(null);
+    const [, setToastMessage] = useState(null);
     const {showToast} = useToast();
 
     const handleSubmit = async (values, actions) => {
@@ -117,10 +132,6 @@ export default function SignUp({navigation}) {
                         <Text style={styles.dontHaveAccountText}>{STRINGS.or}</Text>
                     </View>
                     <View>
-                        <OtherSignInUpButton iconName="google" signInText="Sign In with Google"/>
-                        <OtherSignInUpButton iconName="facebook" signInText="Sign In with Facebook"/>
-                    </View>
-                    <View>
                         <TouchableOpacity
                             onPressIn={handlePressIn}
                             onPressOut={handlePressOut}
@@ -154,10 +165,10 @@ const styles = StyleSheet.create({
     headerImage: {
         flex: 1,
         marginTop: 15,
-        width: 250,
+        width: '70%',
     },
     bottomContainer: {
-        flex: 3.4,
+        flex: 2,
         paddingHorizontal: 30,
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
@@ -165,11 +176,10 @@ const styles = StyleSheet.create({
     },
     welcomeBackText: {
         color: '#7E1F24',
-        fontSize: 34,
+        fontSize: dynamicFont(18),
         fontWeight: 'bold',
         textAlign: 'center',
-        marginVertical: 25,
-        marginTop: 20,
+        marginVertical: "10%",
     },
     dontHaveAccountText: {
         color: '#630A10',
@@ -178,7 +188,7 @@ const styles = StyleSheet.create({
         paddingBottom: 0,
         paddingVertical: 15,
         marginBottom: 5,
-        fontSize: 13
+        fontSize: dynamicFont(10),
     },
     underline: {
         textDecorationLine: 'underline',

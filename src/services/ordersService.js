@@ -4,7 +4,6 @@ import {deleteOrdersController, getOrdersController} from "../controllers/orders
 export async function getOrdersService() {
     try {
         const result = await getOrdersController();
-        log("info", "service", "getOrdersService | result", result, "ordersService.js");
 
         if (result === "error") {
             return [];

@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const WelcomeSlide = ({ imagePath, headerText, contentText, buttonText, onPress }) => {
     return (
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     headerImage: {
-        flex: 1.2,
+        flex: 1,
         backgroundColor: '#630A10',
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
@@ -44,13 +45,7 @@ const styles = StyleSheet.create({
     },
     bottomTextContainer: {
         flex: 1,
-        paddingVertical: 0,
-        paddingHorizontal: 20,
-        paddingBottom: 0,
-        marginTop: 0,
-        marginRight: 0,
-        marginLeft: 0,
-        borderRadius: 0,
+        paddingHorizontal: "5%",
     },
     bottomText: {
         paddingHorizontal: 30,
@@ -58,18 +53,18 @@ const styles = StyleSheet.create({
     },
     headerText: {
         color: '#630A10',
-        fontSize: 36,
+        fontSize: dynamicFont(20),
         fontWeight: 'bold',
     },
     contentText: {
         marginTop: 30,
         color: '#630A10',
-        fontSize: 18,
+        fontSize: dynamicFont(12),
     },
     headerImageImage: {
         top: 20,
-        height: 400,
-        width: 400,
+        height: "90%",
+        width: "95%",
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -89,6 +84,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#630A10',
         textAlign: "center",
-        fontSize: 18,
+        fontSize: dynamicFont(10),
     }
 });

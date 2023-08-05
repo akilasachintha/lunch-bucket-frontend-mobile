@@ -60,9 +60,11 @@ export default function Checkout() {
 
             basketItems = JSON.parse(basketItems);
             if (basketItems && basketItems.meal && basketItems.meal.length > 0) {
+                console.log("basketItems.meal", basketItems.meal);
                 let totalAmount = 0;
 
                 basketItems.meal.forEach((meal) => {
+                    console.log("meal", meal);
                     totalAmount += meal.totalPrice;
                 });
 
@@ -88,8 +90,8 @@ export default function Checkout() {
             <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    {basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal) => (
-                        <CheckoutItem key={meal.id} index={meal.id} mealName={meal.name} mealId={meal.id}
+                    {basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal, index) => (
+                        <CheckoutItem key={index} index={meal.id} mealName={meal.name} mealId={meal.id}
                                       count={meal.count} price={meal.totalPrice}/>
                     ))}
                 </ScrollView>

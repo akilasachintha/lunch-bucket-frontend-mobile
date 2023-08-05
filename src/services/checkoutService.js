@@ -37,23 +37,56 @@ export async function handleCheckoutService() {
         }
 
         if (basketItems && basketItems.meal && basketItems.meal.length > 0) {
+            log("info", "checkoutService", "handleCheckoutService | basketItems.meal", basketItems.meal, "checkoutService.js");
             basketItems.meal.forEach((meal) => {
-                checkoutMenu.orders.push({
-                    order_type: "non_vegi",
-                    rice: meal.items[0]?.type || "",
-                    vege1: meal.items[1]?.type || "",
-                    vege2: meal.items[2]?.type || "",
-                    meat: meal.items[3]?.type || "",
-                    stew: meal.items[4]?.type || "",
-                    packet_amount: meal.count,
-                    order_status: 'pending',
-                    meal: meal.venue,
-                    customer_id: customerId,
-                    comment: "",
-                    price: meal.totalPrice,
-                    potion: false,
-                });
+                if (meal.isSpecial) {
+                    checkoutMenu.orders.push({
+                        order_type: "special",
+                        packet_amount: meal.count,
+                        order_status: 'pending',
+                        meal: meal.venue,
+                        customer_id: customerId,
+                        comment: "",
+                        price: meal.totalPrice,
+                        potion: false,
+                        special_meal: meal.items[0]?.id || "",
+                    });
+                } else if (meal.isVegi) {
+                    checkoutMenu.orders.push({
+                        order_type: "vegi",
+                        rice: meal.items[0]?.type || "",
+                        vege1: meal.items[1]?.type || "",
+                        vege2: meal.items[2]?.type || "",
+                        vege3: meal.items[3]?.type || "",
+                        vege4: meal.items[4]?.type || "",
+                        packet_amount: meal.count,
+                        order_status: 'pending',
+                        meal: meal.venue,
+                        customer_id: customerId,
+                        comment: "",
+                        price: meal.totalPrice,
+                        potion: false,
+                    });
+                } else {
+                    checkoutMenu.orders.push({
+                        order_type: "non_vegi",
+                        rice: meal.items[0]?.type || "",
+                        vege1: meal.items[1]?.type || "",
+                        vege2: meal.items[2]?.type || "",
+                        meat: meal.items[3]?.type || "",
+                        stew: meal.items[4]?.type || "",
+                        packet_amount: meal.count,
+                        order_status: 'pending',
+                        meal: meal.venue,
+                        customer_id: customerId,
+                        comment: "",
+                        price: meal.totalPrice,
+                        potion: false,
+                    });
+                }
             });
+
+            log("info", "checkoutService", "handleCheckoutService | checkoutMenu", checkoutMenu, "checkoutService.js");
         } else {
             log("error", "checkoutService", "handleCheckoutService | basketItems.meal", basketItems.meal, "checkoutService.js");
             return ERROR_STATUS.ERROR;

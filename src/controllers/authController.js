@@ -1,6 +1,8 @@
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import axios from "axios";
 import {log} from "../helpers/logs/log";
+import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function loginController(email, password) {
     try {
@@ -41,6 +43,27 @@ export async function registerController(email, password) {
 
     } catch (error) {
         log("error", "controller", "signUpController", error.message, "authController.js");
+        return ERROR_STATUS.ERROR;
+    }
+}
+
+export async function validateTokenController() {
+    try {
+        const token = await getDataFromLocalStorage('token');
+        if (!token) {
+            return ERROR_STATUS.ERROR;
+        }
+
+        const response = await lunchBucketAPI.get('/dev/lunch/getMenus', {
+            headers: {
+                'token': token,
+            }
+        });
+
+        if (response.status === 200) return response.data;
+
+    } catch (error) {
+        log("error", "controller", "validateTokenController", error.message, "authController.js");
         return ERROR_STATUS.ERROR;
     }
 }

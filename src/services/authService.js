@@ -1,6 +1,6 @@
-import {loginController, registerController} from "../controllers/authController";
+import {loginController, registerController, validateTokenController} from "../controllers/authController";
 import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
-import {addDataToLocalStorage} from "../helpers/storage/asyncStorage";
+import {addDataToLocalStorage, removeDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {log} from "../helpers/logs/log";
 
 
@@ -23,6 +23,7 @@ export async function loginService(email, password) {
             await addDataToLocalStorage('token', data.token);
             await addDataToLocalStorage('customerId', data.id);
             await addDataToLocalStorage('loginStatus', "true");
+
             log("success", "service", "loginService", "Login Success", "authService.js");
             return SUCCESS_STATUS.SUCCESS;
         }
@@ -60,13 +61,32 @@ export async function registerService(email, password) {
 
 export async function logoutService() {
     try {
-        await addDataToLocalStorage('token', "");
+        await removeDataFromLocalStorage('token', "");
         await addDataToLocalStorage('customerId', "");
-        await addDataToLocalStorage('loginStatus', "");
+        await addDataToLocalStorage('loginStatus', "false");
         log("success", "service", "logoutService", "Logout Success", "authService.js");
         return SUCCESS_STATUS.SUCCESS;
     } catch (error) {
         log("error", "service", "logoutService", error.message, "authService.js");
+        return ERROR_STATUS.ERROR;
+    }
+}
+
+export async function validateTokenService() {
+    try {
+        const result = await validateTokenController();
+
+        if (result === "error") {
+            return false;
+        } else {
+            if (result.data.state === false) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    } catch (error) {
+        log("error", "service", "checkTokenService", error.message, "authService.js");
         return ERROR_STATUS.ERROR;
     }
 }
