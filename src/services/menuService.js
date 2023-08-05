@@ -234,11 +234,11 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
             let mealNumber = existingBasket.meal?.length > 0 ? existingBasket.meal.length + 1 : 1;
 
             if (isSpecial) {
-                for (const item of totalCheckedItems) {
+                totalCheckedItems.forEach((item) => {
                     const id = new Date().getTime().toString();
 
                     const meal = {
-                        id: id + item.index,
+                        id: id + item.id,
                         name: 'Meal ' + mealNumber,
                         items: [item],
                         date: currentDateTime.toISOString(),
@@ -253,7 +253,7 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
                     existingBasket.meal = existingBasket.meal || [];
                     existingBasket.meal.push(meal);
                     mealNumber++;
-                }
+                });
             } else {
                 const id = new Date().getTime().toString();
 
@@ -476,5 +476,25 @@ export async function getDinnerMeetPercentageService(vegiId1, vegiId2, stewId, m
     }
 }
 
+export async function fetchBasket(mealId, setCount, setBasket) {
+    try {
+        let basketItems = await getDataFromLocalStorage('basket');
+        basketItems = JSON.parse(basketItems);
+
+        if (basketItems?.meal?.length > 0) {
+            basketItems.meal = basketItems.meal.map((item) => {
+                if (item.id === mealId) {
+                    setCount(item.count);
+                }
+                return item;
+            });
+        }
+
+        setBasket(basketItems);
+        console.log("basketItems", basketItems);
+    } catch (error) {
+        log("Error :: BasketScreen :: fetchBasket :: ", error.message, "BasketItem.js");
+    }
+};
 
 

@@ -20,6 +20,7 @@ export default function MenuScreen({navigation}) {
     // Common
     const [isVisible, setIsVisible] = useState(true);
     const [loading, setLoading] = useState(true);
+
     const [isVegiLunch, setIsVegiLunch] = useState(false);
     const [isVegiDinner, setIsVegiDinner] = useState(false);
 

@@ -82,6 +82,11 @@ export default function OrderItem({id, mealName, count, orderType, items, catego
                                         <Text style={styles.listItemContainerText}>{items.meat}</Text>
                                     </View>
                                 )}
+                                {items.stew && (
+                                    <View style={styles.listItemContainer}>
+                                        <Text style={styles.listItemContainerText}>{items.stew}</Text>
+                                    </View>
+                                )}
                             </View>
                         )}
                     </View>

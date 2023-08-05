@@ -12,6 +12,15 @@ export async function getLunchMenuController() {
             return ERROR_STATUS.ERROR;
         }
 
+        const res = await axios.get('https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/lunch/invokeSuitabilities'
+            , {
+                headers: {
+                    'token': token,
+                }
+            });
+
+        console.log(res.data);
+
         const response = await lunchBucketAPI.get('/dev/lunch/getMenus', {
             headers: {
                 'token': token,
@@ -33,6 +42,12 @@ export async function getDinnerMenuController() {
         if (!token) {
             return ERROR_STATUS.ERROR;
         }
+
+        const res = await axios.get('https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/dinner/invokeSuitabilities', {
+            headers: {
+                'token': token,
+            }
+        });
 
         const response = await lunchBucketAPI.get('/dev/dinner/getMenus', {
             headers: {

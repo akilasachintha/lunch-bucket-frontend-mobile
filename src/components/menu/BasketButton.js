@@ -1,7 +1,8 @@
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {useNavigation} from "@react-navigation/native";
-import {setMenuBasketService, updateBasketFromId} from "../../services/menuService";
-import {useToast} from "../../helpers/toast/Toast";
+import React, {useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {setMenuBasketService, updateBasketFromId} from '../../services/menuService';
+import {useToast} from '../../helpers/toast/Toast';
 
 const BasketButton = ({
                           totalCheckedItemsCount,
@@ -13,66 +14,93 @@ const BasketButton = ({
                           mealId,
                           isVegi,
                           totalCheckedSpecialItemsCount,
-                          totalCheckedSpecialItems
+                          totalCheckedSpecialItems,
                       }) => {
     const navigation = useNavigation();
     const {showToast} = useToast();
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const handleBasketPress = async () => {
-        // at least one special meal means no ordinary meals
-        if (totalCheckedSpecialItemsCount > 0 && totalCheckedItemsCount <= 0) {
-            const basketItems = totalCheckedSpecialItems.filter(item => item.checked === true);
+        if (isButtonDisabled) {
+            // Button is already disabled, return
+            return;
+        }
 
-            if (editMenu && mealId > 0) {
-                await updateBasketFromId(mealId, basketItems);
-                showToast("success", "Basket updated successfully");
-                navigation.navigate('Basket');
-            } else {
-                await setMenuBasketService(basketItems, totalAmount, venue, isVegi, true);
-                navigation.navigate('Basket');
-            }
-            // at least one ordinary meal and no special meals
-        } else if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount < 0 || totalCheckedItemsCount > 4)) {
-            const basketItems = totalCheckedItems.filter(item => item.checked === true);
-            if (editMenu && mealId > 0) {
-                await updateBasketFromId(mealId, basketItems);
-                showToast("success", "Basket updated successfully");
-                navigation.navigate('Basket');
-            } else {
-                await setMenuBasketService(basketItems, totalAmount, venue, isVegi, false);
-                navigation.navigate('Basket');
-            }
-        } else {
+        setIsButtonDisabled(true);
+
+        if (totalCheckedSpecialItemsCount === 0 && totalCheckedItemsCount === 0) {
             navigation.navigate('Basket');
         }
-    }
+
+        if (totalCheckedSpecialItemsCount > 0 && totalCheckedItemsCount <= 0) {
+            // Handle special meals
+            const basketItems = totalCheckedSpecialItems.filter(item => item.checked === true);
+
+            try {
+                if (editMenu && mealId > 0) {
+                    await updateBasketFromId(mealId, basketItems);
+                    showToast('success', 'Basket updated successfully');
+                    navigation.navigate('Basket');
+                } else {
+                    await setMenuBasketService(basketItems, totalAmount, venue, isVegi, true);
+                    navigation.navigate('Basket');
+                }
+            } catch (error) {
+                // Handle error here
+                console.error('Error updating basket:', error);
+            }
+        }
+
+        if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5)) {
+            // Handle ordinary meals
+            const basketItems = totalCheckedItems.filter(item => item.checked === true);
+
+            try {
+                if (editMenu && mealId > 0) {
+                    await updateBasketFromId(mealId, basketItems);
+                    showToast('success', 'Basket updated successfully');
+                    navigation.navigate('Basket');
+                } else if (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5) {
+                    await setMenuBasketService(basketItems, totalAmount, venue, isVegi, false);
+                    navigation.navigate('Basket');
+                } else {
+                    showToast('error', 'Please select 5 items to proceed.');
+                }
+            } catch (error) {
+                // Handle error here
+                console.error('Error updating basket:', error);
+            }
+        }
+
+        if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount < 5)) {
+            showToast('error', 'Please select 5 items to proceed.');
+        }
+
+        setTimeout(() => {
+            setIsButtonDisabled(false);
+        }, 2000);
+    };
+
     return (
         <View style={styles.priceContainer}>
-            <TouchableOpacity
-                style={styles.priceContainerLeft}
-                onPress={() => handleBasketPress()}
-            >
-                {
-                    !editMenu ? (
-                        <Text style={styles.priceContainerLeftText}>View Basket {
-                            (totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && `(${totalCheckedItemsCount + totalCheckedSpecialItemsCount})`
-                        }
-                        </Text>
-                    ) : (
-                        <Text style={styles.priceContainerLeftText}>Update Basket {
-                            (totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && `(${totalCheckedItemsCount + totalCheckedSpecialItemsCount})`
-                        }
-                        </Text>
-                    )
-                }
+            <TouchableOpacity style={styles.priceContainerLeft} onPress={() => handleBasketPress()}>
+                {!editMenu ? (
+                    <Text style={styles.priceContainerLeftText}>
+                        View
+                        Basket {totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0 ? `(${totalCheckedItemsCount + totalCheckedSpecialItemsCount})` : ''}
+                    </Text>
+                ) : (
+                    <Text style={styles.priceContainerLeftText}>
+                        Update
+                        Basket {totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0 ? `(${totalCheckedItemsCount + totalCheckedSpecialItemsCount})` : ''}
+                    </Text>
+                )}
             </TouchableOpacity>
-            {
-                (totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && (
-                    <View style={styles.priceContainerRight}>
-                        <Text style={styles.priceContainerRightText}>Rs {totalAmount + totalSpecialPrice}</Text>
-                    </View>
-                )
-            }
+            {(totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && (
+                <View style={styles.priceContainerRight}>
+                    <Text style={styles.priceContainerRightText}>Rs {totalAmount + totalSpecialPrice}</Text>
+                </View>
+            )}
         </View>
     );
 };

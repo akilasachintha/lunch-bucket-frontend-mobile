@@ -7,13 +7,15 @@ import {getUTCDateTime} from "../../services/timeService";
 import {
     getByMealIdFromBasketService,
     getDinnerMeetMenuService,
+    getDinnerRiceMenuService,
     getDinnerStewMenuService,
     getDinnerVegetableMenuService,
     getLunchMeetMenuService,
-    getLunchStewMenuService,
-    getLunchVegetableMenuService,
     getLunchMeetPercentageService,
-    getLunchStewPercentageService
+    getLunchRiceMenuService,
+    getLunchStewMenuService,
+    getLunchStewPercentageService,
+    getLunchVegetableMenuService,
 } from "../../services/menuService";
 import {log} from "../../helpers/logs/log";
 import AnimatedLoadingSpinner from "../../components/loading/LoadingSkelteon";
@@ -24,15 +26,21 @@ export default function EditMenuScreen({route}) {
 
     const [isVisible, setIsVisible] = useState(true);
     const [loading, setLoading] = useState(true);
+
+    const [isVegiLunch, setIsVegiLunch] = useState(false);
+    const [isVegiDinner, setIsVegiDinner] = useState(false);
+
     const [meal, setMeal] = useState({});
     const [lunch, setLunch] = useState(true);
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
     const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState(false);
 
+    const [lunchRiceItems, setLunchRiceItems] = useState([]);
     const [lunchVegetableItems, setLunchVegetableItems] = useState([]);
     const [lunchStewItems, setLunchStewItems] = useState([]);
     const [lunchMeatItems, setLunchMeatItems] = useState([]);
 
+    const [dinnerRiceItems, setDinnerRiceItems] = useState([]);
     const [dinnerVegetableItems, setDinnerVegetableItems] = useState([]);
     const [dinnerStewItems, setDinnerStewItems] = useState([]);
     const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
@@ -73,6 +81,17 @@ export default function EditMenuScreen({route}) {
                     };
                 });
 
+                const totalDinnerRiceItems = await getDinnerRiceMenuService();
+                const dinnerRiceItems = result.items.filter((item) => item.foodType === "Rice");
+                const updatedDinnerRiceItems = totalDinnerRiceItems.map((item) => {
+                    const foundItem = dinnerRiceItems.find((dinnerItem) => dinnerItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                setDinnerRiceItems(updatedDinnerRiceItems);
                 setDinnerVegetableItems(updatedDinnerVegetableItems);
                 setDinnerStewItems(updatedDinnerStewItems);
                 setDinnerMeatItems(updatedDinnerMeatItems);
@@ -109,6 +128,17 @@ export default function EditMenuScreen({route}) {
                     };
                 });
 
+                const totalLunchRiceItems = await getLunchRiceMenuService();
+                const lunchRiceItems = result.items.filter((item) => item.foodType === "Rice");
+                const updatedLunchRiceItems = totalLunchRiceItems.map((item) => {
+                    const foundItem = lunchRiceItems.find((lunchItem) => lunchItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                setLunchRiceItems(updatedLunchRiceItems);
                 setLunchVegetableItems(updatedLunchVegetableItems);
                 setLunchStewItems(updatedLunchStewItems);
                 setLunchMeatItems(updatedLunchMeatItems);
@@ -221,15 +251,27 @@ export default function EditMenuScreen({route}) {
     };
 
     const lunchItemList = [
+        createItemListWithType("Rice", lunchRiceItems, setLunchRiceItems, 1, disableLunchCheckbox),
         createItemListWithType("Vegetable", lunchVegetableItems, setLunchVegetableItems, 2, disableLunchCheckbox),
         createItemListWithType("Stew", lunchStewItems, setLunchStewItems, 1, disableLunchCheckbox),
         createItemListWithType("Meat", lunchMeatItems, setLunchMeatItems, 1, disableLunchCheckbox),
     ];
 
     const dinnerItemList = [
+        createItemListWithType("Rice", dinnerRiceItems, setDinnerRiceItems, 1, disableDinnerCheckbox),
         createItemListWithType("Vegetable", dinnerVegetableItems, setDinnerVegetableItems, 2, disableDinnerCheckbox),
-        createItemListWithType("Meat", dinnerMeatItems, setDinnerMeatItems, 1, disableDinnerCheckbox),
         createItemListWithType("Stew", dinnerStewItems, setDinnerStewItems, 1, disableDinnerCheckbox),
+        createItemListWithType("Meat", dinnerMeatItems, setDinnerMeatItems, 1, disableDinnerCheckbox),
+    ];
+
+    const lunchVegiItemList = [
+        createItemListWithType("Rice", lunchRiceItems, setLunchRiceItems, 1, disableLunchCheckbox),
+        createItemListWithType("Vegetable", lunchVegetableItems, setLunchVegetableItems, 4, disableLunchCheckbox),
+    ];
+
+    const dinnerVegiItemList = [
+        createItemListWithType("Rice", dinnerRiceItems, setDinnerRiceItems, 1, disableDinnerCheckbox),
+        createItemListWithType("Vegetable", dinnerVegetableItems, setDinnerVegetableItems, 4, disableDinnerCheckbox),
     ];
 
     const getTotalCheckedItemsCount = (itemLists) => {
@@ -260,11 +302,11 @@ export default function EditMenuScreen({route}) {
 
     const totalCheckedLunchItemsCount = useMemo(() => {
         return getTotalCheckedItemsCount(lunchItemList);
-    }, [lunchVegetableItems, lunchStewItems, lunchMeatItems]);
+    }, [lunchRiceItems, lunchVegetableItems, lunchStewItems, lunchMeatItems]);
 
     const totalCheckedDinnerItemsCount = useMemo(() => {
         return getTotalCheckedItemsCount(dinnerItemList);
-    }, [dinnerVegetableItems, dinnerMeatItems, dinnerStewItems]);
+    }, [dinnerRiceItems, dinnerVegetableItems, dinnerMeatItems, dinnerStewItems]);
 
     const calculateTotalPrice = (itemList) => {
         let totalPrice = 0;
@@ -278,11 +320,11 @@ export default function EditMenuScreen({route}) {
 
     const lunchTotalPrice = useMemo(() => {
         return calculateTotalPrice(getTotalCheckedItems(lunchItemList));
-    }, [lunchVegetableItems, lunchStewItems, lunchMeatItems]);
+    }, [lunchRiceItems, lunchVegetableItems, lunchStewItems, lunchMeatItems]);
 
     const dinnerTotalPrice = useMemo(() => {
         return calculateTotalPrice(getTotalCheckedItems(dinnerItemList));
-    }, [dinnerVegetableItems, dinnerMeatItems, dinnerStewItems]);
+    }, [dinnerRiceItems, dinnerVegetableItems, dinnerMeatItems, dinnerStewItems]);
 
     const handleDisabledMenu = async () => {
         try {

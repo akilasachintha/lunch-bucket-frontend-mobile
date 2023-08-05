@@ -1,4 +1,4 @@
-import {SafeAreaView, ScrollView, StyleSheet, View} from "react-native";
+import {SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import React, {useEffect, useState} from "react";
 import StaticTopBar from "../../components/topBar/StaticTopBar";
@@ -6,6 +6,7 @@ import {deleteOrderService, getOrdersService} from "../../services/ordersService
 import {log} from "../../helpers/logs/log";
 import OrderItem from "../../components/orderItem/OrderItem";
 import AnimatedLoadingSpinner from "../../components/loading/LoadingSkelteon";
+import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 export default function ListOrdersScreen() {
     const [orders, setOrders] = useState([]);
@@ -40,6 +41,20 @@ export default function ListOrdersScreen() {
                 <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
                 <View style={styles.bodyContainerLoading}>
                     <AnimatedLoadingSpinner/>
+                </View>
+            </SafeAreaView>
+        );
+    }
+
+    if (orders && orders.length === 0) {
+        return (
+            <SafeAreaView style={styles.safeAreaContainer}>
+                <StaticTopBar/>
+                <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
+                <View style={styles.bodyContainer}>
+                    <ScrollView contentContainerStyle={styles.noOrdersContainer}>
+                        <Text style={styles.noOrdersText}>No orders found.</Text>
+                    </ScrollView>
                 </View>
             </SafeAreaView>
         );
@@ -94,5 +109,14 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         color: '#630A10',
         fontWeight: 'bold',
+    },
+    noOrdersContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noOrdersText: {
+        fontSize: dynamicFont(12),
+        color: '#000',
     },
 });

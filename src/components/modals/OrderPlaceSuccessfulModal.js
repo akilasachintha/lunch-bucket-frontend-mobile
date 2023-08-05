@@ -1,7 +1,8 @@
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {AntDesign} from '@expo/vector-icons';
 
-export default function OrderPlaceSuccessfulModal({isVisible, setIsVisible}) {
+export default function OrderPlaceSuccessfulModal({isVisible, setIsVisible, basket}) {
+
     return (
         <View style={styles.container}>
             <Modal visible={isVisible} transparent>
@@ -17,7 +18,8 @@ export default function OrderPlaceSuccessfulModal({isVisible, setIsVisible}) {
                             <Text style={styles.modalTopText}>Your order was placed successfully</Text>
                         </View>
                         <View style={styles.modalBottomTextContainer}>
-                            <Text style={styles.modalBottomText}>You can change your order until 10AM.</Text>
+                            <Text style={styles.modalBottomText}>You can change your {basket && basket.venue} order
+                                until {basket && basket.venue === "Lunch" ? "10 AM" : "4 PM"}</Text>
                         </View>
                     </View>
                 </TouchableOpacity>

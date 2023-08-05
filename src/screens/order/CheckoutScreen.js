@@ -89,7 +89,8 @@ export default function Checkout() {
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            {isVisible && <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible}/>}
+            {isVisible &&
+                <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible} basket={basket}/>}
             <StaticTopBar/>
             <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>

@@ -1,13 +1,23 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {AntDesign, Fontisto} from '@expo/vector-icons';
-import {useEffect, useState} from 'react';
-import {removeMealFromBasketService} from "../../services/menuService";
+import {useState} from 'react';
 import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 import {log} from "../../helpers/logs/log";
 import {useNavigation} from "@react-navigation/native";
+import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
+import {fetchBasket} from "../../services/menuService";
 
-export default function BasketItem({mealName, mealId, items, setBasket, isSpecial = false}) {
-    const [count, setCount] = useState(1);
+export default function BasketItem({
+                                       mealName,
+                                       mealId,
+                                       items,
+                                       isSpecial = false,
+                                       setIsModalVisible,
+                                       isModalVisible,
+                                       setBasket,
+                                       itemCount,
+                                   }) {
+    const [count, setCount] = useState(itemCount);
     const [onClicked, setOnClicked] = useState(true);
     const navigation = useNavigation();
 
@@ -16,11 +26,10 @@ export default function BasketItem({mealName, mealId, items, setBasket, isSpecia
         setCount(updatedCount);
 
         if (updatedCount <= 0) {
-            await removeMealFromBasketService(mealId);
-            await fetchBasket();
+            setIsModalVisible(true);
         } else {
             await updateBasketCount(mealId, updatedCount);
-            await fetchBasket();
+            await fetchBasket(mealId, setCount, setBasket);
         }
     };
 
@@ -28,7 +37,7 @@ export default function BasketItem({mealName, mealId, items, setBasket, isSpecia
         const updatedCount = count + 1;
         setCount(updatedCount);
         await updateBasketCount(mealId, updatedCount);
-        await fetchBasket();
+        await fetchBasket(mealId, setCount, setBasket);
     };
 
     const updateBasketCount = async (mealId, count) => {
@@ -37,7 +46,6 @@ export default function BasketItem({mealName, mealId, items, setBasket, isSpecia
             basketItems = JSON.parse(basketItems);
 
             if (basketItems?.meal?.length > 0) {
-                console.log("basketItems.meal", basketItems.meal);
                 basketItems.meal = basketItems.meal.map((item) => {
                     if (item.id === mealId) {
                         return {
@@ -52,35 +60,9 @@ export default function BasketItem({mealName, mealId, items, setBasket, isSpecia
                 await addDataToLocalStorage('basket', jsonValue);
             }
         } catch (error) {
-            log("Error :: BasketScreen :: updateBasketCount :: ", error.message, "BasketItem.js");
+            log("Error :: BasketItem :: updateBasketCount :: ", error.message, "BasketItem.js");
         }
     };
-
-    const fetchBasket = async () => {
-        try {
-            let basketItems = await getDataFromLocalStorage('basket');
-            basketItems = JSON.parse(basketItems);
-
-            if (basketItems?.meal?.length > 0) {
-                basketItems.meal = basketItems.meal.map((item) => {
-                    if (item.id === mealId) {
-                        setCount(item.count);
-                    }
-                    return item;
-                });
-            }
-
-            setBasket(basketItems);
-        } catch (error) {
-            log("Error :: BasketScreen :: fetchBasket :: ", error.message, "BasketItem.js");
-        }
-    };
-
-    useEffect(() => {
-        fetchBasket().catch((error) =>
-            log("Error :: BasketScreen :: useEffect :: ", error.message, "BasketItem.js")
-        );
-    }, []);
 
     const handleEditMealPress = () => {
         navigation.navigate('EditMenu', {mealId});
@@ -88,6 +70,13 @@ export default function BasketItem({mealName, mealId, items, setBasket, isSpecia
 
     return (
         <View>
+            {isModalVisible && (
+                <ConfirmDeleteModal
+                    mealId={mealId}
+                    isModalVisible={isModalVisible}
+                    setIsModalVisible={setIsModalVisible}
+                />
+            )}
             {onClicked && (
                 <TouchableOpacity style={[styles.bucketItemContainer, styles.elevation, styles.shadowProp]}
                                   onPress={() => setOnClicked(false)}>
@@ -101,7 +90,7 @@ export default function BasketItem({mealName, mealId, items, setBasket, isSpecia
                         <Fontisto name="minus-a" size={14} color="black"/>
                     </TouchableOpacity>
                     <View style={styles.countTextContainer}>
-                        <Text style={styles.countText}>{count}</Text>
+                        <Text style={styles.countText}>{itemCount}</Text>
                     </View>
                     <TouchableOpacity
                         style={styles.plusButtonTextContainer}
@@ -124,7 +113,7 @@ export default function BasketItem({mealName, mealId, items, setBasket, isSpecia
                             <Fontisto name="minus-a" size={14} color="black"/>
                         </TouchableOpacity>
                         <View style={styles.countTextContainer}>
-                            <Text style={styles.countText}>{count}</Text>
+                            <Text style={styles.countText}>{itemCount}</Text>
                         </View>
                         <TouchableOpacity
                             style={styles.minusButtonTextContainer}
