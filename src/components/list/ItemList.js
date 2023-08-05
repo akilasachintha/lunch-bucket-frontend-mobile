@@ -48,7 +48,7 @@ const ListItem = ({itemName, checked, handleItemPress, percentage, disabled}) =>
     );
 };
 
-export default function ItemList({title, items, specialItems, handleItemPress, disableCheckbox}) {
+export default function ItemList({title, items, handleItemPress, disableCheckbox}) {
     return (
         <View>
             {items && items.length > 0 && (

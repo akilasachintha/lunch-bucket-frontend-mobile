@@ -79,11 +79,7 @@ export async function validateTokenService() {
         if (result === "error") {
             return false;
         } else {
-            if (result.data.state === false) {
-                return false;
-            } else {
-                return true;
-            }
+            return result.data.state !== false;
         }
     } catch (error) {
         log("error", "service", "checkTokenService", error.message, "authService.js");

@@ -59,9 +59,9 @@ export default function ContactOwner() {
             setChatList(updatedChatList);
 
             const {id} = expandedChat;
-            const result = await sendMessageToConversationService(id, values.message);
+            await sendMessageToConversationService(id, values.message);
         } else {
-            const result = await createNewConversationService(values.message);
+            await createNewConversationService(values.message);
             fetchLatestChatData().catch(
                 (error) => log("error", "screen", "ContactOwner | handleOnSubmit", error.message, "ContactOwner.js"),
             );

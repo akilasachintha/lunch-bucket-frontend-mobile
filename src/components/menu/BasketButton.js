@@ -2,12 +2,10 @@ import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useNavigation} from "@react-navigation/native";
 import {setMenuBasketService, updateBasketFromId} from "../../services/menuService";
 import {useToast} from "../../helpers/toast/Toast";
-import {useState} from "react";
 
 const BasketButton = ({
                           totalCheckedItemsCount,
                           totalSpecialPrice,
-                          isSpecial,
                           totalAmount,
                           totalCheckedItems,
                           venue,
