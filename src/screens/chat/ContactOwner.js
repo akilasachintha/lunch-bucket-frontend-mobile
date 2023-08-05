@@ -14,6 +14,7 @@ import {log} from "../../helpers/logs/log";
 
 export default function ContactOwner() {
     const [chatList, setChatList] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const scrollViewRef = useRef();
     const sendIcon = <MaterialCommunityIcons name="send" size={40} color="#630A10"/>;
 
@@ -48,6 +49,9 @@ export default function ContactOwner() {
     }, []);
 
     const handleOnSubmit = async (values, {resetForm}) => {
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
         const newMessage = {message: values.message, sender: "user"};
         const chatIndex = chatList.findIndex((chat) => chat.expanded === true);
 
@@ -69,6 +73,7 @@ export default function ContactOwner() {
 
         scrollViewRef.current.scrollToEnd({animated: true});
         resetForm();
+        setIsSubmitting(false);
     };
 
     const handleToggleExpand = (chatIndex) => {
@@ -146,7 +151,7 @@ export default function ContactOwner() {
                             />
                             <TouchableOpacity
                                 style={styles.sendIcon}
-                                onPress={formikProps.handleSubmit}
+                                onPress={!isSubmitting ? formikProps.handleSubmit : null}
                             >
                                 {sendIcon}
                             </TouchableOpacity>

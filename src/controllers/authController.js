@@ -26,13 +26,14 @@ export async function loginController(email, password) {
     }
 }
 
-export async function registerController(email, password) {
+export async function registerController(email, password, contactNo) {
     try {
         const response = await axios.post(
             'https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/addCustomer',
             {
                 email: email,
                 password: password,
+                contactNo: contactNo,
             }
         );
 

@@ -1,21 +1,19 @@
+import React, {useState} from 'react';
 import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
-import PATHS from "../../helpers/paths/paths";
-import {useState} from "react";
-import {Formik} from "formik";
-import * as Yup from "yup";
-import FormSubmitButton from "../../components/form/FormSubmitButton";
-import FormFields from "../../components/form/FormFields";
-import {registerService} from "../../services/authService";
-import {useToast} from "../../helpers/toast/Toast";
-import {log} from "../../helpers/logs/log";
-import {StatusBar} from "expo-status-bar";
-import {dynamicFont} from "../../helpers/responsive/fontScale";
+import PATHS from '../../helpers/paths/paths';
+import {Formik} from 'formik';
+import * as Yup from 'yup';
+import FormSubmitButton from '../../components/form/FormSubmitButton';
+import FormFields from '../../components/form/FormFields';
+import {registerService} from '../../services/authService';
+import {useToast} from '../../helpers/toast/Toast';
+import {log} from '../../helpers/logs/log';
+import {StatusBar} from 'expo-status-bar';
+import {dynamicFont} from '../../helpers/responsive/fontScale';
 
 const validationSchema = Yup.object().shape({
-    email: Yup.string()
-        .email('Invalid email address')
-        .required('Email is required'),
+    email: Yup.string().email('Invalid email address').required('Email is required'),
     password: Yup.string()
         .min(8, 'Password must be at least 8 characters')
         .matches(
@@ -41,7 +39,7 @@ const fields = [
         name: 'confirmPassword',
         required: true,
         secureTextEntry: true,
-        isEyeEnabled: true
+        isEyeEnabled: true,
     },
 ];
 
@@ -58,20 +56,24 @@ export default function SignUp({navigation}) {
     const {showToast} = useToast();
 
     const handleSubmit = async (values, actions) => {
+        if (isSubmitting) {
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
-            const result = await registerService(values.email, values.password);
-            if (result === "success") {
-                showToast('success', 'Successfully Registered');
+            const result = await registerService(values.email, values.password, values.contactNo);
+            if (result === 'success') {
+                showToast('success', 'Successfully Registered.');
                 navigation.navigate('Login');
             } else {
-                showToast('error', 'Register Failed');
-                log("error", "Login", "handleSubmit", "Register Failed", "SignUp.js");
+                showToast('error', 'You are Already Registered');
+                log('error', 'Login', 'handleSubmit', 'User already Registered.', 'SignUp.js');
             }
         } catch (error) {
-            setToastMessage("Login Failed");
-            log("error", "Login", "handleSubmit", error.message, "SignUp.js");
+            setToastMessage('Login Failed');
+            log('error', 'Login', 'handleSubmit', error.message, 'SignUp.js');
         } finally {
             actions.setSubmitting(false);
             setIsSubmitting(false);
@@ -88,24 +90,18 @@ export default function SignUp({navigation}) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar style="light"/>
+            <StatusBar style=""/>
             <View style={styles.mainContainer}>
                 <View style={styles.headerContainer}>
-                    <Image
-                        style={styles.headerImage}
-                        source={PATHS.signUp}
-                    />
+                    <Image style={styles.headerImage} source={PATHS.signUp}/>
                 </View>
                 <View style={styles.bottomContainer}>
                     <View>
                         <Text style={styles.welcomeBackText}>{STRINGS.welcomeBack}</Text>
                     </View>
                     <View>
-                        <Formik
-                            initialValues={initialValues}
-                            validationSchema={validationSchema}
-                            onSubmit={handleSubmit}
-                        >
+                        <Formik initialValues={initialValues} validationSchema={validationSchema}
+                                onSubmit={handleSubmit}>
                             {({handleChange, handleBlur, handleSubmit, values, errors, isValid, touched}) => (
                                 <View>
                                     <View>
@@ -120,10 +116,11 @@ export default function SignUp({navigation}) {
                                     </View>
 
                                     <FormSubmitButton
-                                        buttonText={"Sign Up"}
+                                        buttonText={'Sign Up'}
                                         isValid={isValid}
                                         handleSubmit={handleSubmit}
-                                        isSubmitting={isSubmitting}/>
+                                        isSubmitting={isSubmitting}
+                                    />
                                 </View>
                             )}
                         </Formik>
@@ -179,7 +176,7 @@ const styles = StyleSheet.create({
         fontSize: dynamicFont(18),
         fontWeight: 'bold',
         textAlign: 'center',
-        marginVertical: "10%",
+        marginVertical: '10%',
     },
     dontHaveAccountText: {
         color: '#630A10',

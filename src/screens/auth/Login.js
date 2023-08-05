@@ -15,6 +15,7 @@ import {log} from "../../helpers/logs/log";
 const validationSchema = Yup.object().shape({
     email: Yup.string()
         .email('Invalid email address')
+        .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email address')
         .required('Email is required'),
     password: Yup.string()
         .min(8, 'Password must be at least 8 characters')

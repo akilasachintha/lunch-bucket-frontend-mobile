@@ -16,6 +16,7 @@ export default function Checkout() {
     const [isVisible, setIsVisible] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
     const [basket, setBasket] = useState({});
+    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
     const navigation = useNavigation();
     const {showToast} = useToast();
@@ -37,6 +38,9 @@ export default function Checkout() {
     }
 
     const handleCheckout = async () => {
+        if (isPlacingOrder) return;
+        setIsPlacingOrder(true);
+
         try {
             const orderPlacedSuccessfully = await fetchCheckout();
 
@@ -50,6 +54,8 @@ export default function Checkout() {
             }
         } catch (error) {
             log("error", "CheckoutScreen", "handleCheckout", error.message, "CheckoutScreen.js");
+        } finally {
+            setIsPlacingOrder(false);
         }
     };
 
@@ -60,11 +66,9 @@ export default function Checkout() {
 
             basketItems = JSON.parse(basketItems);
             if (basketItems && basketItems.meal && basketItems.meal.length > 0) {
-                console.log("basketItems.meal", basketItems.meal);
                 let totalAmount = 0;
 
                 basketItems.meal.forEach((meal) => {
-                    console.log("meal", meal);
                     totalAmount += meal.totalPrice;
                 });
 
@@ -105,7 +109,7 @@ export default function Checkout() {
                         <Text style={styles.totalAmountRightContainer}>Rs {totalAmount}</Text>
                     </TouchableOpacity>
                 </View>
-                <BottomButton buttonText="Place Order" onPress={handleCheckout}/>
+                <BottomButton buttonText="Place Order" onPress={handleCheckout} isLoading={isPlacingOrder}/>
             </View>
         </SafeAreaView>
     )
@@ -118,32 +122,6 @@ const styles = StyleSheet.create({
     },
     bodyContainer: {
         flex: 10,
-    },
-    bodyTopBar: {
-        backgroundColor: '#7E1F24',
-        flex: 1,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        flexDirection: 'row',
-    },
-    backButtonContainer: {
-        flex: 1,
-        paddingVertical: 20,
-    },
-    backButtonIcon: {
-        fontWeight: 'bold',
-        textAlign: 'center',
-        color: '#fff',
-    },
-    topTextContainer: {
-        flex: 5,
-        paddingVertical: 20,
-    },
-    topText: {
-        textAlign: 'center',
-        fontWeight: 'bold',
-        fontSize: 18,
-        color: '#fff',
     },
     amountListContainer: {
         paddingVertical: "5%",
@@ -164,10 +142,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'rgba(71, 71, 71, 1)',
         textAlign: 'right'
-    },
-    deliveryAmountLeftContainer: {
-        fontSize: 18,
-        flex: 1,
     },
     totalAmountLeftContainer: {
         fontSize: 18,

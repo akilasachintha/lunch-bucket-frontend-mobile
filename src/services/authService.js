@@ -33,13 +33,13 @@ export async function loginService(email, password) {
     }
 }
 
-export async function registerService(email, password) {
+export async function registerService(email, password, contactNo) {
     try {
         if (email === "" || password === "") {
             return ERROR_STATUS.ERROR;
         }
 
-        const result = await registerController(email, password);
+        const result = await registerController(email, password, contactNo);
         const data = await result.data;
 
         if (result === "error") {
@@ -75,7 +75,6 @@ export async function logoutService() {
 export async function validateTokenService() {
     try {
         const result = await validateTokenController();
-
         if (result === "error") {
             return false;
         } else {
