@@ -1,10 +1,9 @@
-import React, {useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/native';
 import PATHS from '../../helpers/paths/paths';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StatusBar} from 'expo-status-bar';
-import {getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
+import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
 import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const InitialScreen = () => {
@@ -12,41 +11,44 @@ const InitialScreen = () => {
     const navigation = useNavigation();
     const isFocused = useIsFocused();
 
-    useFocusEffect(
-        React.useCallback(() => {
-            const checkIfVisited = async () => {
-                try {
-                    const visited = await AsyncStorage.getItem('@visited');
-                    let loginStatus = await getDataFromLocalStorage('loginStatus');
+    const checkIfVisited = async () => {
+        try {
+            const visited = await getDataFromLocalStorage('@visited');
+            let loginStatus = await getDataFromLocalStorage('loginStatus');
 
-                    if (isFocused) {
-                        Animated.timing(slideAnim, {
-                            toValue: 1,
-                            duration: 6000,
-                            useNativeDriver: true,
-                        }).start();
+            if (isFocused) {
+                Animated.timing(slideAnim, {
+                    toValue: 1,
+                    duration: 6000,
+                    useNativeDriver: true,
+                }).start();
 
-                        if (visited) {
-                            setTimeout(() => {
-                                slideAnim.setValue(0);
-                                if (loginStatus === 'true') {
-                                    navigation.navigate('Menu');
-                                } else {
-                                    navigation.navigate('Login');
-                                }
-                            }, 7000);
+                if (visited === 'true') {
+                    setTimeout(() => {
+                        slideAnim.setValue(0);
+
+                        if (loginStatus === 'true') {
+                            navigation.navigate('Menu');
                         } else {
-                            await AsyncStorage.setItem('@visited', 'true');
-                            setTimeout(() => {
-                                slideAnim.setValue(0);
-                                navigation.navigate('Welcome');
-                            }, 7000);
+                            navigation.navigate('Login');
                         }
-                    }
-                } catch (error) {
-                    console.error(error);
+                    }, 7000);
+                } else {
+                    await addDataToLocalStorage('@visited', 'true');
+                    setTimeout(() => {
+                        slideAnim.setValue(0);
+
+                        navigation.navigate('Welcome');
+                    }, 7000);
                 }
-            };
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
             checkIfVisited().catch(console.error);
         }, [isFocused])
     );

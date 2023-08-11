@@ -29,11 +29,13 @@ const fields = [
 
 export default function Login({navigation}) {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const initialValues = {email: '', password: ''};
     const {showToast} = useToast();
 
     const handleSubmit = async (values, actions) => {
         setIsSubmitting(true);
+        setIsLoading(true);
 
         try {
             const result = await loginService(values.email, values.password);
@@ -49,6 +51,7 @@ export default function Login({navigation}) {
         } finally {
             actions.setSubmitting(false);
             setIsSubmitting(false);
+            setIsLoading(false);
         }
     };
 
@@ -85,6 +88,7 @@ export default function Login({navigation}) {
                                     </View>
 
                                     <FormSubmitButton
+                                        isLoading={isLoading}
                                         buttonText={"Sign In"}
                                         isValid={isValid}
                                         handleSubmit={handleSubmit}

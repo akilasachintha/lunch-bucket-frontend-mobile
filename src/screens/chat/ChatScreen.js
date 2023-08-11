@@ -4,12 +4,14 @@ import React from "react";
 import BorderButton from "../../components/borderButton/BorderButton";
 import {useNavigation} from "@react-navigation/native";
 import StaticTopBar from "../../components/topBar/StaticTopBar";
+import DynamicTopBar from "../../components/topBar/DynamicTopBar";
+import {SelectedTab} from "../../helpers/enums/enums";
 
 export default function ChatScreen() {
     const navigation = useNavigation();
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <StaticTopBar/>
+            <DynamicTopBar selectedTab={SelectedTab.CHAT}/>
             <View style={styles.container}>
                 <TopHeader headerText="Chat" backButtonPath="Menu"/>
                 <View style={styles.bodyContainer}>

@@ -19,6 +19,8 @@ import {
 } from "../../services/menuService";
 import {log} from "../../helpers/logs/log";
 import AnimatedLoadingSpinner from "../../components/loading/LoadingSkelteon";
+import DynamicTopBar from "../../components/topBar/DynamicTopBar";
+import {SelectedTab} from "../../helpers/enums/enums";
 
 export default function EditMenuScreen({route}) {
     const {showToast} = useToast();
@@ -390,7 +392,7 @@ export default function EditMenuScreen({route}) {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <View style={styles.mainContainer}>
-                <StaticTopBar/>
+                <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
                 <View style={styles.bodyTopBar}>
                     {
                         meal && meal.venue === "Lunch" ? (

@@ -1,20 +1,31 @@
 import TopHeader from "../../components/topHeader/TopHeader";
-import {SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {
+    ActivityIndicator,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from "react-native";
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import React, {useEffect, useRef, useState} from 'react';
-import StaticTopBar from "../../components/topBar/StaticTopBar";
 import {
     createNewConversationService,
     getChatsService,
     sendMessageToConversationService
 } from "../../services/chatService";
 import {log} from "../../helpers/logs/log";
+import DynamicTopBar from "../../components/topBar/DynamicTopBar";
+import {SelectedTab} from "../../helpers/enums/enums";
 
 export default function ContactOwner() {
     const [chatList, setChatList] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const scrollViewRef = useRef();
     const sendIcon = <MaterialCommunityIcons name="send" size={40} color="#630A10"/>;
 
@@ -27,15 +38,17 @@ export default function ContactOwner() {
     // Function to fetch the latest chat data
     const fetchLatestChatData = async () => {
         try {
+            setIsLoading(true);
             const updatedChatData = await getChatsService();
             const formattedChatList = updatedChatData.map((chat) => ({
                 id: chat.id,
-                view_admin_state: chat.view_admin_state,
+                view_user_state: chat.view_user_state,
                 expanded: false,
                 messages: chat.messages,
             }));
             setChatList(formattedChatList);
             log("success", "screen", "ContactOwner | fetchLatestChatData", updatedChatData, "ContactOwner.js");
+            setIsLoading(false);
         } catch (error) {
             log("error", "screen", "ContactOwner | fetchLatestChatData", error.message, "ContactOwner.js");
         }
@@ -84,9 +97,23 @@ export default function ContactOwner() {
         });
     };
 
+    if (isLoading) {
+        return (
+            <SafeAreaView style={styles.safeAreaContainer}>
+                <DynamicTopBar selectedTab={SelectedTab.CHAT}/>
+                <View style={styles.container}>
+                    <TopHeader headerText="Chat with Owner" backButtonPath="Chat"/>
+                    <View style={styles.bodyContainer}>
+                        <ActivityIndicator size="large" color="#630A10" style={styles.activityIndicator}/>
+                    </View>
+                </View>
+            </SafeAreaView>
+        )
+    }
+
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <StaticTopBar/>
+            <DynamicTopBar selectedTab={SelectedTab.CHAT}/>
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
@@ -97,6 +124,7 @@ export default function ContactOwner() {
                         <TopHeader headerText="Chat with Owner" backButtonPath="Chat"/>
                         <View style={styles.bodyContainer}>
                             <ScrollView
+                                showsVerticalScrollIndicator={false}
                                 style={styles.scrollViewContainer}
                                 ref={scrollViewRef}
                                 onContentSizeChange={() => scrollViewRef.current.scrollToEnd()}
@@ -175,7 +203,9 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
     },
-    scrollViewContainer: {},
+    scrollViewContainer: {
+        marginTop: "2%",
+    },
     conversationTitleContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -275,5 +305,10 @@ const styles = StyleSheet.create({
         height: 10,
         borderRadius: 15,
         backgroundColor: '#419d02',
+    },
+    activityIndicator: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });

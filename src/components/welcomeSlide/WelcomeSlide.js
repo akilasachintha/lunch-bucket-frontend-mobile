@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: "5%",
     },
     bottomText: {
-        paddingHorizontal: 30,
-        paddingVertical: 50,
+        paddingHorizontal: "8%",
+        paddingVertical: "10%",
     },
     headerText: {
         color: '#630A10',
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     contentText: {
-        marginTop: 30,
+        marginTop: "5%",
         color: '#630A10',
         fontSize: dynamicFont(12),
     },

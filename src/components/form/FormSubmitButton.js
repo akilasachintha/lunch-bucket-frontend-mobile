@@ -1,8 +1,8 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {dynamicFont} from "../../helpers/responsive/fontScale";
 
-const FormSubmitButton = ({handleSubmit, buttonText, isValid}) => {
+const FormSubmitButton = ({handleSubmit, buttonText, isValid, isLoading}) => {
     const inputStyles = [
         styles.signInText,
         !isValid ? styles.signInTextError : null,
@@ -11,9 +11,20 @@ const FormSubmitButton = ({handleSubmit, buttonText, isValid}) => {
     return (
         <View style={styles.signInButtonContainer}>
             <TouchableOpacity onPress={handleSubmit} disabled={!isValid}>
-                <Text style={inputStyles}>
-                    {buttonText}
-                </Text>
+                {
+                    !isLoading && (
+                        <Text style={inputStyles}>
+                            {buttonText}
+                        </Text>
+                    )
+                }
+                {
+                    isLoading && (
+                        <Text style={inputStyles}>
+                            <ActivityIndicator size={25} color="#630A10"/>
+                        </Text>
+                    )
+                }
             </TouchableOpacity>
         </View>
     );

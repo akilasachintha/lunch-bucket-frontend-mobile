@@ -1,13 +1,19 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-export default function BottomButton({buttonText, onPress}) {
+export default function BottomButton({buttonText, onPress, isLoading}) {
     return (
         <View style={styles.viewItemContainer}>
             <TouchableOpacity
                 style={styles.viewItemContainerTextContainer}
                 onPress={onPress}
+                disabled={isLoading}
             >
-                <Text style={styles.viewItemContainerText}> {buttonText} </Text>
+                {isLoading ? (
+                    <ActivityIndicator size={28} color="#630A10"/>
+                ) : (
+                    <Text style={styles.viewItemContainerText}>{buttonText}</Text>
+                )}
             </TouchableOpacity>
         </View>
     );

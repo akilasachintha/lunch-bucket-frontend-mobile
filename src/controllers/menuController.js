@@ -12,7 +12,7 @@ export async function getLunchMenuController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const res = await axios.get('https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/lunch/invokeSuitabilities'
+        const res = axios.get('https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/lunch/invokeSuitabilities'
             , {
                 headers: {
                     'token': token,
@@ -43,7 +43,7 @@ export async function getDinnerMenuController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const res = await axios.get('https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/dinner/invokeSuitabilities', {
+        const res = axios.get('https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/dinner/invokeSuitabilities', {
             headers: {
                 'token': token,
             }
@@ -59,6 +59,27 @@ export async function getDinnerMenuController() {
 
     } catch (error) {
         log("error", "controller", "getDinnerMenuController", error.message, "menuController.js");
+        return ERROR_STATUS.ERROR;
+    }
+}
+
+export async function getLunchVegetablePercentageController(vegiId1, vegiId2) {
+    try {
+        if (!vegiId1 || !vegiId2) return ERROR_STATUS.ERROR;
+
+        const token = await getDataFromLocalStorage('token');
+        if (!token) return ERROR_STATUS.ERROR;
+
+        const response = await axios.get(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/vegeSuitability/${vegiId1}/${vegiId2}`, {
+            headers: {'token': token,}
+        });
+
+        console.log(response.data);
+
+        if (response.status === 200) return response.data;
+
+    } catch (error) {
+        log("error", "controller", "getLunchVegetablePercentageController", error.message, "menuController.js");
         return ERROR_STATUS.ERROR;
     }
 }

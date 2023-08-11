@@ -27,7 +27,7 @@ export default function OrderItem({id, mealName, count, orderType, items, catego
                         <Text style={styles.bucketItemNameText}>{mealName}</Text>
                     </View>
                     <View style={styles.countTextContainer}>
-                        <Text style={styles.countText}>{count}</Text>
+                        <Text style={styles.countText}>{count} {count === 1 ? "Pack" : "Packs"}</Text>
                     </View>
                 </TouchableOpacity>
             )}
@@ -38,7 +38,7 @@ export default function OrderItem({id, mealName, count, orderType, items, catego
                             <Text style={styles.bucketItemNameText}>{mealName}</Text>
                         </View>
                         <View style={styles.countTextContainer}>
-                            <Text style={styles.countText}>{count}</Text>
+                            <Text style={styles.countText}>{count} {count === 1 ? "Pack" : "Packs"}</Text>
                         </View>
                         <View style={styles.editButtonContainer}>
                             <TouchableOpacity onPress={handleDeleteOrder} style={styles.deleteButtonTextContainer}>
@@ -110,15 +110,15 @@ const styles = StyleSheet.create({
     bucketItemContainer: {
         flexDirection: 'row',
         backgroundColor: 'rgba(252, 240, 200, 1)',
-        paddingVertical: 20,
-        paddingHorizontal: 40,
+        marginHorizontal: "5%",
+        paddingVertical: "4%",
+        paddingHorizontal: "10%",
         marginVertical: 10,
-        marginHorizontal: 20,
         borderRadius: 30,
         alignItems: 'center',
     },
     bucketItemNameContainer: {
-        flex: 5,
+        flex: 2,
     },
     bucketItemNameText: {
         fontSize: 18,

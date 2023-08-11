@@ -17,7 +17,7 @@ const validationSchema = Yup.object().shape({
     password: Yup.string()
         .min(8, 'Password must be at least 8 characters')
         .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
             'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character'
         )
         .required('Password is required'),
@@ -46,14 +46,16 @@ const fields = [
 export default function SignUp({navigation}) {
     const [isPressed, setIsPressed] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [, setToastMessage] = useState(null);
+    const {showToast} = useToast();
+
     const initialValues = {
         email: '',
         contactNo: '',
         password: '',
         confirmPassword: '',
     };
-    const [, setToastMessage] = useState(null);
-    const {showToast} = useToast();
 
     const handleSubmit = async (values, actions) => {
         if (isSubmitting) {
@@ -61,11 +63,14 @@ export default function SignUp({navigation}) {
         }
 
         setIsSubmitting(true);
+        setIsLoading(true);
 
         try {
             const result = await registerService(values.email, values.password, values.contactNo);
+            console.log(result);
             if (result === 'success') {
                 showToast('success', 'Successfully Registered.');
+                actions.resetForm();
                 navigation.navigate('Login');
             } else {
                 showToast('error', 'You are Already Registered');
@@ -77,6 +82,7 @@ export default function SignUp({navigation}) {
         } finally {
             actions.setSubmitting(false);
             setIsSubmitting(false);
+            setIsLoading(false);
         }
     };
 
@@ -120,6 +126,7 @@ export default function SignUp({navigation}) {
                                         isValid={isValid}
                                         handleSubmit={handleSubmit}
                                         isSubmitting={isSubmitting}
+                                        isLoading={isLoading} // Pass isLoading prop to FormSubmitButton
                                     />
                                 </View>
                             )}

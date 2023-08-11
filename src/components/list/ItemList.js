@@ -1,9 +1,9 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {AntDesign, MaterialIcons} from '@expo/vector-icons';
 import PercentageBar from "../precentageBar/PrecentageBar";
 
-const ListItem = ({itemName, checked, handleItemPress, percentage, disabled}) => {
+const ListItem = ({itemName, url, checked, handleItemPress, percentage, disabled}) => {
     return (
         <View>
             <TouchableOpacity
@@ -18,13 +18,13 @@ const ListItem = ({itemName, checked, handleItemPress, percentage, disabled}) =>
                 disabled={disabled}
             >
                 <View style={styles.listItemLeftContainer}>
-                    <Text style={styles.listItemText}>{itemName}</Text>
-                    {
-
-                    }
-                    {percentage != null && percentage > 0 && (
-                        <PercentageBar percentage={percentage}/>
-                    )}
+                    <Image style={styles.listItemImage} source={{uri: url}}/>
+                    <View style={styles.listItemTextContainer}>
+                        <Text style={styles.listItemText}>{itemName}</Text>
+                        {percentage != null && percentage > 0 && (
+                            <PercentageBar percentage={percentage}/>
+                        )}
+                    </View>
                 </View>
                 {!checked && !disabled && (
                     <View style={styles.listItemRightContainer}>
@@ -48,21 +48,24 @@ const ListItem = ({itemName, checked, handleItemPress, percentage, disabled}) =>
     );
 };
 
-export default function ItemList({title, items, handleItemPress, disableCheckbox}) {
+export default function ItemList({title, items, handleItemPress, disableCheckbox, isVegi}) {
+    const filteredItems = isVegi ? items.filter(item => item.vegetarian || item.foodType === "Rice") : items;
+
     return (
         <View>
-            {items && items.length > 0 && (
+            {filteredItems && filteredItems.length > 0 && (
                 <View style={styles.itemTextContainer}>
                     <Text style={styles.itemText}>{title}</Text>
                 </View>
             )}
             <View>
-                {items && items.length > 0
-                    && items.map((item, index) => (
+                {filteredItems && filteredItems.length > 0
+                    && filteredItems.map((item, index) => (
                     <View key={item.id}>
                         <ListItem
                             itemName={item.type}
                             checked={item.checked}
+                            url={item && item.url}
                             handleItemPress={() => handleItemPress(index)}
                             percentage={item.percentage}
                             disabled={disableCheckbox}
@@ -76,7 +79,6 @@ export default function ItemList({title, items, handleItemPress, disableCheckbox
 
 const styles = StyleSheet.create({
     itemTextContainer: {
-        marginTop: 20,
         paddingHorizontal: 40,
         backgroundColor: 'rgba(252, 240, 200, 0.3)',
         paddingVertical: 20,
@@ -94,12 +96,24 @@ const styles = StyleSheet.create({
     },
     listItemLeftContainer: {
         flex: 8,
-        flexDirection: 'column',
-        alignItems: 'flex-start',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: "3%",
     },
     listItemRightContainer: {
         flex: 1,
         alignItems: 'flex-end',
         justifyContent: 'center',
     },
+    listItemImage: {
+        width: 90,
+        height: 60,
+        borderRadius: 10,
+        marginRight: 20,
+    },
+    listItemTextContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        flexDirection: 'column',
+    }
 });

@@ -1,11 +1,11 @@
+import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {AntDesign, Fontisto} from '@expo/vector-icons';
-import {useState} from 'react';
-import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
-import {log} from "../../helpers/logs/log";
-import {useNavigation} from "@react-navigation/native";
-import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
-import {fetchBasket} from "../../services/menuService";
+import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
+import {log} from '../../helpers/logs/log';
+import {useNavigation} from '@react-navigation/native';
+import ConfirmDeleteModal from '../modals/ConfirmDeleteModal';
+import {fetchBasket, removeMealFromBasketService} from '../../services/menuService';
 
 export default function BasketItem({
                                        mealName,
@@ -60,13 +60,29 @@ export default function BasketItem({
                 await addDataToLocalStorage('basket', jsonValue);
             }
         } catch (error) {
-            log("Error :: BasketItem :: updateBasketCount :: ", error.message, "BasketItem.js");
+            log('Error :: BasketItem :: updateBasketCount :: ', error.message, 'BasketItem.js');
         }
+    };
+
+    const handleDeleteItem = async () => {
+        // Remove the item from the basket using the mealId
+        try {
+            let basketItems = await getDataFromLocalStorage('basket');
+            basketItems = JSON.parse(basketItems);
+
+            if (basketItems?.meal?.length > 0) {
+                await removeMealFromBasketService(mealId);
+            }
+        } catch (error) {
+            log('Error :: BasketItem :: handleDeleteItem :: ', error.message, 'BasketItem.js');
+        }
+
+        setIsModalVisible(false);
     };
 
     const handleEditMealPress = () => {
         navigation.navigate('EditMenu', {mealId});
-    }
+    };
 
     return (
         <View>
@@ -75,27 +91,24 @@ export default function BasketItem({
                     mealId={mealId}
                     isModalVisible={isModalVisible}
                     setIsModalVisible={setIsModalVisible}
+                    onDelete={() => handleDeleteItem()} // Add this prop to handle item deletion
                 />
             )}
             {onClicked && (
-                <TouchableOpacity style={[styles.bucketItemContainer, styles.elevation, styles.shadowProp]}
-                                  onPress={() => setOnClicked(false)}>
+                <TouchableOpacity
+                    style={[styles.bucketItemContainer, styles.elevation, styles.shadowProp]}
+                    onPress={() => setOnClicked(false)}
+                >
                     <View style={styles.bucketItemNameContainer}>
                         <Text style={styles.bucketItemNameText}>{mealName}</Text>
                     </View>
-                    <TouchableOpacity
-                        style={styles.minusButtonTextContainer}
-                        onPress={handleMinusPress}
-                    >
+                    <TouchableOpacity style={styles.minusButtonTextContainer} onPress={handleMinusPress}>
                         <Fontisto name="minus-a" size={14} color="black"/>
                     </TouchableOpacity>
                     <View style={styles.countTextContainer}>
                         <Text style={styles.countText}>{itemCount}</Text>
                     </View>
-                    <TouchableOpacity
-                        style={styles.plusButtonTextContainer}
-                        onPress={handlePlusPress}
-                    >
+                    <TouchableOpacity style={styles.plusButtonTextContainer} onPress={handlePlusPress}>
                         <Fontisto name="plus-a" size={14} color="black"/>
                     </TouchableOpacity>
                 </TouchableOpacity>
@@ -106,40 +119,31 @@ export default function BasketItem({
                         <View style={styles.bucketItemNameContainer}>
                             <Text style={styles.bucketItemNameText}>{mealName}</Text>
                         </View>
-                        <TouchableOpacity
-                            style={styles.plusButtonTextContainer}
-                            onPress={handleMinusPress}
-                        >
+                        <TouchableOpacity style={styles.plusButtonTextContainer} onPress={handleMinusPress}>
                             <Fontisto name="minus-a" size={14} color="black"/>
                         </TouchableOpacity>
                         <View style={styles.countTextContainer}>
                             <Text style={styles.countText}>{itemCount}</Text>
                         </View>
-                        <TouchableOpacity
-                            style={styles.minusButtonTextContainer}
-                            onPress={handlePlusPress}
-                        >
+                        <TouchableOpacity style={styles.minusButtonTextContainer} onPress={handlePlusPress}>
                             <Fontisto name="plus-a" size={14} color="black"/>
                         </TouchableOpacity>
-                        {
-                            !isSpecial && (
-                                <View style={styles.editButtonContainer}>
-                                    <TouchableOpacity
-                                        onPress={handleEditMealPress}
-                                        style={styles.editButtonTextContainer}
-                                    >
-                                        <AntDesign name="edit" size={14} color="black"/>
-                                    </TouchableOpacity>
-                                </View>
-                            )
-                        }
+                        {!isSpecial && (
+                            <View style={styles.editButtonContainer}>
+                                <TouchableOpacity onPress={handleEditMealPress} style={styles.editButtonTextContainer}>
+                                    <AntDesign name="edit" size={14} color="black"/>
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </TouchableOpacity>
                     <View style={[styles.itemListContainer, styles.elevation, styles.shadowProp]}>
-                        {items && items.length > 0 && items.map((item) => (
-                            <View key={item.id} style={styles.listItemContainer}>
-                                <Text style={styles.listItemContainerText}>{item.type}</Text>
-                            </View>
-                        ))}
+                        {items &&
+                            items.length > 0 &&
+                            items.map((item) => (
+                                <View key={item.id} style={styles.listItemContainer}>
+                                    <Text style={styles.listItemContainerText}>{item.type}</Text>
+                                </View>
+                            ))}
                     </View>
                 </View>
             )}
@@ -236,7 +240,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderColor: '#fff',
-        borderBottomColor: 'rgba(197,194,194,0.5)',
+        borderBottomColor: 'rgba(197, 194, 194, 0.5)',
         borderWidth: 2,
     },
     listItemContainerText: {
@@ -244,5 +248,5 @@ const styles = StyleSheet.create({
     },
     itemListContainer: {
         marginBottom: 20,
-    }
+    },
 });

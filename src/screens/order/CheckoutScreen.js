@@ -4,13 +4,14 @@ import {useNavigation} from "@react-navigation/native";
 import CheckoutItem from "../../components/checkoutItem/CheckoutItem";
 import TopHeader from "../../components/topHeader/TopHeader";
 import OrderPlaceSuccessfulModal from "../../components/modals/OrderPlaceSuccessfulModal";
-import StaticTopBar from "../../components/topBar/StaticTopBar";
 import BottomButton from "../../components/buttons/BottomButton";
 import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 import {log} from "../../helpers/logs/log";
 import {handleCheckoutService} from "../../services/checkoutService";
 import {ERROR_STATUS} from "../../errorLogs/errorStatus";
 import {useToast} from "../../helpers/toast/Toast";
+import DynamicTopBar from "../../components/topBar/DynamicTopBar";
+import {SelectedTab} from "../../helpers/enums/enums";
 
 export default function Checkout() {
     const [isVisible, setIsVisible] = useState(false);
@@ -46,12 +47,12 @@ export default function Checkout() {
 
             if (orderPlacedSuccessfully) {
                 setIsVisible(true);
-
-                setTimeout(() => {
-                    setIsVisible(false);
-                    navigation.navigate('OrdersList');
-                }, 4000);
             }
+
+            if(orderPlacedSuccessfully && !isVisible){
+                navigation.navigate('OrdersList');
+            }
+
         } catch (error) {
             log("error", "CheckoutScreen", "handleCheckout", error.message, "CheckoutScreen.js");
         } finally {
@@ -91,7 +92,7 @@ export default function Checkout() {
         <SafeAreaView style={styles.safeAreaContainer}>
             {isVisible &&
                 <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible} basket={basket}/>}
-            <StaticTopBar/>
+            <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
             <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>
                 <ScrollView showsVerticalScrollIndicator={false}>

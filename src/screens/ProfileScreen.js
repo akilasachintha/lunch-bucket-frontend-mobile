@@ -1,15 +1,17 @@
-import TopHeader from "../components/topHeader/TopHeader";
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
-import {useNavigation} from "@react-navigation/native";
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import TextInputField from "../components/inputField/TextInputField";
-import StaticTopBar from "../components/topBar/StaticTopBar";
-import BottomButton from "../components/buttons/BottomButton";
-import {useEffect, useState} from "react";
-import {getUserDetailsService} from "../services/userProfileService";
-import {log} from "../helpers/logs/log";
-import {logoutService} from "../services/authService";
+import TextInputField from '../components/inputField/TextInputField';
+import BottomButton from '../components/buttons/BottomButton';
+import {getUserDetailsService} from '../services/userProfileService';
+import {log} from '../helpers/logs/log';
+import {logoutService} from '../services/authService';
+import {dynamicFont} from '../helpers/responsive/fontScale';
+import DynamicTopBar from '../components/topBar/DynamicTopBar';
+import {SelectedTab} from '../helpers/enums/enums';
+import TopHeader from "../components/topHeader/TopHeader";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -18,6 +20,7 @@ const validationSchema = Yup.object().shape({
 export default function ProfileScreen() {
     const navigation = useNavigation();
     const [userData, setUserData] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
 
     const initialValues = {
         email: '',
@@ -30,31 +33,49 @@ export default function ProfileScreen() {
 
     const handleLogout = async () => {
         await logoutService();
-        navigation.navigate('Welcome');
-    }
+        navigation.navigate('Initial');
+    };
 
     const fetchUserData = async () => {
-        const result = await getUserDetailsService();
-        setUserData(result);
-        log("info", "screen", "ProfileScreen | result", result, "ProfileScreen.js");
-    }
-
+        try {
+            const result = await getUserDetailsService();
+            setUserData(result);
+            setIsLoading(false); // Set loading to false when data is fetched
+            log('info', 'screen', 'ProfileScreen | result', result, 'ProfileScreen.js');
+        } catch (error) {
+            setIsLoading(false); // Set loading to false on error as well
+            log('error', 'screen', 'ProfileScreen', error.message, 'ProfileScreen.js');
+        }
+    };
 
     useEffect(() => {
-        fetchUserData().catch(
-            (error) => {
-                log("error", "screen", "ProfileScreen", error.message, "ProfileScreen.js");
-            }
-        );
+        fetchUserData();
     }, []);
 
     const fields = [
-        {name: 'email', label: 'Email', placeholder: userData && userData.user && userData.user.email,},
+        {name: 'email', label: 'Email', placeholder: userData?.user?.email},
+        {name: 'id', label: 'Id', placeholder: userData?.user?.id},
+        {name: 'contactNo', label: 'Contact', placeholder: userData?.user?.contactNo},
     ];
+
+    if (isLoading) {
+        return (
+            <SafeAreaView style={styles.safeAreaContainer}>
+                <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
+                <TopHeader headerText="Profile" backButtonPath="Menu"/>
+                <View style={styles.bodyContainer}>
+                    <View style={styles.fieldHeaderContainer}>
+                        <Text style={styles.fieldHeaderContainerText}>Personal Details</Text>
+                    </View>
+                    <ActivityIndicator size="large" color="#ce6d74" style={styles.activityIndicator}/>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <StaticTopBar/>
+            <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
             <TopHeader headerText="Profile" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <Formik
@@ -68,21 +89,23 @@ export default function ProfileScreen() {
                                 <View style={styles.fieldHeaderContainer}>
                                     <Text style={styles.fieldHeaderContainerText}>Personal Details</Text>
                                 </View>
-                                {fields && fields.map((field) => (
-                                    <TextInputField
-                                        key={field.name}
-                                        label={field.label}
-                                        placeholder={field.placeholder}
-                                        placeholderTextColor="#ce6d74"
-                                        value={values[field.name]}
-                                        onChangeText={handleChange(field.name)}
-                                        onBlur={() => setFieldTouched(field.name)}
-                                        touched={touched[field.name]}
-                                        error={errors[field.name]}
-                                    />
-                                ))}
+                                {fields &&
+                                    fields.map((field) => (
+                                        <TextInputField
+                                            key={field.name}
+                                            label={field.label}
+                                            placeholder={field.placeholder}
+                                            placeholderTextColor="#ce6d74"
+                                            value={values[field.name]}
+                                            onChangeText={handleChange(field.name)}
+                                            onBlur={() => setFieldTouched(field.name)}
+                                            touched={touched[field.name]}
+                                            error={errors[field.name]}
+                                            editable={false}
+                                        />
+                                    ))}
                             </ScrollView>
-                            {/*<BottomButton onPress={handleSubmit} buttonText="Done"/>*/}
+                            {/* <BottomButton onPress={handleSubmit} buttonText="Done" /> */}
                             <BottomButton onPress={handleLogout} buttonText="Logout"/>
                         </View>
                     )}
@@ -111,8 +134,18 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     fieldHeaderContainerText: {
-        fontSize: 18,
+        fontSize: dynamicFont(14),
         color: '#630A10',
         fontWeight: 'bold',
     },
+    loadingIndicator: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    activityIndicator: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 });

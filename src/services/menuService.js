@@ -5,20 +5,50 @@ import {
     getLunchMeetPercentageController,
     getLunchMenuController,
     getLunchStewPercentageController,
+    getLunchVegetablePercentageController,
 } from "../controllers/menuController";
 import {addDataToLocalStorage, getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
 import {getUTCDateTime} from "./timeService";
 import {log} from "../helpers/logs/log";
 
-export async function getLunchMeetMenuService() {
+export async function getLunchMenuService(setLunchMenu) {
     try {
         const result = await getLunchMenuController();
 
         if (result === "error") {
             return [];
         } else {
-            return await result.data.data.meat_menu_lunch.map((item) => ({
+            return result.data.data;
+        }
+    } catch (error) {
+        log("error", "service", "getLunchMenuService", error.message, "menuService.js");
+        return [];
+    }
+}
+
+export async function getDinnerMenuService(setDinnerMenu) {
+    try {
+        const result = await getDinnerMenuController();
+
+        if (result === "error") {
+            return [];
+        } else {
+            return result.data.data;
+        }
+    } catch (error) {
+        log("error", "service", "getDinnerMenuService", error.message, "menuService.js");
+        return [];
+    }
+}
+
+export async function getLunchMeetMenuService(lunchMenu) {
+    try {
+        const result = lunchMenu;
+        if (!result) {
+            return [];
+        } else {
+            return await result.meat_menu_lunch.map((item) => ({
                 ...item,
                 checked: false,
                 disableCheckbox: true,
@@ -32,14 +62,13 @@ export async function getLunchMeetMenuService() {
     }
 }
 
-export async function getLunchSpecialMenuService() {
+export async function getLunchSpecialMenuService(lunchMenu) {
     try {
-        const result = await getLunchMenuController();
-
-        if (result === "error") {
+        const result = lunchMenu;
+        if (!result) {
             return [];
         } else {
-            return result.data.data.special_menu_lunch.map((item) => {
+            return result.special_menu_lunch.map((item) => {
                 const categoryWithChecked = item.category.map((categoryItem) => ({
                     ...categoryItem,
                     checked: false,
@@ -60,14 +89,13 @@ export async function getLunchSpecialMenuService() {
     }
 }
 
-export async function getLunchRiceMenuService() {
+export async function getLunchRiceMenuService(lunchMenu) {
     try {
-        const result = await getLunchMenuController();
-
-        if (result === "error") {
+        const result = lunchMenu;
+        if (!result) {
             return [];
         } else {
-            return await result.data.data?.rice_menu_lunch.map((item) => ({
+            return await result.rice_menu_lunch.map((item) => ({
                 ...item,
                 checked: false,
                 disableCheckbox: true,
@@ -81,14 +109,13 @@ export async function getLunchRiceMenuService() {
     }
 }
 
-export async function getLunchVegetableMenuService() {
+export async function getLunchVegetableMenuService(lunchMenu) {
     try {
-        const result = await getLunchMenuController();
-
-        if (result === "error") {
+        const result = lunchMenu;
+        if (!result) {
             return [];
         } else {
-            return await result.data.data.vege_menu_lunch.map((item) => ({
+            return await result.vege_menu_lunch.map((item) => ({
                 ...item,
                 checked: false,
                 disableCheckbox: true,
@@ -104,14 +131,13 @@ export async function getLunchVegetableMenuService() {
     }
 }
 
-export async function getLunchStewMenuService() {
+export async function getLunchStewMenuService(lunchMenu) {
     try {
-        const result = await getLunchMenuController();
-
-        if (result === "error") {
+        const result = lunchMenu;
+        if (!result) {
             return [];
         } else {
-            return await result.data.data.stew_menu_lunch.map((item) => ({
+            return await result.stew_menu_lunch.map((item) => ({
                 ...item,
                 checked: false,
                 disableCheckbox: true,
@@ -126,14 +152,13 @@ export async function getLunchStewMenuService() {
     }
 }
 
-export async function getDinnerMeetMenuService() {
+export async function getDinnerMeetMenuService(dinnerMenu) {
     try {
-        const result = await getDinnerMenuController();
-
-        if (result === "error") {
+        const result = dinnerMenu;
+        if (!result) {
             return [];
         } else {
-            return await result.data.data.meat_menu_dinner.map((item) => ({
+            return await result.meat_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Meat',
@@ -145,14 +170,14 @@ export async function getDinnerMeetMenuService() {
     }
 }
 
-export async function getDinnerSpecialMenuService() {
+export async function getDinnerSpecialMenuService(dinnerMenu) {
     try {
-        const result = await getDinnerMenuController();
+        const result = dinnerMenu;
 
-        if (result === "error") {
+        if (!result) {
             return [];
         } else {
-            return await result.data.data.special_menu_dinner.map((item) => ({
+            return await result.special_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Special',
@@ -164,14 +189,14 @@ export async function getDinnerSpecialMenuService() {
     }
 }
 
-export async function getDinnerRiceMenuService() {
+export async function getDinnerRiceMenuService(dinnerMenu) {
     try {
-        const result = await getDinnerMenuController();
+        const result = dinnerMenu;
 
-        if (result === "error") {
+        if (!result) {
             return [];
         } else {
-            return await result.data.data.rice_menu_dinner.map((item) => ({
+            return await result.rice_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Rice',
@@ -183,14 +208,14 @@ export async function getDinnerRiceMenuService() {
     }
 }
 
-export async function getDinnerVegetableMenuService() {
+export async function getDinnerVegetableMenuService(dinnerMenu) {
     try {
-        const result = await getDinnerMenuController();
+        const result = dinnerMenu;
 
-        if (result === "error") {
+        if (!result) {
             return [];
         } else {
-            return await result.data.data.vege_menu_dinner.map((item) => ({
+            return await result.vege_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Vegetable',
@@ -202,14 +227,14 @@ export async function getDinnerVegetableMenuService() {
     }
 }
 
-export async function getDinnerStewMenuService() {
+export async function getDinnerStewMenuService(dinnerMenu) {
     try {
-        const result = await getDinnerMenuController();
+        const result = dinnerMenu;
 
-        if (result === "error") {
+        if (!result) {
             return [];
         } else {
-            return await result.data.data.stew_menu_dinner.map((item) => ({
+            return await result.stew_menu_dinner.map((item) => ({
                 ...item,
                 checked: false,
                 foodType: 'Stew',
@@ -356,7 +381,7 @@ export async function updateBasketFromId(mealId, updatedMeal) {
     }
 }
 
-export async function fetchMenuData() {
+export async function fetchMenuData(lunchMenu, setLunchMenu, dinnerMenu, setDinnerMenu) {
     try {
         const [
             specialMenuLunch,
@@ -371,17 +396,17 @@ export async function fetchMenuData() {
             stewMenuDinner,
             vegetableMenuDinner,
         ] = await Promise.all([
-            getLunchSpecialMenuService(),
-            getLunchRiceMenuService(),
-            getLunchMeetMenuService(),
-            getLunchStewMenuService(),
-            getLunchVegetableMenuService(),
+            getLunchSpecialMenuService(lunchMenu),
+            getLunchRiceMenuService(lunchMenu),
+            getLunchMeetMenuService(lunchMenu),
+            getLunchStewMenuService(lunchMenu),
+            getLunchVegetableMenuService(lunchMenu),
 
-            getDinnerSpecialMenuService(),
-            getDinnerRiceMenuService(),
-            getDinnerMeetMenuService(),
-            getDinnerStewMenuService(),
-            getDinnerVegetableMenuService(),
+            getDinnerSpecialMenuService(dinnerMenu),
+            getDinnerRiceMenuService(dinnerMenu),
+            getDinnerMeetMenuService(dinnerMenu),
+            getDinnerStewMenuService(dinnerMenu),
+            getDinnerVegetableMenuService(dinnerMenu),
         ]);
 
         return {
@@ -438,6 +463,28 @@ export async function getLunchMeetPercentageService(vegiId1, vegiId2, stewId, me
         return 0;
     }
 }
+
+export async function getLunchVegetablePercentageService(vegiId1, vegiId2) {
+    try {
+        if (!vegiId1 || !vegiId2) return 0;
+        console.log(vegiId1, vegiId2);
+
+        const data = await getLunchVegetablePercentageController(vegiId1, vegiId2);
+
+        const veg = data && data.data.data;
+        if (veg) {
+            return parseInt(veg);
+        } else {
+            return 0;
+        }
+
+    } catch (error) {
+        log("error", "service", "getMeetPercentage", error.message, "menuService.js");
+        return 0;
+    }
+}
+
+
 
 export async function getDinnerStewPercentageService(vegiId1, vegiId2, stewId) {
     try {

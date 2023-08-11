@@ -5,16 +5,17 @@ import BasketItem from "../../components/basketItem/BasketItem";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import BorderButton from "../../components/borderButton/BorderButton";
-import StaticTopBar from "../../components/topBar/StaticTopBar";
 import BottomButton from "../../components/buttons/BottomButton";
 import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 import {log} from "../../helpers/logs/log";
 import {useToast} from "../../helpers/toast/Toast";
+import DynamicTopBar from "../../components/topBar/DynamicTopBar";
+import {SelectedTab} from "../../helpers/enums/enums";
 
 export default function BasketScreen() {
     const [basket, setBasket] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
-    // const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigation = useNavigation();
     const plusIcon = <Fontisto name="plus-a" size={18} color="#7E1F24"/>;
@@ -28,7 +29,7 @@ export default function BasketScreen() {
             log("info", "BasketScreen", "fetchBasketItems | basketItems", JSON.stringify(basketItems), "BasketScreen.js");
 
             if (!basketItems) {
-                // setIsLoading(false);
+                setIsLoading(false);
                 return;
             }
 
@@ -36,10 +37,10 @@ export default function BasketScreen() {
             console.log("basketItems", basketItems);
             log("info", "BasketScreen", "fetchBasketItems | basketItems", basketItems, "BasketScreen.js");
             setBasket(basketItems);
-            // setIsLoading(false);
+            setIsLoading(false);
         } catch (error) {
             log("error", "BasketScreen", "fetchBasketItems", error.message, "BasketScreen.js");
-            // setIsLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -65,23 +66,23 @@ export default function BasketScreen() {
         }
     }
 
-    // if (isLoading) {
-    //     return (
-    //         <SafeAreaView style={styles.safeAreaContainer}>
-    //             <StaticTopBar/>
-    //             <TopHeader headerText="Your Bucket" backButtonPath="Menu"/>
-    //             <View style={styles.bodyContainer}>
-    //                 <ActivityIndicator size="large" color="#7E1F24" style={styles.loadingIndicator}/>
-    //                 <BorderButton text="Add Meal" onPress={() => navigation.navigate('Menu')} icon={plusIcon}/>
-    //                 <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder}/>
-    //             </View>
-    //         </SafeAreaView>
-    //     )
-    // }
+    if (isLoading) {
+        return (
+            <SafeAreaView style={styles.safeAreaContainer}>
+                <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
+                <TopHeader headerText="Your Bucket" backButtonPath="Menu"/>
+                <View style={styles.bodyContainer}>
+                    <ActivityIndicator size="large" color="#7E1F24" style={styles.loadingIndicator}/>
+                    <BorderButton text="Add Meal" onPress={() => navigation.navigate('Menu')} icon={plusIcon}/>
+                    <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder}/>
+                </View>
+            </SafeAreaView>
+        )
+    }
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <StaticTopBar/>
+            <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
             <TopHeader headerText="Your Bucket" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView>
@@ -102,7 +103,7 @@ export default function BasketScreen() {
                     }
                 </ScrollView>
                 <BorderButton text="Add Meal" onPress={() => navigation.navigate('Menu')} icon={plusIcon}/>
-                <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder}/>
+                <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder} isLoading={isLoading}/>
             </View>
         </SafeAreaView>
     );

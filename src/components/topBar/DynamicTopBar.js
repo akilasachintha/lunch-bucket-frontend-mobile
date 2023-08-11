@@ -5,19 +5,19 @@ import {SelectedTab} from "../../helpers/enums/enums";
 
 const iconsData = [
     {
+        name: 'home',
+        tabName: SelectedTab.MAIN,
+        screenName: 'Menu',
+    },
+    {
         name: 'clock',
         tabName: SelectedTab.PREVIOUS,
-        screenName: 'Basket',
+        screenName: 'OrdersList',
     },
     {
         name: 'comment',
         tabName: SelectedTab.CHAT,
         screenName: 'Chat',
-    },
-    {
-        name: 'crown',
-        tabName: SelectedTab.MAIN,
-        screenName: null,
     },
     {
         name: 'user',
@@ -66,8 +66,7 @@ export default function DynamicTopBar({selectedTab}) {
 const styles = StyleSheet.create({
     topBarContainer: {
         flex: 1,
-        marginTop: StatusBar.currentHeight + 10,
-        marginBottom: 10,
+        marginTop: StatusBar.currentHeight,
     },
     container: {
         marginTop: 2,
@@ -77,7 +76,6 @@ const styles = StyleSheet.create({
     },
     icons: {
         flex: 1,
-        margin: 2,
         justifyContent: 'center',
         alignItems: 'center',
     },

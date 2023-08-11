@@ -1,12 +1,12 @@
-import {SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
+import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import React, {useEffect, useState} from "react";
-import StaticTopBar from "../../components/topBar/StaticTopBar";
 import {deleteOrderService, getOrdersService} from "../../services/ordersService";
 import {log} from "../../helpers/logs/log";
 import OrderItem from "../../components/orderItem/OrderItem";
-import AnimatedLoadingSpinner from "../../components/loading/LoadingSkelteon";
 import {dynamicFont} from "../../helpers/responsive/fontScale";
+import DynamicTopBar from "../../components/topBar/DynamicTopBar";
+import {SelectedTab} from "../../helpers/enums/enums";
 
 export default function ListOrdersScreen() {
     const [orders, setOrders] = useState([]);
@@ -37,10 +37,10 @@ export default function ListOrdersScreen() {
     if (loading) {
         return (
             <SafeAreaView style={styles.safeAreaContainer}>
-                <StaticTopBar/>
+                <DynamicTopBar selectedTab={SelectedTab.PREVIOUS}/>
                 <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
                 <View style={styles.bodyContainerLoading}>
-                    <AnimatedLoadingSpinner/>
+                    <ActivityIndicator size="large" color="#630A10" style={styles.activityIndicator}/>
                 </View>
             </SafeAreaView>
         );
@@ -49,7 +49,7 @@ export default function ListOrdersScreen() {
     if (orders && orders.length === 0) {
         return (
             <SafeAreaView style={styles.safeAreaContainer}>
-                <StaticTopBar/>
+                <DynamicTopBar selectedTab={SelectedTab.PREVIOUS}/>
                 <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
                 <View style={styles.bodyContainer}>
                     <ScrollView contentContainerStyle={styles.noOrdersContainer}>
@@ -62,7 +62,7 @@ export default function ListOrdersScreen() {
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <StaticTopBar/>
+            <DynamicTopBar selectedTab={SelectedTab.PREVIOUS}/>
             <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView>
@@ -119,4 +119,9 @@ const styles = StyleSheet.create({
         fontSize: dynamicFont(12),
         color: '#000',
     },
+    activityIndicator: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 });

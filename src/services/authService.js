@@ -3,7 +3,6 @@ import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
 import {addDataToLocalStorage, removeDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {log} from "../helpers/logs/log";
 
-
 export async function loginService(email, password) {
     try {
         if (email === "" || password === "") {
@@ -35,7 +34,7 @@ export async function loginService(email, password) {
 
 export async function registerService(email, password, contactNo) {
     try {
-        if (email === "" || password === "") {
+        if (email === "" || password === "" || contactNo === "") {
             return ERROR_STATUS.ERROR;
         }
 
@@ -49,7 +48,6 @@ export async function registerService(email, password, contactNo) {
             log("error", "service", "registerService | state", data.state, "authService.js");
             return ERROR_STATUS.ERROR;
         } else {
-            await addDataToLocalStorage('token', data.token);
             log("success", "service", "registerService", "Register Success", "authService.js");
             return SUCCESS_STATUS.SUCCESS;
         }
@@ -62,8 +60,10 @@ export async function registerService(email, password, contactNo) {
 export async function logoutService() {
     try {
         await removeDataFromLocalStorage('token', "");
+        await removeDataFromLocalStorage('@visited', "");
         await addDataToLocalStorage('customerId', "");
         await addDataToLocalStorage('loginStatus', "false");
+
         log("success", "service", "logoutService", "Logout Success", "authService.js");
         return SUCCESS_STATUS.SUCCESS;
     } catch (error) {

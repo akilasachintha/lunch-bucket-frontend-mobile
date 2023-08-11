@@ -33,7 +33,7 @@ export async function registerController(email, password, contactNo) {
             {
                 email: email,
                 password: password,
-                contactNo: contactNo,
+                contact_no: contactNo,
             }
         );
 
