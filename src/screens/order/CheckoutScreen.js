@@ -103,12 +103,16 @@ export default function Checkout() {
                 </ScrollView>
                 <View style={styles.amountListContainer}>
                     <TouchableOpacity style={styles.amountContainer}>
-                        <Text style={styles.amountLeftContainer}>Total Bill Amount</Text>
-                        <Text style={styles.amountRightContainer}>Rs {totalAmount}</Text>
+                        <Text style={styles.amountLeftContainer}>Bill Amount</Text>
+                        <Text style={styles.amountRightContainer}>Rs {totalAmount}.00</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.amountContainer}>
+                        <Text style={styles.amountLeftContainer}>Delivery Fee</Text>
+                        <Text style={styles.amountRightContainer}>Rs 0.00</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.totalAmountLeftContainer}>Total Amount</Text>
-                        <Text style={styles.totalAmountRightContainer}>Rs {totalAmount}</Text>
+                        <Text style={styles.totalAmountRightContainer}>Rs {totalAmount}.00</Text>
                     </TouchableOpacity>
                 </View>
                 <BottomButton buttonText="Place Order" onPress={handleCheckout} isLoading={isPlacingOrder}/>

@@ -16,6 +16,7 @@ export default function BasketScreen() {
     const [basket, setBasket] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedMealId, setSelectedMealId] = useState(null);
 
     const navigation = useNavigation();
     const plusIcon = <Fontisto name="plus-a" size={18} color="#7E1F24"/>;
@@ -24,7 +25,7 @@ export default function BasketScreen() {
 
     const fetchBasket = async () => {
         try {
-            // setIsLoading(true);
+            setIsLoading(true);
             let basketItems = await getDataFromLocalStorage('basket');
             log("info", "BasketScreen", "fetchBasketItems | basketItems", JSON.stringify(basketItems), "BasketScreen.js");
 
@@ -32,9 +33,8 @@ export default function BasketScreen() {
                 setIsLoading(false);
                 return;
             }
-
             basketItems = JSON.parse(basketItems);
-            console.log("basketItems", basketItems);
+
             log("info", "BasketScreen", "fetchBasketItems | basketItems", basketItems, "BasketScreen.js");
             setBasket(basketItems);
             setIsLoading(false);
@@ -87,17 +87,20 @@ export default function BasketScreen() {
             <View style={styles.bodyContainer}>
                 <ScrollView>
                     {
-                        basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal, index) => (
+                        basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal) => (
                             <BasketItem
                                 setIsModalVisible={setIsModalVisible}
                                 isModalVisible={isModalVisible}
-                                key={index}
+                                setSelectedMealId={setSelectedMealId}
+                                selectedMealId={selectedMealId}
+                                key={meal.id}
                                 mealName={meal.name}
                                 mealId={meal.id}
                                 items={meal.items}
                                 setBasket={setBasket}
                                 itemCount={meal.count}
                                 isSpecial={meal.isSpecial}
+                                potion={meal.potion}
                             />
                         ))
                     }

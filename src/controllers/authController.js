@@ -1,13 +1,12 @@
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
-import axios from "axios";
 import {log} from "../helpers/logs/log";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
-import {lunchBucketAPI} from "../apis/lunchBucketAPI";
+import {auth2API, lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function loginController(email, password) {
     try {
-        const response = await axios.post(
-            'https://fmrlw0xn6h.execute-api.ap-south-1.amazonaws.com/dev/userLogin',
+        const response = await auth2API.post(
+            'userLogin',
             {
                 email: email,
                 password: password,
@@ -28,12 +27,16 @@ export async function loginController(email, password) {
 
 export async function registerController(email, password, contactNo) {
     try {
-        const response = await axios.post(
-            'https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/addCustomer',
+        const expoPushToken = await getDataFromLocalStorage('expoPushToken');
+        console.log(expoPushToken);
+
+        const response = await lunchBucketAPI.post(
+            'addCustomer',
             {
                 email: email,
                 password: password,
                 contact_no: contactNo,
+                device_token: expoPushToken ? expoPushToken : "",
             }
         );
 
@@ -55,7 +58,9 @@ export async function validateTokenController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const response = await lunchBucketAPI.get('/dev/lunch/getMenus', {
+        const response = await lunchBucketAPI.get(
+            'lunch/getMenus',
+            {
             headers: {
                 'token': token,
             }

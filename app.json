@@ -2,7 +2,8 @@
   "expo": {
     "name": "lunch-bucket-frontend-mobile",
     "slug": "lunch-bucket-frontend-mobile",
-    "version": "1.0.1",
+    "scheme": "com.icode.lunchbucket",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -25,7 +26,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.akilasachintha.lunchbucketfrontendmobile"
+      "googleServicesFile": "./google-services.json",
+      "package": "com.icode.lunchbucket"
     },
     "web": {
       "favicon": "./assets/favicon.png"

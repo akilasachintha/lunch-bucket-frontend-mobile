@@ -14,7 +14,6 @@ import ItemList from '../list/ItemList';
 import BasketButton from './BasketButton';
 import Timer from '../timer/Timer';
 import {AntDesign, MaterialIcons} from '@expo/vector-icons';
-import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const Menu = ({
                   specialMenu,
@@ -35,7 +34,7 @@ const Menu = ({
                   totalCheckedSpecialItems,
                   refreshing,
                   onRefresh,
-                  loading
+                  loading,
               }) => {
     const [totalSpecialPrice, setTotalSpecialPrice] = useState(0);
     const [showSpecialMenu, setShowSpecialMenu] = useState(false);
@@ -73,9 +72,9 @@ const Menu = ({
         <View style={styles.bodyContentContainer}>
             <Timer remainingTime={remainingTime} remainingTimeColor={remainingTimeColor} title={title}
                    disableTime={disableTime}/>
-            <View style={styles.chooseTypeContainer}>
-                {
-                    totalCheckedSpecialItemsCount <= 0 && (
+            {
+                !editMenu && (
+                    <View style={styles.chooseTypeContainer}>
                         <TouchableOpacity
                             style={[styles.chooseTypeItemLeft, !showSpecialMenu && styles.selectedMenu]}
                             onPress={() => setShowSpecialMenu(false)}
@@ -83,10 +82,6 @@ const Menu = ({
                             <Text style={[styles.chooseTypeText, !showSpecialMenu && styles.selectedMenuText]}>Today's
                                 Menu</Text>
                         </TouchableOpacity>
-                    )
-                }
-                {
-                    totalCheckedItemsCount <= 0 && (
                         <TouchableOpacity
                             style={[styles.chooseTypeItemRight, showSpecialMenu && styles.selectedMenu]}
                             onPress={() => setShowSpecialMenu(true)}
@@ -94,9 +89,9 @@ const Menu = ({
                             <Text style={[styles.chooseTypeText, showSpecialMenu && styles.selectedMenuText]}>Today's
                                 Special</Text>
                         </TouchableOpacity>
-                    )
-                }
-            </View>
+                    </View>
+                )
+            }
             <ActivityIndicator size="large" color="#630A10" style={styles.activityIndicator}/>
             <BasketButton
                 totalCheckedSpecialItems={totalCheckedSpecialItems}
@@ -118,44 +113,42 @@ const Menu = ({
         <View style={styles.bodyContentContainer}>
             <Timer remainingTime={remainingTime} remainingTimeColor={remainingTimeColor} title={title}
                    disableTime={disableTime}/>
-            <View style={styles.chooseTypeContainer}>
-                {
-                    totalCheckedSpecialItemsCount <= 0 && (
-                        <TouchableOpacity
-                            style={[styles.chooseTypeItemLeft, !showSpecialMenu && styles.selectedMenu]}
-                            onPress={() => setShowSpecialMenu(false)}
-                        >
-                            <Text style={[styles.chooseTypeText, !showSpecialMenu && styles.selectedMenuText]}>Today's
-                                Menu</Text>
-                        </TouchableOpacity>
-                    )
-                }
-                {
-                    totalCheckedItemsCount <= 0 && (
-                        <TouchableOpacity
-                            style={[styles.chooseTypeItemRight, showSpecialMenu && styles.selectedMenu]}
-                            onPress={() => setShowSpecialMenu(true)}
-                        >
-                            <Text style={[styles.chooseTypeText, showSpecialMenu && styles.selectedMenuText]}>Today's
-                                Special</Text>
-                        </TouchableOpacity>
-                    )
-                }
-            </View>
+            {
+                !editMenu && (
+                    <View style={styles.chooseTypeContainer}>
+                        {
+                            totalCheckedSpecialItemsCount <= 0 && (
+                                <TouchableOpacity
+                                    style={[styles.chooseTypeItemLeft, !showSpecialMenu && styles.selectedMenu]}
+                                    onPress={() => setShowSpecialMenu(false)}
+                                >
+                                    <Text style={[styles.chooseTypeText, !showSpecialMenu && styles.selectedMenuText]}>Today's
+                                        Menu</Text>
+                                </TouchableOpacity>
+                            )
+                        }
+                        {
+                            totalCheckedItemsCount <= 0 && (
+                                <TouchableOpacity
+                                    style={[styles.chooseTypeItemRight, showSpecialMenu && styles.selectedMenu]}
+                                    onPress={() => setShowSpecialMenu(true)}
+                                >
+                                    <Text style={[styles.chooseTypeText, showSpecialMenu && styles.selectedMenuText]}>Today's
+                                        Special</Text>
+                                </TouchableOpacity>
+                            )
+                        }
+                    </View>
+                )
+            }
             <ScrollView style={styles.scrollViewContainer} showsVerticalScrollIndicator={false}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
                         }
             >
                 <View style={styles.itemContainer}>
-                    {showSpecialMenu && (
+                    {!editMenu && showSpecialMenu && (
                         <View>
-                            {/*{totalCheckedItemsCount <= 0 && (*/}
-                            {/*    <View style={styles.specialMenuMainTextContainer}>*/}
-                            {/*        <Text style={styles.specialMenuMainText}>Today's Special Menu</Text>*/}
-                            {/*        <Ionicons name="md-fast-food-outline" size={24} color="black"/>*/}
-                            {/*    </View>*/}
-                            {/*)}*/}
                             <View style={styles.specialMenu}>
                                 {totalCheckedItemsCount <= 0 &&
                                     specialMenu &&
@@ -242,27 +235,25 @@ const Menu = ({
                             </View>
                         </View>
                     )}
-                    {!showSpecialMenu && (
+                    {(!showSpecialMenu || editMenu) && (
                         <View>
-                            {/*{totalCheckedSpecialItemsCount <= 0 && (*/}
-                            {/*    <View style={styles.specialMenuMainTextContainer}>*/}
-                            {/*        <Text style={styles.specialMenuMainText}>Today's Rice & Curry Menu</Text>*/}
-                            {/*        <Ionicons name="md-fast-food-outline" size={24} color="black"/>*/}
-                            {/*    </View>*/}
-                            {/*)}*/}
                             <View style={styles.normalMealContainer}>
                                 <Text style={styles.pickUpDishesText}>You can pick up to 1 rice and 4 dishes.</Text>
-                                <View style={styles.descriptionContainer}>
-                                    <View style={styles.vegiSwitchContainer}>
-                                        <Switch onValueChange={toggleSwitch} value={isVegi}
-                                                style={styles.vegiTextSwitch}
-                                                trackColor={{false: '#767577', true: '#2C984A'}}
-                                                thumbColor={isVegi ? '#f4f3f4' : '#f4f3f4'}
-                                        />
-                                        <Text style={styles.vegiText}>I am {!isVegi && "not "}a Vegetarian</Text>
-                                    </View>
-                                </View>
-                                {totalCheckedSpecialItemsCount <= 0 &&
+                                {
+                                    !editMenu && (
+                                        <View style={styles.descriptionContainer}>
+                                            <View style={styles.vegiSwitchContainer}>
+                                                <Switch onValueChange={toggleSwitch} value={isVegi}
+                                                        style={styles.vegiTextSwitch}
+                                                        trackColor={{false: '#767577', true: '#2C984A'}}
+                                                        thumbColor={isVegi ? '#f4f3f4' : '#f4f3f4'}
+                                                />
+                                                <Text style={styles.vegiText}>I am {!isVegi && "not "}a Vegetarian</Text>
+                                            </View>
+                                        </View>
+                                    )
+                                }
+                                {(totalCheckedSpecialItemsCount <= 0 || editMenu) &&
                                     itemList &&
                                     itemList?.length > 0 &&
                                     itemList.map((list, index) => (
@@ -301,7 +292,8 @@ const styles = StyleSheet.create({
     scrollViewContainer: {},
     pickUpDishesText: {
         textAlign: 'center',
-        fontSize: dynamicFont(10),
+        fontSize: 14,
+        marginTop: 10,
         color: '#4D4D4D',
     },
     descriptionContainer: {
@@ -322,7 +314,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: '10%',
     },
     specialMenuMainText: {
-        fontSize: dynamicFont(12),
+        fontSize: 18,
         marginRight: 10,
         textAlign: 'center',
     },
@@ -372,7 +364,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     specialMenuText: {
-        fontSize: dynamicFont(12),
+        fontSize: 18,
         paddingHorizontal: 40,
         textAlign: 'left',
     },
@@ -419,7 +411,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
     },
     chooseTypeText: {
-        fontSize: dynamicFont(12),
+        fontSize: 18,
         textAlign: 'center',
     },
     selectedMenu: {
@@ -437,7 +429,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     subItemPriceText: {
-        fontSize: dynamicFont(9),
+        fontSize: 14,
     },
     specialSubMenuContainer: {
         flexDirection: 'row',
@@ -464,7 +456,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     vegiText: {
-        fontSize: dynamicFont(9),
+        fontSize: 14,
         paddingRight: 10,
         fontStyle: 'italic',
     },

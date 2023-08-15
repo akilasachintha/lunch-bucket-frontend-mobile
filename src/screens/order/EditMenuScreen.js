@@ -1,36 +1,36 @@
 import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useEffect, useMemo, useState} from "react";
 import Menu from "../../components/menu/Menu";
-import StaticTopBar from "../../components/topBar/StaticTopBar";
 import {useToast} from "../../helpers/toast/Toast";
 import {getUTCDateTime} from "../../services/timeService";
 import {
     getByMealIdFromBasketService,
     getDinnerMeetMenuService,
+    getDinnerMenuService,
     getDinnerRiceMenuService,
     getDinnerStewMenuService,
     getDinnerVegetableMenuService,
     getLunchMeetMenuService,
     getLunchMeetPercentageService,
+    getLunchMenuService,
     getLunchRiceMenuService,
     getLunchStewMenuService,
     getLunchStewPercentageService,
     getLunchVegetableMenuService,
 } from "../../services/menuService";
 import {log} from "../../helpers/logs/log";
-import AnimatedLoadingSpinner from "../../components/loading/LoadingSkelteon";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
+import moment from "moment/moment";
 
 export default function EditMenuScreen({route}) {
     const {showToast} = useToast();
     const {mealId} = route.params;
 
+    const [refreshing, setRefreshing] = useState(false);
+
     const [isVisible, setIsVisible] = useState(true);
     const [loading, setLoading] = useState(true);
-
-    const [isVegiLunch, setIsVegiLunch] = useState(false);
-    const [isVegiDinner, setIsVegiDinner] = useState(false);
 
     const [meal, setMeal] = useState({});
     const [lunch, setLunch] = useState(true);
@@ -47,13 +47,17 @@ export default function EditMenuScreen({route}) {
     const [dinnerStewItems, setDinnerStewItems] = useState([]);
     const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
 
+    const [isVegiLunch, setIsVegiLunch] = useState(false);
+    const [isVegiDinner, setIsVegiDinner] = useState(false);
+
     const fetchMealById = async (mealId) => {
         const result = await getByMealIdFromBasketService(mealId);
         if (result != null) {
             setMeal(result);
 
             if (result.venue === "Dinner") {
-                const totalDinnerVegetableItems = await getDinnerVegetableMenuService();
+                const dinnerMenu = await getDinnerMenuService();
+                const totalDinnerVegetableItems = await getDinnerVegetableMenuService(dinnerMenu);
                 const dinnerVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
                 const updatedDinnerVegetableItems = totalDinnerVegetableItems.map((item) => {
                     const foundItem = dinnerVegetableItems.find((dinnerItem) => dinnerItem.id === item.id);
@@ -63,7 +67,7 @@ export default function EditMenuScreen({route}) {
                     };
                 });
 
-                const totalDinnerStewItems = await getDinnerStewMenuService();
+                const totalDinnerStewItems = await getDinnerStewMenuService(dinnerMenu);
                 const dinnerStewItems = result.items.filter((item) => item.foodType === "Stew");
                 const updatedDinnerStewItems = totalDinnerStewItems.map((item) => {
                     const foundItem = dinnerStewItems.find((dinnerItem) => dinnerItem.id === item.id);
@@ -73,7 +77,7 @@ export default function EditMenuScreen({route}) {
                     };
                 });
 
-                const totalDinnerMeatItems = await getDinnerMeetMenuService();
+                const totalDinnerMeatItems = await getDinnerMeetMenuService(dinnerMenu);
                 const dinnerMeatItems = result.items.filter((item) => item.foodType === "Meat");
                 const updatedDinnerMeatItems = totalDinnerMeatItems.map((item) => {
                     const foundItem = dinnerMeatItems.find((dinnerItem) => dinnerItem.id === item.id);
@@ -83,7 +87,7 @@ export default function EditMenuScreen({route}) {
                     };
                 });
 
-                const totalDinnerRiceItems = await getDinnerRiceMenuService();
+                const totalDinnerRiceItems = await getDinnerRiceMenuService(dinnerMenu);
                 const dinnerRiceItems = result.items.filter((item) => item.foodType === "Rice");
                 const updatedDinnerRiceItems = totalDinnerRiceItems.map((item) => {
                     const foundItem = dinnerRiceItems.find((dinnerItem) => dinnerItem.id === item.id);
@@ -100,7 +104,8 @@ export default function EditMenuScreen({route}) {
             }
 
             if (result.venue === "Lunch") {
-                const totalLunchVegetableItems = await getLunchVegetableMenuService();
+                const lunchMenu = await getLunchMenuService();
+                const totalLunchVegetableItems = await getLunchVegetableMenuService(lunchMenu);
                 const lunchVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
                 const updatedLunchVegetableItems = totalLunchVegetableItems.map((item) => {
                     const foundItem = lunchVegetableItems.find((lunchItem) => lunchItem.id === item.id);
@@ -110,7 +115,7 @@ export default function EditMenuScreen({route}) {
                     };
                 });
 
-                const totalLunchStewItems = await getLunchStewMenuService();
+                const totalLunchStewItems = await getLunchStewMenuService(lunchMenu);
                 const lunchStewItems = result.items.filter((item) => item.foodType === "Stew");
                 const updatedLunchStewItems = totalLunchStewItems.map((item) => {
                     const foundItem = lunchStewItems.find((lunchItem) => lunchItem.id === item.id);
@@ -120,7 +125,7 @@ export default function EditMenuScreen({route}) {
                     };
                 });
 
-                const totalLunchMeatItems = await getLunchMeetMenuService();
+                const totalLunchMeatItems = await getLunchMeetMenuService(lunchMenu);
                 const lunchMeatItems = result.items.filter((item) => item.foodType === "Meat");
                 const updatedLunchMeatItems = totalLunchMeatItems.map((item) => {
                     const foundItem = lunchMeatItems.find((lunchItem) => lunchItem.id === item.id);
@@ -130,7 +135,7 @@ export default function EditMenuScreen({route}) {
                     };
                 });
 
-                const totalLunchRiceItems = await getLunchRiceMenuService();
+                const totalLunchRiceItems = await getLunchRiceMenuService(lunchMenu);
                 const lunchRiceItems = result.items.filter((item) => item.foodType === "Rice");
                 const updatedLunchRiceItems = totalLunchRiceItems.map((item) => {
                     const foundItem = lunchRiceItems.find((lunchItem) => lunchItem.id === item.id);
@@ -331,10 +336,13 @@ export default function EditMenuScreen({route}) {
     const handleDisabledMenu = async () => {
         try {
             const response = await getUTCDateTime();
-            const currentTime = new Date(response.data.datetime);
+            const {utc_time, utc_date} = response;
 
-            const currentUTCHours = currentTime.getUTCHours();
-            const currentUTCMinutes = currentTime.getUTCMinutes();
+            const trimmedUtcDate = utc_date.trim();
+            const currentTime = moment.utc(`${trimmedUtcDate} ${utc_time}`);
+
+            const currentUTCHours = currentTime.hours();
+            const currentUTCMinutes = currentTime.minutes();
 
             if ((currentUTCHours > 4 || (currentUTCHours === 4 && currentUTCMinutes >= 30)) &&
                 (currentUTCHours < 10 || (currentUTCHours === 10 && currentUTCMinutes < 30))) {
@@ -359,36 +367,6 @@ export default function EditMenuScreen({route}) {
         );
     }, []);
 
-
-    const lunchStyles = [styles.lunchContainer, !lunch && styles.lunchContainerNotSelected];
-    const dinnerStyles = [styles.dinnerContainer, lunch && styles.dinnerContainerNotSelected];
-
-    if (loading) {
-        return (
-            <SafeAreaView style={styles.safeAreaContainer}>
-                <View style={styles.mainContainer}>
-                    <StaticTopBar/>
-                    <View style={styles.bodyTopBar}>
-                        {
-                            meal && meal.venue === "Lunch" ? (
-                                <TouchableOpacity style={lunchStyles} onPress={() => setLunch(false)}>
-                                    <Text style={styles.dinnerContainerText}>Update Lunch {meal && meal.name}</Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <TouchableOpacity style={dinnerStyles} onPress={() => setLunch(false)}>
-                                    <Text style={styles.dinnerContainerText}>Update Dinner {meal && meal.name}</Text>
-                                </TouchableOpacity>
-                            )
-                        }
-                    </View>
-                    <View style={styles.bodyContainer}>
-                        <AnimatedLoadingSpinner/>
-                    </View>
-                </View>
-            </SafeAreaView>
-        );
-    }
-
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <View style={styles.mainContainer}>
@@ -396,11 +374,11 @@ export default function EditMenuScreen({route}) {
                 <View style={styles.bodyTopBar}>
                     {
                         meal && meal.venue === "Lunch" ? (
-                            <TouchableOpacity style={lunchStyles} onPress={() => setLunch(false)}>
+                            <TouchableOpacity style={styles.lunchContainer} onPress={() => setLunch(false)}>
                                 <Text style={styles.dinnerContainerText}>Lunch</Text>
                             </TouchableOpacity>
                         ) : (
-                            <TouchableOpacity style={dinnerStyles} onPress={() => setLunch(false)}>
+                            <TouchableOpacity style={styles.dinnerContainer} onPress={() => setLunch(false)}>
                                 <Text style={styles.dinnerContainerText}>Change Dinner {meal && meal.name}</Text>
                             </TouchableOpacity>
                         )
@@ -414,10 +392,13 @@ export default function EditMenuScreen({route}) {
                         totalCheckedItems={meal.venue === "Lunch" ? getTotalCheckedItems(lunchItemList) : getTotalCheckedItems(dinnerItemList)}
                         totalAmount={meal.venue === "Lunch" ? lunchTotalPrice : dinnerTotalPrice}
                         isVisible={isVisible}
+                        isVegi={meal.venue === "Lunch" ? isVegiLunch : isVegiDinner}
                         setIsVisible={setIsVisible}
                         disableTime={meal.venue === "Lunch" ? disableLunchCheckbox : disableDinnerCheckbox}
                         editMenu={true}
                         mealId={mealId}
+                        loading={loading}
+                        refreshing={refreshing}
                     />
                 </View>
             </View>
@@ -450,6 +431,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         borderBottomWidth: 5,
         borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
     },
     lunchContainerNotSelected: {
         paddingVertical: 20,

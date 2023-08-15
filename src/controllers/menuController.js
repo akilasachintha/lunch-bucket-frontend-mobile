@@ -2,7 +2,6 @@ import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {log} from "../helpers/logs/log";
-import axios from "axios";
 
 export async function getLunchMenuController() {
     try {
@@ -12,20 +11,13 @@ export async function getLunchMenuController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const res = axios.get('https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/lunch/invokeSuitabilities'
-            , {
-                headers: {
-                    'token': token,
-                }
-            });
-
-        console.log(res.data);
-
-        const response = await lunchBucketAPI.get('/dev/lunch/getMenus', {
+        const response = await lunchBucketAPI.get('lunch/getMenus', {
             headers: {
                 'token': token,
             }
         });
+
+        console.log(response.data);
 
         if (response.status === 200) return response.data;
 
@@ -43,13 +35,7 @@ export async function getDinnerMenuController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const res = axios.get('https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/dinner/invokeSuitabilities', {
-            headers: {
-                'token': token,
-            }
-        });
-
-        const response = await lunchBucketAPI.get('/dev/dinner/getMenus', {
+        const response = await lunchBucketAPI.get('dinner/getMenus', {
             headers: {
                 'token': token,
             }
@@ -70,7 +56,7 @@ export async function getLunchVegetablePercentageController(vegiId1, vegiId2) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await axios.get(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/vegeSuitability/${vegiId1}/${vegiId2}`, {
+        const response = await lunchBucketAPI.get(`vegeSuitability/${vegiId1}/${vegiId2}`, {
             headers: {'token': token,}
         });
 
@@ -92,7 +78,7 @@ export async function getLunchStewPercentageController(vegiId1, vegiId2) {
 
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await axios.get(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/lunch/stewSuitability/${vegiId1}/${vegiId1}`, {
+        const response = await lunchBucketAPI.get(`lunch/stewSuitability/${vegiId1}/${vegiId1}`, {
             headers: {'token': token,}
         });
 
@@ -112,7 +98,7 @@ export async function getLunchMeetPercentageController(vegiId1, vegiId2, stewId)
 
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await axios.get(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/lunch/meatSuitability/${vegiId1}/${vegiId2}/${stewId}`, {
+        const response = await lunchBucketAPI.get(`lunch/meatSuitability/${vegiId1}/${vegiId2}/${stewId}`, {
             headers: {'token': token,}
         });
 
@@ -132,7 +118,7 @@ export async function getDinnerStewPercentageController(vegiId1, vegiId2) {
 
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await axios.get(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/dinner/stewSuitability/${vegiId1}/${vegiId2}`, {
+        const response = await lunchBucketAPI.get(`dinner/stewSuitability/${vegiId1}/${vegiId2}`, {
             headers: {'token': token,}
         });
 
@@ -152,7 +138,7 @@ export async function getDinnerMeetPercentageController(vegiId1, vegiId2, stewId
 
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await axios.get(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/dinner/meatSuitability/${vegiId1}/${vegiId2}/${stewId}`, {
+        const response = await lunchBucketAPI.get(`dinner/meatSuitability/${vegiId1}/${vegiId2}/${stewId}`, {
             headers: {'token': token,}
         });
 
