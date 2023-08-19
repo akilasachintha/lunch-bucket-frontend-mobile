@@ -11,6 +11,7 @@ import {dynamicFont} from "../../helpers/responsive/fontScale";
 import {loginService} from "../../services/authService";
 import {useToast} from "../../helpers/toast/Toast";
 import {log} from "../../helpers/logs/log";
+import PushNotificationModal from "../../components/modals/PushNotificationModal";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -28,6 +29,7 @@ const fields = [
 ];
 
 export default function Login({navigation}) {
+    const [deviceToken, setDeviceToken] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const initialValues = {email: '', password: ''};
@@ -39,6 +41,11 @@ export default function Login({navigation}) {
 
         try {
             const result = await loginService(values.email, values.password);
+
+            if (result === "device_token_changed") {
+                setDeviceToken(true);
+            }
+
             if (result === "success") {
                 navigation.navigate('Menu');
             } else {
@@ -58,6 +65,7 @@ export default function Login({navigation}) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.mainContainer}>
+                <PushNotificationModal deviceToken={deviceToken} setDeviceToken={setDeviceToken}/>
                 <View style={styles.headerContainer}>
                     <Image
                         style={styles.headerImage}

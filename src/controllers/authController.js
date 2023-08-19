@@ -5,12 +5,17 @@ import {auth2API, lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function loginController(email, password) {
     try {
+
+        const expoPushToken = await getDataFromLocalStorage('expoPushToken');
+        if (!expoPushToken) return ERROR_STATUS.ERROR;
+
         const response = await auth2API.post(
             'userLogin',
             {
                 email: email,
                 password: password,
                 project_code: "64a7aec4932166ca272cd176AVT60UVT4300",
+                device_token: expoPushToken ? expoPushToken : "",
             }
         );
 
