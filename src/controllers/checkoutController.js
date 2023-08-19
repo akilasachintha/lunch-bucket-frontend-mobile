@@ -1,7 +1,7 @@
-import axios from "axios";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import {log} from "../helpers/logs/log";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function setOrderController(data) {
     try {
@@ -11,8 +11,8 @@ export async function setOrderController(data) {
 
         log("info", "controller", "setOrderController | data", data, "checkoutController.js");
 
-        const response = await axios.post(
-            'https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/addOrders',
+        const response = await lunchBucketAPI.post(
+            'addOrders',
             data,
             {
                 headers: {

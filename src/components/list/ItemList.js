@@ -61,7 +61,7 @@ export default function ItemList({title, items, handleItemPress, disableCheckbox
             <View>
                 {filteredItems && filteredItems.length > 0
                     && filteredItems.map((item, index) => (
-                    <View key={item.id}>
+                    <View key={index}>
                         <ListItem
                             itemName={item.type}
                             checked={item.checked}

@@ -1,15 +1,38 @@
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/native';
 import PATHS from '../../helpers/paths/paths';
 import {StatusBar} from 'expo-status-bar';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
 import {dynamicFont} from "../../helpers/responsive/fontScale";
+import {lunchBucketAPI} from "../../apis/lunchBucketAPI";
 
 const InitialScreen = () => {
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
+
+    useEffect(() => {
+        async function fetchData() {
+            const token = await getDataFromLocalStorage('token');
+
+            if (token) {
+                await lunchBucketAPI.get('dinner/invokeSuitabilities', {
+                    headers: {
+                        'token': token,
+                    }
+                });
+
+                await lunchBucketAPI.get('lunch/invokeSuitabilities', {
+                    headers: {
+                        'token': token,
+                    }
+                });
+            }
+        }
+
+        fetchData().catch(console.error);
+    }, []);
 
     const checkIfVisited = async () => {
         try {

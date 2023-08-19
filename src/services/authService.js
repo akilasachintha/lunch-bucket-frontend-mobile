@@ -23,6 +23,10 @@ export async function loginService(email, password) {
             await addDataToLocalStorage('customerId', data.id);
             await addDataToLocalStorage('loginStatus', "true");
 
+            if (data && !data.device_token) {
+                return "device_token_changed";
+            }
+
             log("success", "service", "loginService", "Login Success", "authService.js");
             return SUCCESS_STATUS.SUCCESS;
         }

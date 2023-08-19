@@ -1,4 +1,4 @@
-import {ActivityIndicator, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useEffect, useMemo, useState} from "react";
 import Menu from "../../components/menu/Menu";
 import {useToast} from "../../helpers/toast/Toast";
@@ -16,12 +16,11 @@ import {
 import {log} from "../../helpers/logs/log";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
+import moment from "moment/moment";
 
 export default function MenuScreen({navigation}) {
     const {showToast} = useToast();
 
-    const [lunchMenu, setLunchMenu] = useState([]);
-    const [dinnerMenu, setDinnerMenu] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
 
     // Common
@@ -36,7 +35,7 @@ export default function MenuScreen({navigation}) {
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
     const [lunchSpecialItems, setLunchSpecialItems] = useState([]);
     const [lunchRiceItems, setLunchRiceItems] = useState([]);
-    const [lunchVegetableItems, setLunchVegetableItems] = useState([]);
+    const [lunchVegetableItems, setLunchVegetableItems] = useState(null);
     const [lunchStewItems, setLunchStewItems] = useState([]);
     const [lunchMeatItems, setLunchMeatItems] = useState([]);
 
@@ -67,11 +66,11 @@ export default function MenuScreen({navigation}) {
 
         // Fetch Menu data
         try {
-            const lunchMenu = await getLunchMenuService(setLunchMenu);
-            const dinnerMenu = await getDinnerMenuService(setDinnerMenu);
+            const lunchMenu = await getLunchMenuService();
+            const dinnerMenu = await getDinnerMenuService();
 
             if (lunchMenu) {
-                const menuData = await fetchMenuData(lunchMenu, setLunchMenu, dinnerMenu, setDinnerMenu);
+                const menuData = await fetchMenuData(lunchMenu, dinnerMenu);
                 setLunchSpecialItems(menuData.specialMenuLunch);
                 setLunchRiceItems(menuData.riceMenuLunch);
                 setLunchMeatItems(menuData.meetMenuLunch);
@@ -105,6 +104,7 @@ export default function MenuScreen({navigation}) {
         return navigation.addListener('focus', clearValuesAndFetchData);
     }, [navigation]);
 
+
     const createItemListWithType = (type, items, setItems, maxCount, disableCheckbox) => {
         const handleItemPress = (index) => {
             const newItems = [...items];
@@ -112,35 +112,27 @@ export default function MenuScreen({navigation}) {
             const itemCount = newItems.filter(item => item.checked && item.foodType === type).length;
 
             if (itemChecked) {
-                newItems[index].checked = false
-                console.log("unchecked");
-                console.log(type);
-                console.log(items);
-                const vegetable = lunchVegiItemList.filter(item => item.foodType === "Vegetable");
-                const updatedItems = vegetable.map(item => ({
-                    ...item,
-                    percentage: 0,
-                }));
-                console.log(updatedItems);
-                setLunchVegetableItems(updatedItems);
+                newItems[index].checked = false;
 
                 if (type === "Vegetable") {
                     if (lunch) {
-                        const vegetableItems = newItems.filter(item => item.foodType === "Vegetable");
-                        const updatedItems = vegetableItems.map(item => ({
-                            ...item,
-                            percentage: 0,
-                        }));
-                        setLunchVegetableItems(updatedItems);
+                        const updatedLunchVegetableItems = lunchVegetableItems.map((item) => {
+                            return {
+                                ...item,
+                                percentage: 0,
+                            }
+                        });
+                        newItems[index].percentage = 0;
+                        setLunchVegetableItems([updatedLunchVegetableItems]);
 
                         setLunchMeatItems(lunchMeatItems.map((item) => ({...item, percentage: 0,})));
                         setLunchStewItems(lunchStewItems.map((item) => ({...item, percentage: 0,})));
                     } else {
+                        setDinnerVegetableItems(dinnerVegetableItems.map((item) => ({...item, percentage: 0,})));
                         setDinnerMeatItems(dinnerMeatItems.map((item) => ({...item, percentage: 0,})));
                         setDinnerStewItems(dinnerStewItems.map((item) => ({...item, percentage: 0,})));
                     }
                 }
-
                 if (type === "Stew") {
                     if (lunch) {
                         setLunchMeatItems(lunchMeatItems.map((item) => ({...item, percentage: 0,})));
@@ -148,28 +140,20 @@ export default function MenuScreen({navigation}) {
                         setDinnerMeatItems(dinnerMeatItems.map((item) => ({...item, percentage: 0,})));
                     }
                 }
-
-            } else if (itemCount >= maxCount) {
-                showToast('warning', `You can select up to ${maxCount} ${type.toLowerCase()} only.`);
-                return;
             } else {
-                newItems[index].checked = true;
+                if (!(isVegiLunch || isVegiDinner) && itemCount >= maxCount) {
+                    showToast('warning', `You can select up to ${maxCount} ${type.toLowerCase()} only.`);
+                    return;
+                }
 
-                if (type === "Vegetable") {
-                    if (lunch) {
-                        const updatedVegetableItems = lunchVegetableItems.map(item => ({
-                            ...item,
-                            percentage: 0,
-                        }));
-                        setLunchVegetableItems(updatedVegetableItems);
-                    } else {
-                        const updatedVegetableItems = dinnerVegetableItems.map(item => ({
-                            ...item,
-                            percentage: 0,
-                        }));
-                        setDinnerVegetableItems(updatedVegetableItems);
+                if (isVegiLunch || isVegiDinner) {
+                    if ((type === "Rice" && itemCount > 0) || (type === "Vegetable" && itemCount > 2) || (type === "Stew" && itemCount > 0)) {
+                        showToast('warning', `You can select up to ${type === "Vegetable" ? 3 : maxCount} ${type.toLowerCase()} only.`);
+                        return;
                     }
                 }
+
+                newItems[index].checked = true;
 
                 if (type === "Vegetable" && itemCount === 1) {
                     if (lunch) {
@@ -233,7 +217,6 @@ export default function MenuScreen({navigation}) {
                         });
                     }
                 }
-
                 if (type === "Vegetable" && itemCount === 1) {
                     if (lunch) {
                         const updatedLunchStewItems = lunchStewItems.map(async (item) => {
@@ -273,7 +256,6 @@ export default function MenuScreen({navigation}) {
                         });
                     }
                 }
-
                 if (type === "Vegetable" && itemCount === 1 && (lunchStewItems.filter(item => item.checked && item.foodType === "Stew").length === 1 || dinnerStewItems.filter(item => item.checked && item.foodType === "Stew").length === 1)) {
                     if (lunch) {
                         const updatedLunchMeetItems = lunchMeatItems.map(async (item) => {
@@ -317,7 +299,6 @@ export default function MenuScreen({navigation}) {
                         });
                     }
                 }
-
                 if (type === "Stew" && itemCount === 0 && (lunchVegetableItems.filter(item => item.checked && item.foodType === "Vegetable").length === 2 || dinnerVegetableItems.filter(item => item.checked && item.foodType === "Vegetable").length === 2)) {
                     if (lunch) {
                         const updatedLunchMeetItems = lunchMeatItems.map(async (item) => {
@@ -471,10 +452,15 @@ export default function MenuScreen({navigation}) {
     const handleDisabledMenu = async () => {
         try {
             const response = await getUTCDateTime();
-            const currentTime = new Date(response.data.datetime);
+            const {utc_time, utc_date} = response;
 
-            const currentUTCHours = currentTime.getUTCHours();
-            const currentUTCMinutes = currentTime.getUTCMinutes();
+            const trimmedUtcDate = utc_date.trim();
+            const currentTime = moment.utc(`${trimmedUtcDate} ${utc_time}`);
+
+            const currentUTCHours = currentTime.hours();
+            const currentUTCMinutes = currentTime.minutes();
+
+            console.log(currentUTCHours, currentUTCMinutes);
 
             if ((currentUTCHours > 4 || (currentUTCHours === 4 && currentUTCMinutes >= 30)) &&
                 (currentUTCHours < 10 || (currentUTCHours === 10 && currentUTCMinutes < 30))) {
@@ -484,6 +470,8 @@ export default function MenuScreen({navigation}) {
                 setDisableDinnerCheckbox(true);
                 setDisableLunchCheckbox(false);
             }
+
+            console.log(disableLunchCheckbox, disableDinnerCheckbox);
 
         } catch (error) {
             log('error', 'MenuScreen', 'handleDisabledMenu', error.message, 'MenuScreen.js');
@@ -513,28 +501,6 @@ export default function MenuScreen({navigation}) {
     const lunchStyles = [styles.lunchContainer, !lunch && styles.lunchContainerNotSelected];
     const dinnerStyles = [styles.dinnerContainer, lunch && styles.dinnerContainerNotSelected];
 
-    if (loading) {
-        return (
-            <SafeAreaView style={styles.safeAreaContainer}>
-                <View style={styles.mainContainer}>
-                    <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
-                    <View style={styles.bodyTopBar}>
-                        <TouchableOpacity style={lunchStyles} onPress={() => setLunch(true)}>
-                            <Text style={styles.lunchContainerText}>Lunch</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={dinnerStyles} onPress={() => setLunch(false)}>
-                            <Text style={styles.dinnerContainerText}>Dinner</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.bodyContainer}>
-                        <ActivityIndicator size="large" color="#630A10"
-                                           style={styles.activityIndicator}/>
-                    </View>
-                </View>
-            </SafeAreaView>
-        );
-    }
-
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <View style={styles.mainContainer}>
@@ -551,6 +517,8 @@ export default function MenuScreen({navigation}) {
                     {lunch && (
                         <Menu
                             specialMenu={lunchSpecialItems}
+                            loading={loading}
+                            setLoading={setLoading}
                             title="Lunch"
                             totalCheckedSpecialItemsCount={totalCheckedSpecialLunchItemsCount}
                             setSpecialMenu={setLunchSpecialItems}
@@ -571,6 +539,8 @@ export default function MenuScreen({navigation}) {
                     {!lunch && (
                         <Menu
                             title="Dinner"
+                            loading={loading}
+                            setLoading={setLoading}
                             specialMenu={dinnerSpecialItems}
                             totalCheckedSpecialItemsCount={totalCheckedSpecialDinnerItemsCount}
                             setSpecialMenu={setDinnerSpecialItems}

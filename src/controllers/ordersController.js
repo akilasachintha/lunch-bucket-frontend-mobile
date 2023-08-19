@@ -1,7 +1,7 @@
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
-import axios from "axios";
 import {log} from "../helpers/logs/log";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function getOrdersController() {
     try {
@@ -12,7 +12,7 @@ export async function getOrdersController() {
         if (!token) return ERROR_STATUS.ERROR;
         if (!customerId) return ERROR_STATUS.ERROR;
 
-        const response = await axios.get(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/getOrderByCustomer/${customerId}`, {
+        const response = await lunchBucketAPI.get(`dev/getOrderByCustomer/${customerId}`, {
             headers: {'token': token,}
         });
 
@@ -29,7 +29,7 @@ export async function deleteOrdersController(id) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await axios.delete(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/deleteOrder/${id}`, {
+        const response = await lunchBucketAPI.delete(`dev/deleteOrder/${id}`, {
             headers: {'token': token,}
         });
 

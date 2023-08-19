@@ -50,6 +50,7 @@ export async function handleCheckoutService() {
                         price: meal.totalPrice,
                         potion: false,
                         special_meal: meal.items[0]?.id || "",
+                        cash: false,
                     });
                 } else if (meal.isVegi) {
                     checkoutMenu.orders.push({
@@ -66,6 +67,7 @@ export async function handleCheckoutService() {
                         comment: "",
                         price: meal.totalPrice,
                         potion: false,
+                        cash: false,
                     });
                 } else {
                     checkoutMenu.orders.push({
@@ -82,6 +84,7 @@ export async function handleCheckoutService() {
                         comment: "",
                         price: meal.totalPrice,
                         potion: false,
+                        cash: false,
                     });
                 }
             });

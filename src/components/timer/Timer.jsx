@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-import { fetchRemainingTimes } from '../../services/timeService';
-import { log } from '../../helpers/logs/log';
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import {fetchRemainingTimes} from '../../services/timeService';
+import {log} from '../../helpers/logs/log';
 
 export default function Timer({ title, disableTime }) {
     const [remainingTimeLunchColor, setRemainingTimeLunchColor] = useState('');
@@ -41,8 +41,11 @@ export default function Timer({ title, disableTime }) {
 
     if (isLoading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="small" color="#630A10" />
+            <View style={timerContainerStyle}>
+                <View style={styles.timerBarLeftContainer}>{renderTimerText()}</View>
+                <View style={styles.timerBarRightContainer}>
+                    <ActivityIndicator size="small" color="#0000ff"/>
+                </View>
             </View>
         );
     }

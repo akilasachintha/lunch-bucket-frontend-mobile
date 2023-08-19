@@ -1,7 +1,7 @@
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
-import axios from "axios";
 import {log} from "../helpers/logs/log";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function getChatsController() {
     try {
@@ -10,7 +10,7 @@ export async function getChatsController() {
         if (!token) return ERROR_STATUS.ERROR;
         if (!customerId) return ERROR_STATUS.ERROR;
 
-        const response = await axios.get(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/getUserChat/${customerId}`, {
+        const response = await lunchBucketAPI.get(`getUserChat/${customerId}`, {
             headers: {'token': token,}
         });
 
@@ -30,7 +30,7 @@ export async function createNewConversationController(customerId, message) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await axios.post(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/addUserMessage`, {
+        const response = await lunchBucketAPI.post(`addUserMessage`, {
             customer_id: customerId,
             message: message,
         }, {
@@ -52,7 +52,7 @@ export async function sendMessageToConversation(chatId, message) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await axios.post(`https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/addUserReply`, {
+        const response = await lunchBucketAPI.post(`addUserReply`, {
             chat_id: chatId,
             message: message,
         }, {

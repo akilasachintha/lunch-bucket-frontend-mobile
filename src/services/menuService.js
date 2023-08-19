@@ -11,8 +11,9 @@ import {addDataToLocalStorage, getDataFromLocalStorage} from "../helpers/storage
 import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
 import {getUTCDateTime} from "./timeService";
 import {log} from "../helpers/logs/log";
+import moment from "moment/moment";
 
-export async function getLunchMenuService(setLunchMenu) {
+export async function getLunchMenuService() {
     try {
         const result = await getLunchMenuController();
 
@@ -27,7 +28,7 @@ export async function getLunchMenuService(setLunchMenu) {
     }
 }
 
-export async function getDinnerMenuService(setDinnerMenu) {
+export async function getDinnerMenuService() {
     try {
         const result = await getDinnerMenuController();
 
@@ -84,7 +85,7 @@ export async function getLunchSpecialMenuService(lunchMenu) {
             });
         }
     } catch (error) {
-        log("error", "service", "getLunchMeetMenuService", error.message, "menuService.js");
+        log("error", "service", "getLunchSpecialMenuService", error.message, "menuService.js");
         return [];
     }
 }
@@ -104,7 +105,7 @@ export async function getLunchRiceMenuService(lunchMenu) {
             }));
         }
     } catch (error) {
-        log("error", "service", "getLunchMeetMenuService", error.message, "menuService.js");
+        log("error", "service", "getLunchRiceMenuService", error.message, "menuService.js");
         return [];
     }
 }
@@ -162,6 +163,7 @@ export async function getDinnerMeetMenuService(dinnerMenu) {
                 ...item,
                 checked: false,
                 foodType: 'Meat',
+                percentage: 0,
             }));
         }
     } catch (error) {
@@ -181,6 +183,7 @@ export async function getDinnerSpecialMenuService(dinnerMenu) {
                 ...item,
                 checked: false,
                 foodType: 'Special',
+                percentage: 0,
             }));
         }
     } catch (error) {
@@ -200,6 +203,7 @@ export async function getDinnerRiceMenuService(dinnerMenu) {
                 ...item,
                 checked: false,
                 foodType: 'Rice',
+                percentage: 0,
             }));
         }
     } catch (error) {
@@ -219,6 +223,7 @@ export async function getDinnerVegetableMenuService(dinnerMenu) {
                 ...item,
                 checked: false,
                 foodType: 'Vegetable',
+                percentage: 0,
             }));
         }
     } catch (error) {
@@ -238,6 +243,7 @@ export async function getDinnerStewMenuService(dinnerMenu) {
                 ...item,
                 checked: false,
                 foodType: 'Stew',
+                percentage: 0,
             }));
         }
 
@@ -249,10 +255,12 @@ export async function getDinnerStewMenuService(dinnerMenu) {
 
 export async function setMenuBasketService(totalCheckedItems, totalAmount, venue, isVegi, isSpecial) {
     try {
-        const {data: {datetime}} = await getUTCDateTime();
-        const currentDateTime = new Date(datetime);
-        currentDateTime.getUTCHours();
-        currentDateTime.getUTCMinutes();
+        const response = await getUTCDateTime();
+        const {utc_time, utc_date} = response;
+
+        const trimmedUtcDate = utc_date.trim();
+        const currentTime = moment.utc(`${trimmedUtcDate} ${utc_time}`);
+
         let existingBasket = JSON.parse(await getDataFromLocalStorage('basket') || '{}');
 
         if (totalCheckedItems.length > 0) {
@@ -264,9 +272,9 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
 
                     const meal = {
                         id: id + item.id,
-                        name: 'Meal ' + mealNumber,
+                        name: 'Special Meal',
                         items: [item],
-                        date: currentDateTime.toISOString(),
+                        date: currentTime.toISOString(),
                         count: 1,
                         unitPrice: item.price,
                         totalPrice: item.price,
@@ -284,9 +292,9 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
 
                 const meal = {
                     id: id,
-                    name: 'Meal ' + mealNumber,
+                    name: 'Main Meal',
                     items: totalCheckedItems,
-                    date: currentDateTime.toISOString(),
+                    date: currentTime.toISOString(),
                     count: 1,
                     unitPrice: totalAmount,
                     totalPrice: totalAmount,
@@ -381,7 +389,7 @@ export async function updateBasketFromId(mealId, updatedMeal) {
     }
 }
 
-export async function fetchMenuData(lunchMenu, setLunchMenu, dinnerMenu, setDinnerMenu) {
+export async function fetchMenuData(lunchMenu, dinnerMenu) {
     try {
         const [
             specialMenuLunch,
@@ -538,10 +546,11 @@ export async function fetchBasket(mealId, setCount, setBasket) {
         }
 
         setBasket(basketItems);
+        setBasket(basketItems);
         console.log("basketItems", basketItems);
     } catch (error) {
         log("Error :: BasketScreen :: fetchBasket :: ", error.message, "BasketItem.js");
     }
-};
+}
 
 
