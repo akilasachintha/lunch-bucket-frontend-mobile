@@ -5,10 +5,9 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import TextInputField from '../components/inputField/TextInputField';
 import BottomButton from '../components/buttons/BottomButton';
-import {getUserDetailsService} from '../services/userProfileService';
+import {getUserFullDetailsService} from '../services/userProfileService';
 import {log} from '../helpers/logs/log';
 import {logoutService} from '../services/authService';
-import {dynamicFont} from '../helpers/responsive/fontScale';
 import DynamicTopBar from '../components/topBar/DynamicTopBar';
 import {SelectedTab} from '../helpers/enums/enums';
 import TopHeader from "../components/topHeader/TopHeader";
@@ -38,24 +37,26 @@ export default function ProfileScreen() {
 
     const fetchUserData = async () => {
         try {
-            const result = await getUserDetailsService();
+            const result = await getUserFullDetailsService();
+            console.log(result);
             setUserData(result);
-            setIsLoading(false); // Set loading to false when data is fetched
+            setIsLoading(false);
             log('info', 'screen', 'ProfileScreen | result', result, 'ProfileScreen.js');
         } catch (error) {
-            setIsLoading(false); // Set loading to false on error as well
+            setIsLoading(false);
             log('error', 'screen', 'ProfileScreen', error.message, 'ProfileScreen.js');
         }
     };
 
     useEffect(() => {
-        fetchUserData();
+        fetchUserData().catch((error) => {
+            log('error', 'screen', 'ProfileScreen', error.message, 'ProfileScreen.js');
+        });
     }, []);
 
     const fields = [
-        {name: 'email', label: 'Email', placeholder: userData?.user?.email},
-        {name: 'id', label: 'Id', placeholder: userData?.user?.id},
-        {name: 'contactNo', label: 'Contact', placeholder: userData?.user?.contactNo},
+        {name: 'code', label: 'Code', placeholder: userData?.code},
+        {name: 'contact_no', label: 'Contact', placeholder: userData.contact_no},
     ];
 
     if (isLoading) {
@@ -87,7 +88,7 @@ export default function ProfileScreen() {
                         <View style={styles.formikContainer}>
                             <ScrollView style={styles.scrollViewContainer}>
                                 <View style={styles.fieldHeaderContainer}>
-                                    <Text style={styles.fieldHeaderContainerText}>Personal Details</Text>
+                                    <Text style={styles.fieldHeaderContainerText}>{userData?.email}</Text>
                                 </View>
                                 {fields &&
                                     fields.map((field) => (
@@ -104,8 +105,31 @@ export default function ProfileScreen() {
                                             editable={false}
                                         />
                                     ))}
+                                <View style={styles.fieldHeaderDetailsContainer}>
+                                    <View>
+                                        <Text style={styles.profileText}>Total Packets</Text>
+                                    </View>
+                                    <View>
+                                        <Text style={styles.profileText}>{userData?.total_packets}</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.fieldHeaderDetailsContainer}>
+                                    <View>
+                                        <Text style={styles.profileText}>Balance Packets</Text>
+                                    </View>
+                                    <View>
+                                        <Text style={styles.profileText}>{userData?.balance_packets}</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.pointsContainer}>
+                                    <View>
+                                        <Text style={styles.profileText}>Points you Earned</Text>
+                                    </View>
+                                    <View>
+                                        <Text style={styles.pointsText}>{userData?.points?.toFixed(2)}</Text>
+                                    </View>
+                                </View>
                             </ScrollView>
-                            {/* <BottomButton onPress={handleSubmit} buttonText="Done" /> */}
                             <BottomButton onPress={handleLogout} buttonText="Logout"/>
                         </View>
                     )}
@@ -130,11 +154,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     fieldHeaderContainer: {
-        marginHorizontal: 30,
+        marginHorizontal: "8%",
         marginVertical: 20,
     },
     fieldHeaderContainerText: {
-        fontSize: dynamicFont(14),
+        fontSize: 20,
         color: '#630A10',
         fontWeight: 'bold',
     },
@@ -147,5 +171,31 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    fieldHeaderDetailsContainer: {
+        marginHorizontal: "8%",
+        marginVertical: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    profileText: {
+        fontSize: 18,
+        color: '#630A10',
+    },
+    pointsContainer: {
+        backgroundColor: 'rgba(255, 230, 98, 0.58)',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        marginVertical: "10%",
+        paddingVertical: "3%",
+        marginHorizontal: "8%",
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    pointsText: {
+        color: '#630A10',
+        fontWeight: 'bold',
+        marginTop: 10,
+        fontSize: 20,
     }
 });

@@ -11,7 +11,8 @@ import {dynamicFont} from "../../helpers/responsive/fontScale";
 import {loginService} from "../../services/authService";
 import {useToast} from "../../helpers/toast/Toast";
 import {log} from "../../helpers/logs/log";
-import PushNotificationModal from "../../components/modals/PushNotificationModal";
+import PushNotificationDeviceChangeModal from "../../components/modals/PushNotificationDeviceChangeModal";
+import {ERROR_STATUS} from "../../errorLogs/errorStatus";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -30,6 +31,7 @@ const fields = [
 
 export default function Login({navigation}) {
     const [deviceToken, setDeviceToken] = useState(false);
+    const [isDeviceTokenChanged, setIsDeviceTokenChanged] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const initialValues = {email: '', password: ''};
@@ -41,14 +43,18 @@ export default function Login({navigation}) {
 
         try {
             const result = await loginService(values.email, values.password);
+            console.log(result);
 
-            if (result === "device_token_changed") {
+            if (!result.device_token && result.state) {
                 setDeviceToken(true);
             }
 
-            if (result === "success") {
+            if (result.device_token && result.state) {
                 navigation.navigate('Menu');
-            } else {
+                showToast('success', 'Login Success');
+            }
+
+            if (result === ERROR_STATUS.ERROR) {
                 showToast('error', 'Email or Password is incorrect');
                 log("error", "Login", "handleSubmit", "Email or Password is incorrect", "Login.js");
             }
@@ -65,7 +71,10 @@ export default function Login({navigation}) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.mainContainer}>
-                <PushNotificationModal deviceToken={deviceToken} setDeviceToken={setDeviceToken}/>
+                <PushNotificationDeviceChangeModal deviceToken={deviceToken}
+                                                   setDeviceToken={setDeviceToken}
+                                                   isDeviceTokenChanged={isDeviceTokenChanged}
+                                                   setIsDeviceTokenChanged={setIsDeviceTokenChanged}/>
                 <View style={styles.headerContainer}>
                     <Image
                         style={styles.headerImage}

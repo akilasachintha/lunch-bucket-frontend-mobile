@@ -10,7 +10,7 @@ export default function OrderItem({id, mealName, count, orderType, items, catego
     const handleDeleteOrder = async () => {
         try {
             await deleteOrderService(id);
-            onDeleteOrder(); // Call the callback to remove the item from the screen
+            onDeleteOrder();
         } catch (error) {
             log('error', 'OrderItem', 'handleDeleteOrder', error.message, 'OrderItem.jsx');
         }
@@ -25,6 +25,11 @@ export default function OrderItem({id, mealName, count, orderType, items, catego
                 >
                     <View style={styles.bucketItemNameContainer}>
                         <Text style={styles.bucketItemNameText}>{mealName}</Text>
+                        {orderType === 'special' ? (
+                            <Text style={styles.bucketItemNameSubText}>{type}</Text>
+                        ) : (
+                            <Text style={styles.bucketItemNameSubText}>{items && items.rice}</Text>
+                        )}
                     </View>
                     <View style={styles.countTextContainer}>
                         <Text style={styles.countText}>{count} {count === 1 ? "Pack" : "Packs"}</Text>
@@ -204,4 +209,7 @@ const styles = StyleSheet.create({
     itemListContainer: {
         marginBottom: 20,
     },
+    bucketItemNameSubText: {
+        fontSize: 14,
+    }
 });

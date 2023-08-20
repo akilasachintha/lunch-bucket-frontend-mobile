@@ -41,8 +41,8 @@ const fetchRemainingTimes = async (
             timeLimitDateLunch.set({hours: 10, minutes: 30, seconds: 0});
             timeLimitDateDinner.set({hours: 10, minutes: 30, seconds: 0});
 
-            setRemainingTimeLunchColor("rgba(238, 41, 41, 0.5)");
-            setRemainingTimeDinnerColor("rgb(173,253,167)");
+            setRemainingTimeLunchColor("rgb(245,33,33)");
+            setRemainingTimeDinnerColor("rgb(10,152,0)");
         } else if (
             (currentUTCHours >= 10 || (currentUTCHours < 24)) ||
             (currentUTCHours === 0 && currentUTCMinutes < 30)
@@ -50,8 +50,8 @@ const fetchRemainingTimes = async (
             timeLimitDateLunch.add(1, "days").set({hours: 4, minutes: 30, seconds: 0});
             timeLimitDateDinner.add(1, "days").set({hours: 4, minutes: 30, seconds: 0});
 
-            setRemainingTimeLunchColor("rgb(173,253,167)");
-            setRemainingTimeDinnerColor("rgba(238, 41, 41, 0.5)");
+            setRemainingTimeLunchColor("rgb(10,152,0)");
+            setRemainingTimeDinnerColor("rgb(245,33,33)");
         } else if (
             (currentUTCHours >= 0 && currentUTCMinutes >= 0) &&
             (currentUTCHours < 4 || (currentUTCHours === 4 && currentUTCMinutes < 30))
@@ -59,8 +59,8 @@ const fetchRemainingTimes = async (
             timeLimitDateLunch.set({hours: 4, minutes: 30, seconds: 0});
             timeLimitDateDinner.set({hours: 4, minutes: 30, seconds: 0});
 
-            setRemainingTimeLunchColor("rgb(173,253,167)");
-            setRemainingTimeDinnerColor("rgba(238, 41, 41, 0.5)");
+            setRemainingTimeLunchColor("rgb(10,152,0)");
+            setRemainingTimeDinnerColor("rgb(245,33,33)");
         }
 
         setInterval(() => {

@@ -1,12 +1,13 @@
 import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import TopHeader from "../../components/topHeader/TopHeader";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {deleteOrderService, getOrdersService} from "../../services/ordersService";
 import {log} from "../../helpers/logs/log";
 import OrderItem from "../../components/orderItem/OrderItem";
 import {dynamicFont} from "../../helpers/responsive/fontScale";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
+import {useFocusEffect} from "@react-navigation/native";
 
 export default function ListOrdersScreen() {
     const [orders, setOrders] = useState([]);
@@ -19,11 +20,13 @@ export default function ListOrdersScreen() {
         setLoading(false);
     }
 
-    useEffect(() => {
-        fetchOrders().catch((error) => {
-            log("error", "ListOrdersScreen", "useEffect", error.message, "ListOrdersScreen.jsx");
-        });
-    }, []);
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchOrders().catch((error) => {
+                log("error", "ListOrdersScreen", "useFocusEffect", error.message, "ListOrdersScreen.jsx");
+            });
+        }, [])
+    );
 
     const handleDeleteOrder = async (orderId) => {
         try {
@@ -66,8 +69,10 @@ export default function ListOrdersScreen() {
             <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView>
-                    {orders && orders.length > 0 && orders.map((order, index) => (
-                        <OrderItem key={order.id} mealName={`Order ${index + 1}`} items={order.items}
+                    {orders && orders.length > 0 && orders.map((order) => (
+                        <OrderItem key={order.id}
+                                   mealName={order.order_type === "non_vegi" || order.order_type === "vegi" ? "Main Meal" : "Special Meal"}
+                                   items={order.items}
                                    id={order.id}
                                    count={order.packet_amount} category={order.category} type={order.type}
                                    orderType={order.order_type}

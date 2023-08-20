@@ -14,6 +14,7 @@ import ItemList from '../list/ItemList';
 import BasketButton from './BasketButton';
 import Timer from '../timer/Timer';
 import {AntDesign, MaterialIcons} from '@expo/vector-icons';
+import PATHS from "../../helpers/paths/paths";
 
 const Menu = ({
                   specialMenu,
@@ -75,20 +76,30 @@ const Menu = ({
             {
                 !editMenu && (
                     <View style={styles.chooseTypeContainer}>
-                        <TouchableOpacity
-                            style={[styles.chooseTypeItemLeft, !showSpecialMenu && styles.selectedMenu]}
-                            onPress={() => setShowSpecialMenu(false)}
-                        >
-                            <Text style={[styles.chooseTypeText, !showSpecialMenu && styles.selectedMenuText]}>Today's
-                                Menu</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.chooseTypeItemRight, showSpecialMenu && styles.selectedMenu]}
-                            onPress={() => setShowSpecialMenu(true)}
-                        >
-                            <Text style={[styles.chooseTypeText, showSpecialMenu && styles.selectedMenuText]}>Today's
-                                Special</Text>
-                        </TouchableOpacity>
+                        {
+                            totalCheckedSpecialItemsCount <= 0 && (
+                                <TouchableOpacity
+                                    style={[styles.chooseTypeItemLeft, !showSpecialMenu && styles.selectedMenu]}
+                                    onPress={() => setShowSpecialMenu(false)}
+                                >
+                                    <Image source={PATHS.foodcup} style={styles.chooseTypeIcon}/>
+                                    <Text style={[styles.chooseTypeText, !showSpecialMenu && styles.selectedMenuText]}>Today's
+                                        Menu</Text>
+                                </TouchableOpacity>
+                            )
+                        }
+                        {
+                            totalCheckedItemsCount <= 0 && (
+                                <TouchableOpacity
+                                    style={[styles.chooseTypeItemRight, showSpecialMenu && styles.selectedMenu]}
+                                    onPress={() => setShowSpecialMenu(true)}
+                                >
+                                    <Image source={PATHS.food} style={styles.chooseTypeIcon}/>
+                                    <Text style={[styles.chooseTypeText, showSpecialMenu && styles.selectedMenuText]}>Today's
+                                        Special</Text>
+                                </TouchableOpacity>
+                            )
+                        }
                     </View>
                 )
             }
@@ -113,39 +124,41 @@ const Menu = ({
         <View style={styles.bodyContentContainer}>
             <Timer remainingTime={remainingTime} remainingTimeColor={remainingTimeColor} title={title}
                    disableTime={disableTime}/>
-            {
-                !editMenu && (
-                    <View style={styles.chooseTypeContainer}>
-                        {
-                            totalCheckedSpecialItemsCount <= 0 && (
-                                <TouchableOpacity
-                                    style={[styles.chooseTypeItemLeft, !showSpecialMenu && styles.selectedMenu]}
-                                    onPress={() => setShowSpecialMenu(false)}
-                                >
-                                    <Text style={[styles.chooseTypeText, !showSpecialMenu && styles.selectedMenuText]}>Today's
-                                        Menu</Text>
-                                </TouchableOpacity>
-                            )
-                        }
-                        {
-                            totalCheckedItemsCount <= 0 && (
-                                <TouchableOpacity
-                                    style={[styles.chooseTypeItemRight, showSpecialMenu && styles.selectedMenu]}
-                                    onPress={() => setShowSpecialMenu(true)}
-                                >
-                                    <Text style={[styles.chooseTypeText, showSpecialMenu && styles.selectedMenuText]}>Today's
-                                        Special</Text>
-                                </TouchableOpacity>
-                            )
-                        }
-                    </View>
-                )
-            }
             <ScrollView style={styles.scrollViewContainer} showsVerticalScrollIndicator={false}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
                         }
             >
+                {
+                    !editMenu && (
+                        <View style={styles.chooseTypeContainer}>
+                            {
+                                totalCheckedSpecialItemsCount <= 0 && (
+                                    <TouchableOpacity
+                                        style={[styles.chooseTypeItemLeft, !showSpecialMenu && styles.selectedMenu]}
+                                        onPress={() => setShowSpecialMenu(false)}
+                                    >
+                                        <Image source={PATHS.foodcup} style={styles.chooseTypeIcon}/>
+                                        <Text style={[styles.chooseTypeText, !showSpecialMenu && styles.selectedMenuText]}>Today's
+                                            Menu</Text>
+                                    </TouchableOpacity>
+                                )
+                            }
+                            {
+                                totalCheckedItemsCount <= 0 && (
+                                    <TouchableOpacity
+                                        style={[styles.chooseTypeItemRight, showSpecialMenu && styles.selectedMenu]}
+                                        onPress={() => setShowSpecialMenu(true)}
+                                    >
+                                        <Image source={PATHS.food} style={styles.chooseTypeIcon}/>
+                                        <Text style={[styles.chooseTypeText, showSpecialMenu && styles.selectedMenuText]}>Today's
+                                            Special</Text>
+                                    </TouchableOpacity>
+                                )
+                            }
+                        </View>
+                    )
+                }
                 <View style={styles.itemContainer}>
                     {!editMenu && showSpecialMenu && (
                         <View>
@@ -399,24 +412,38 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingBottom: 10,
+        paddingHorizontal: 40,
+        marginTop: 10,
+    },
+    chooseTypeIcon: {
+        width: 40,
+        height: 30,
+        marginBottom: 10,
     },
     chooseTypeItemLeft: {
         flex: 1,
-        backgroundColor: 'rgb(250,229,121)',
         paddingVertical: 10,
+        borderRadius: 10,
+        borderColor: '#FFF1F1',
+        borderWidth: 2,
+        marginRight: 10,
+        alignItems: 'center',
     },
     chooseTypeItemRight: {
         flex: 1,
-        backgroundColor: 'rgb(250,229,121)',
         paddingVertical: 10,
+        alignItems: 'center',
+        borderColor: '#FFF1F1',
+        borderWidth: 2,
+        borderRadius: 10,
     },
     chooseTypeText: {
-        fontSize: 18,
+        fontSize: 14,
         textAlign: 'center',
     },
     selectedMenu: {
-        borderBottomWidth: 2,
-        borderBottomColor: 'rgb(134,36,43)',
+        borderWidth: 2,
+        borderColor: 'rgb(134,36,43)',
     },
     selectedMenuText: {
         color: 'black',

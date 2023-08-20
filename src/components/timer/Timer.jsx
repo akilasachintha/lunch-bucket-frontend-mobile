@@ -26,14 +26,14 @@ export default function Timer({ title, disableTime }) {
     }, []);
 
     const timerContainerStyle = [
-        styles.timerContainer,
-        { backgroundColor: title === 'Lunch' ? remainingTimeLunchColor : remainingTimeDinnerColor },
+        styles.timerLeftText,
+        {color: title === 'Lunch' ? remainingTimeLunchColor : remainingTimeDinnerColor},
     ];
 
     const renderTimerText = () => {
         const time = title === 'Lunch' ? (disableTime ? '4 PM' : '10 AM') : disableTime ? '10 AM' : '4 PM';
         return (
-            <Text style={styles.timerLeftText}>
+            <Text style={timerContainerStyle}>
                 You can{disableTime ? ' not' : ''} place {title} orders until {time}
             </Text>
         );
@@ -51,7 +51,7 @@ export default function Timer({ title, disableTime }) {
     }
 
     return (
-        <View style={timerContainerStyle}>
+        <View style={styles.timerContainer}>
             <View style={styles.timerBarLeftContainer}>{renderTimerText()}</View>
             <View style={styles.timerBarRightContainer}>
                 <Text style={styles.timerRightText}>

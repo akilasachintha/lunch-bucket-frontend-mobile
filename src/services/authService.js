@@ -12,6 +12,8 @@ export async function loginService(email, password) {
         const result = await loginController(email, password);
         const data = await result.data;
 
+        console.log("log", result);
+
         if (result === "error") {
             log("error", "service", "loginService | result", result, "authService.js");
             return ERROR_STATUS.ERROR;
@@ -23,12 +25,8 @@ export async function loginService(email, password) {
             await addDataToLocalStorage('customerId', data.id);
             await addDataToLocalStorage('loginStatus', "true");
 
-            if (data && !data.device_token) {
-                return "device_token_changed";
-            }
-
             log("success", "service", "loginService", "Login Success", "authService.js");
-            return SUCCESS_STATUS.SUCCESS;
+            return data;
         }
     } catch (error) {
         log("error", "service", "loginService", error.message, "authService.js");
