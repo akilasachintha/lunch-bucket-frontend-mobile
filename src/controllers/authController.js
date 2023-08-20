@@ -6,8 +6,8 @@ import {auth2API, lunchBucketAPI} from "../apis/lunchBucketAPI";
 export async function loginController(email, password) {
     try {
 
-        const expoPushToken = await getDataFromLocalStorage('expoPushToken');
-        if (!expoPushToken) return ERROR_STATUS.ERROR;
+        let expoPushToken = await getDataFromLocalStorage('expoPushToken');
+        if (!expoPushToken) expoPushToken = "";
 
         const response = await auth2API.post(
             'userLogin',
@@ -18,6 +18,8 @@ export async function loginController(email, password) {
                 device_token: expoPushToken ? expoPushToken : "",
             }
         );
+
+        console.log(response);
 
         if (response.status === 200) {
             log("info", "controller", "loginController", response.data, "authController.js");
@@ -75,6 +77,37 @@ export async function validateTokenController() {
 
     } catch (error) {
         log("error", "controller", "validateTokenController", error.message, "authController.js");
+        return ERROR_STATUS.ERROR;
+    }
+}
+
+export async function validatePushNotificationTokenChange() {
+    try {
+        const token = await getDataFromLocalStorage('token');
+        const expoPushToken = await getDataFromLocalStorage('expoPushToken');
+        if (!token || !expoPushToken) {
+            return ERROR_STATUS.ERROR;
+        }
+
+        const response = await lunchBucketAPI.put(
+            'https://fmrlw0xn6h.execute-api.ap-south-1.amazonaws.com/dev/updateDeviceToken',
+            {
+                device_token: expoPushToken,
+            },
+            {
+                headers: {
+                    'project_code': '64a7aec4932166ca272cd176AVT60UVT4300',
+                    'token': token,
+                }
+            }
+        );
+
+        console.log(response.data);
+
+        if (response.status === 200) return response.data;
+
+    } catch (error) {
+        log("error", "controller", "validatePushNotificationTokenChange", error.message, "authController.js");
         return ERROR_STATUS.ERROR;
     }
 }

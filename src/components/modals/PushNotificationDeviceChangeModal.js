@@ -1,7 +1,38 @@
 import React from 'react';
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useNavigation} from "@react-navigation/native";
+import {useToast} from "../../helpers/toast/Toast";
+import {validatePushNotificationTokenChange} from "../../controllers/authController";
 
-const PushNotificationModal = ({deviceToken, setDeviceToken}) => {
+const PushNotificationDeviceChangeModal = ({
+                                               deviceToken,
+                                               setDeviceToken,
+                                               isDeviceTokenChanged,
+                                               setIsDeviceTokenChanged,
+                                           }) => {
+
+    const navigation = useNavigation();
+    const {showToast} = useToast();
+
+    const handleCancel = () => {
+        setIsDeviceTokenChanged(false);
+        setDeviceToken(false);
+        navigation.navigate('Menu');
+        showToast('success', 'Login Success');
+    }
+
+    const handleChange = async () => {
+        try {
+            const result = await validatePushNotificationTokenChange();
+
+            navigation.navigate('Menu');
+            showToast('success', 'Login Success');
+
+        } catch (e) {
+            log("error", "PushNotificationDeviceChangeModal", "handleChange", e.message, "PushNotificationDeviceChangeModal.js");
+        }
+    }
+
     return (
         <View style={styles.container}>
             <Modal visible={deviceToken} transparent>
@@ -17,7 +48,7 @@ const PushNotificationModal = ({deviceToken, setDeviceToken}) => {
                         </View>
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity
-                                onPress={() => setIsModalVisible(false)}
+                                onPress={handleCancel}
                             >
                                 <View style={styles.getStartedButtonTextContainer}>
                                     <Text style={styles.buttonText}>Cancel</Text>
@@ -25,7 +56,7 @@ const PushNotificationModal = ({deviceToken, setDeviceToken}) => {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.buttonConfirmContainer}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={handleChange}>
                                 <View style={styles.getStartedButtonConfirmTextContainer}>
                                     <Text style={styles.buttonConfirmText}>Change</Text>
                                 </View>
@@ -111,4 +142,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default PushNotificationModal;
+export default PushNotificationDeviceChangeModal;

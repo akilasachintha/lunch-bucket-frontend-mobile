@@ -7,14 +7,16 @@ export async function getOrdersController() {
     try {
         const token = await getDataFromLocalStorage('token');
         const customerId = await getDataFromLocalStorage('customerId');
+        console.log(customerId);
 
-        log("info", "controller", "getOrdersController | token", customerId, "ordersController.js");
         if (!token) return ERROR_STATUS.ERROR;
         if (!customerId) return ERROR_STATUS.ERROR;
 
-        const response = await lunchBucketAPI.get(`dev/getOrderByCustomer/${customerId}`, {
+        const response = await lunchBucketAPI.get(`getOrderByCustomer/${customerId}`, {
             headers: {'token': token,}
         });
+
+        console.log(response.data);
 
         if (response.status === 200) return response.data;
 
@@ -29,7 +31,7 @@ export async function deleteOrdersController(id) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await lunchBucketAPI.delete(`dev/deleteOrder/${id}`, {
+        const response = await lunchBucketAPI.delete(`deleteOrder/${id}`, {
             headers: {'token': token,}
         });
 

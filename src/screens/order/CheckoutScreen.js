@@ -1,23 +1,28 @@
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from "@react-navigation/native";
 import CheckoutItem from "../../components/checkoutItem/CheckoutItem";
 import TopHeader from "../../components/topHeader/TopHeader";
 import OrderPlaceSuccessfulModal from "../../components/modals/OrderPlaceSuccessfulModal";
 import BottomButton from "../../components/buttons/BottomButton";
-import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
+import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 import {log} from "../../helpers/logs/log";
 import {handleCheckoutService} from "../../services/checkoutService";
 import {ERROR_STATUS} from "../../errorLogs/errorStatus";
 import {useToast} from "../../helpers/toast/Toast";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
+import {getUserPointsService} from "../../services/userProfileService";
+import ClaimPointsModal from "../../components/modals/ClaimPointsModal";
 
 export default function Checkout() {
     const [isVisible, setIsVisible] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
     const [basket, setBasket] = useState({});
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+    const [points, setPoints] = useState(0);
+    const [isPointsApplied, setIsPointsApplied] = useState(false);
 
     const navigation = useNavigation();
     const {showToast} = useToast();
@@ -43,13 +48,22 @@ export default function Checkout() {
         setIsPlacingOrder(true);
 
         try {
+            let basketItems = await getDataFromLocalStorage('basket');
+            if (!basketItems) return;
+
+            basketItems = JSON.parse(basketItems);
+            basketItems.isCash = !!(basketItems && basketItems.isCash);
+            console.log(basketItems);
+
+            await addDataToLocalStorage('basket', JSON.stringify(basketItems));
+
             const orderPlacedSuccessfully = await fetchCheckout();
 
             if (orderPlacedSuccessfully) {
                 setIsVisible(true);
             }
 
-            if(orderPlacedSuccessfully && !isVisible){
+            if (!isVisible) {
                 navigation.navigate('OrdersList');
             }
 
@@ -82,8 +96,25 @@ export default function Checkout() {
         }
     };
 
+    const fetchUserPoints = async () => {
+        try {
+            setIsLoading(true);
+            const userPoints = await getUserPointsService();
+            if (!userPoints) return 0;
+
+            setPoints(userPoints);
+            setIsLoading(false);
+        } catch (error) {
+            setPoints(0);
+            log("error", "CheckoutScreen", "fetchUserPoints", error.message, "CheckoutScreen.js");
+        }
+    }
+
     useEffect(() => {
         fetchBasket().catch(
+            (error) => log("error", "CheckoutScreen", "useEffect", error.message, "CheckoutScreen.js"),
+        );
+        fetchUserPoints().catch(
             (error) => log("error", "CheckoutScreen", "useEffect", error.message, "CheckoutScreen.js"),
         );
     }, []);
@@ -92,6 +123,9 @@ export default function Checkout() {
         <SafeAreaView style={styles.safeAreaContainer}>
             {isVisible &&
                 <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible} basket={basket}/>}
+            {isPointsApplied &&
+                <ClaimPointsModal points={points.toFixed(2)} isPointsApplied={isPointsApplied}
+                                  setIsPointsApplied={setIsPointsApplied}/>}
             <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
             <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>
@@ -102,6 +136,14 @@ export default function Checkout() {
                     ))}
                 </ScrollView>
                 <View style={styles.amountListContainer}>
+                    <View style={styles.claimPointsMainContainer}>
+                        <TouchableOpacity style={styles.claimPointsContainer} onPress={() => setIsPointsApplied(true)}>
+                            {isLoading ?
+                                <ActivityIndicator size="small" color="#018525"/> :
+                                <Text style={styles.claimPointsText}>Claim Your Points Rs {points.toFixed(2)}</Text>
+                            }
+                        </TouchableOpacity>
+                    </View>
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.amountLeftContainer}>Bill Amount</Text>
                         <Text style={styles.amountRightContainer}>Rs {totalAmount}.00</Text>
@@ -137,6 +179,23 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         marginHorizontal: 40,
         alignItems: 'center',
+    },
+    claimPointsMainContainer: {
+        alignItems: 'center',
+    },
+    claimPointsContainer: {
+        backgroundColor: 'rgba(137, 205, 156, 0.46)',
+        alignItems: 'center',
+        width: '70%',
+        paddingVertical: 10,
+        marginHorizontal: 40,
+        borderRadius: 30,
+        borderWidth: 2,
+        borderColor: '#018525',
+        marginBottom: 20,
+    },
+    claimPointsText: {
+        color: '#01260b',
     },
     amountLeftContainer: {
         fontSize: 18,

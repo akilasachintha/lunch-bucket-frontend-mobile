@@ -80,7 +80,7 @@ const InitialScreen = () => {
         <SafeAreaView style={styles.safeAreaContainer}>
             <StatusBar style=""/>
             <View style={styles.titleContainer}>
-                <Text style={styles.titleText}>Lunch Bucket</Text>
+                <Image source={PATHS.logo} style={styles.logo}/>
             </View>
             <View style={styles.imagesContainer}>
                 <View style={styles.phoneImageContainer}>
@@ -109,7 +109,7 @@ const InitialScreen = () => {
             </View>
             <View style={styles.bottomTextContainer}>
                 <Text style={styles.bottomText}>
-                    Meal Supplier You Can Trust. It's all about your meal. Your Meal Matters Us
+                    Meal Supplier You Can Trust.
                 </Text>
             </View>
         </SafeAreaView>
@@ -121,12 +121,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FCF0C8',
     },
+    logo: {
+        width: "100%",
+        height: "100%",
+    },
     titleContainer: {
         flex: 1,
-        justifyContent: 'flex-end',
         alignItems: 'center',
         marginVertical: 10,
-        marginTop: 50,
+        marginTop: 100,
     },
     titleText: {
         fontSize: dynamicFont(24),
