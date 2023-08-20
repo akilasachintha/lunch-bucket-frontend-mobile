@@ -21,7 +21,9 @@ export async function setOrderController(data) {
             }
         );
 
-        console.log(response);
+        console.log(response.data);
+
+        log("info", "controller", "setOrderController | response", response.data, "checkoutController.js");
 
         if (response.status === 200) {
             log("info", "controller", "setOrderController", response.data, "checkoutController.js");
@@ -33,7 +35,7 @@ export async function setOrderController(data) {
         }
 
     } catch (error) {
-        log("error", "controller", "setOrderController", error.message, "checkoutController.js");
+        log("error", "controller", "setOrderController", error, "checkoutController.js");
         return ERROR_STATUS.ERROR;
     }
 }

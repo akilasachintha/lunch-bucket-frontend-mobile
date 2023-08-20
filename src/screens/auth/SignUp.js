@@ -126,7 +126,7 @@ export default function SignUp({navigation}) {
                                         isValid={isValid}
                                         handleSubmit={handleSubmit}
                                         isSubmitting={isSubmitting}
-                                        isLoading={isLoading} // Pass isLoading prop to FormSubmitButton
+                                        isLoading={isLoading}
                                     />
                                 </View>
                             )}

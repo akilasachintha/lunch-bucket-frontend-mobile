@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     checkoutItemContainer: {
         flexDirection: 'row',
         backgroundColor: 'rgba(252, 240, 200, 1)',
-        paddingVertical: 20,
+        paddingVertical: 10,
         paddingHorizontal: 40,
         marginVertical: 10,
         marginHorizontal: 20,

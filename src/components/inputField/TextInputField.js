@@ -16,6 +16,7 @@ const TextInputField = ({label, placeholder, placeholderTextColor, value, onChan
                         onChangeText={onChangeText}
                         onBlur={onBlur}
                         editable={editable}
+                        scrollEnabled={true}
                     />
                 </View>
             </View>
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
     inputFieldContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginHorizontal: 30,
+        marginHorizontal: "8%",
         marginVertical: 10,
     },
     inputLabel: {
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
         color: '#630A10',
     },
     errorContainer: {
-        marginHorizontal: 30,
+        marginHorizontal: "8%",
         alignItems: 'flex-end',
     },
 });

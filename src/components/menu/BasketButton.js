@@ -86,7 +86,7 @@ const BasketButton = ({
             <TouchableOpacity style={styles.priceContainerLeft} onPress={() => handleBasketPress()}>
                 {!editMenu ? (
                     <Text style={styles.priceContainerLeftText}>
-                        View
+                        {(totalCheckedItemsCount <= 0 && totalCheckedSpecialItemsCount <= 0) ? 'View ' : 'Add to '}
                         Basket {totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0 ? `(${totalCheckedItemsCount + totalCheckedSpecialItemsCount})` : ''}
                     </Text>
                 ) : (

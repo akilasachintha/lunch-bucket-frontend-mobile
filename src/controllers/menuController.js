@@ -82,6 +82,8 @@ export async function getLunchStewPercentageController(vegiId1, vegiId2) {
             headers: {'token': token,}
         });
 
+        console.log(response.data);
+
         if (response.status === 200) return response.data;
 
     } catch (error) {

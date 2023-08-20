@@ -9,6 +9,10 @@ const PATHS = {
     phone: require('../../../assets/images/phone.png'),
     bike: require('../../../assets/images/bike.png'),
     promotion: require('../../../assets/images/promotion.png'),
+    cashPoints: require('../../../assets/images/cashPoints.png'),
+    logo: require('../../../assets/images/logo.png'),
+    foodcup: require('../../../assets/images/foodcup.png'),
+    food: require('../../../assets/images/food.png'),
 }
 
 export default PATHS;
