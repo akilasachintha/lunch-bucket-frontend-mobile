@@ -1,14 +1,22 @@
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {AntDesign} from '@expo/vector-icons';
+import {useNavigation} from "@react-navigation/native";
 
-export default function OrderPlaceSuccessfulModal({isVisible, setIsVisible, basket}) {
+export default function OrderPlaceSuccessfulModal({isVisible, setIsVisible, basket, successResult}) {
+
+    const navigation = useNavigation();
+
+    const handlePress = () => {
+        setIsVisible(false);
+        navigation.navigate('OrdersList');
+    }
 
     return (
         <View style={styles.container}>
             <Modal visible={isVisible} transparent>
                 <TouchableOpacity
+                    onPress={handlePress}
                     style={styles.background}
-                    onPress={() => setIsVisible(false)}
                 >
                     <View style={styles.modal}>
                         <View style={styles.modalIconContainer}>
@@ -16,6 +24,12 @@ export default function OrderPlaceSuccessfulModal({isVisible, setIsVisible, bask
                         </View>
                         <View style={styles.modalTopTextContainer}>
                             <Text style={styles.modalTopText}>Your order was placed successfully</Text>
+                        </View>
+                        <View style={styles.earnedContainer}>
+                            <Text style={styles.earnedText}>You Earned
+                                Points: {successResult && successResult.earned_points}</Text>
+                            <Text style={styles.earnedText}>Your Total
+                                Points: {successResult && successResult.balance_points}</Text>
                         </View>
                         <View style={styles.modalBottomTextContainer}>
                             <Text style={styles.modalBottomText}>You can change your {basket && basket.venue} order
@@ -53,15 +67,21 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     modalTopText: {
-        fontSize: 22,
+        fontSize: 18,
         textAlign: 'center',
         color: 'rgba(68, 68, 68, 1)',
     },
     modalBottomTextContainer: {
-        marginTop: 30,
     },
     modalBottomText: {
         color: 'rgba(68, 68, 68, 1)',
-        fontSize: 14,
+        fontSize: 12,
+        textAlign: 'center',
     },
+    earnedContainer: {
+        marginVertical: "5%",
+    },
+    earnedText: {
+        color: 'rgb(134,36,43)',
+    }
 });

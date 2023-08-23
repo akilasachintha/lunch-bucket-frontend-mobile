@@ -5,7 +5,6 @@ import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function setOrderController(data) {
     try {
-        console.log(data);
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
@@ -21,8 +20,6 @@ export async function setOrderController(data) {
             }
         );
 
-        console.log(response.data);
-
         log("info", "controller", "setOrderController | response", response.data, "checkoutController.js");
 
         if (response.status === 200) {
@@ -35,7 +32,7 @@ export async function setOrderController(data) {
         }
 
     } catch (error) {
-        log("error", "controller", "setOrderController", error, "checkoutController.js");
+        log("error", "controller", "setOrderController", error.message, "checkoutController.js");
         return ERROR_STATUS.ERROR;
     }
 }

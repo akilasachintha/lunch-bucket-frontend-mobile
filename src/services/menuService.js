@@ -292,7 +292,7 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
 
                 const meal = {
                     id: id,
-                    name: 'Main Meal',
+                    name: isVegi ? 'Veg Meal' : 'Non-Veg Meal',
                     items: totalCheckedItems,
                     date: currentTime.toISOString(),
                     count: 1,

@@ -1,7 +1,7 @@
 import {log} from "../helpers/logs/log";
 import {getDataFromLocalStorage, removeDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {setOrderController} from "../controllers/checkoutController";
-import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
+import {ERROR_STATUS} from "../errorLogs/errorStatus";
 
 export async function handleCheckoutService() {
     try {
@@ -10,7 +10,7 @@ export async function handleCheckoutService() {
             getDataFromLocalStorage("customerId"),
         ]);
 
-        log("info", "checkoutService", "handleCheckoutService | basket", JSON.parse(basket), "checkoutService.js");
+        log("info", "checkoutService", "handleCheckoutService | basket", JSON.stringify(basket), "checkoutService.js");
 
         if (!basket) {
             log("error", "checkoutService", "handleCheckoutService | basket", basket, "checkoutService.js");
@@ -106,7 +106,7 @@ export async function handleCheckoutService() {
         } else {
             log("success", "checkoutService", "handleCheckoutService", data.data, "checkoutService.js");
             await removeDataFromLocalStorage("basket");
-            return SUCCESS_STATUS.SUCCESS;
+            return data;
         }
     } catch (error) {
         log("error", "checkoutService", "handleCheckoutService", error.message, "checkoutService.js");
