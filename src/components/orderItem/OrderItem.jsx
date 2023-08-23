@@ -1,20 +1,9 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
-import {deleteOrderService} from '../../services/ordersService';
-import {log} from '../../helpers/logs/log';
 
-export default function OrderItem({id, mealName, count, orderType, items, category, type, onDeleteOrder}) {
+export default function OrderItem({mealName, count, orderType, items, category, type, price, meal, onDeleteOrder}) {
     const [onClicked, setOnClicked] = useState(true);
-
-    const handleDeleteOrder = async () => {
-        try {
-            await deleteOrderService(id);
-            onDeleteOrder();
-        } catch (error) {
-            log('error', 'OrderItem', 'handleDeleteOrder', error.message, 'OrderItem.jsx');
-        }
-    };
 
     return (
         <View>
@@ -23,16 +12,47 @@ export default function OrderItem({id, mealName, count, orderType, items, catego
                     style={[styles.bucketItemContainer, styles.elevation, styles.shadowProp]}
                     onPress={() => setOnClicked(false)}
                 >
-                    <View style={styles.bucketItemNameContainer}>
-                        <Text style={styles.bucketItemNameText}>{mealName}</Text>
-                        {orderType === 'special' ? (
-                            <Text style={styles.bucketItemNameSubText}>{type}</Text>
-                        ) : (
-                            <Text style={styles.bucketItemNameSubText}>{items && items.rice}</Text>
-                        )}
+                    <View style={styles.itemTopContainer}>
+                        <View style={styles.typeContainer}>
+                            <View>
+                                {
+                                    orderType === 'special' && (
+                                        <Text style={styles.orderTypeText}>Special</Text>)
+                                }
+                                {
+                                    orderType === 'non_vegi' && (
+                                        <Text style={styles.orderTypeText}>Non-Veg</Text>)
+                                }
+                                {
+                                    orderType === 'vegi' && (
+                                        <Text style={styles.orderTypeText}>Veg</Text>)
+                                }
+                            </View>
+                            <View>
+                                {
+                                    meal === 'Lunch' && (
+                                        <Text style={styles.mealText}>Lunch</Text>)
+                                }
+                                {
+                                    meal === 'Dinner' && (
+                                        <Text style={styles.mealText}>Dinner</Text>)
+                                }
+                            </View>
+                        </View>
+                        <Text style={styles.itemTopPriceText}>Rs. {price}</Text>
                     </View>
-                    <View style={styles.countTextContainer}>
-                        <Text style={styles.countText}>{count} {count === 1 ? "Pack" : "Packs"}</Text>
+                    <View style={styles.listItemMainContainer}>
+                        <View style={styles.bucketItemNameContainer}>
+                            <Text style={styles.bucketItemNameText}>{mealName}</Text>
+                            {orderType === 'special' ? (
+                                <Text style={styles.bucketItemNameSubText}>{type}</Text>
+                            ) : (
+                                <Text style={styles.bucketItemNameSubText}>{items && items.rice}</Text>
+                            )}
+                        </View>
+                        <View style={styles.countTextContainer}>
+                            <Text style={styles.countText}>{count} {count === 1 ? "Pack" : "Packs"}</Text>
+                        </View>
                     </View>
                 </TouchableOpacity>
             )}
@@ -46,7 +66,7 @@ export default function OrderItem({id, mealName, count, orderType, items, catego
                             <Text style={styles.countText}>{count} {count === 1 ? "Pack" : "Packs"}</Text>
                         </View>
                         <View style={styles.editButtonContainer}>
-                            <TouchableOpacity onPress={handleDeleteOrder} style={styles.deleteButtonTextContainer}>
+                            <TouchableOpacity onPress={onDeleteOrder} style={styles.deleteButtonTextContainer}>
                                 <MaterialIcons name="delete-forever" size={24} color="black"/>
                             </TouchableOpacity>
                         </View>
@@ -113,20 +133,19 @@ const styles = StyleSheet.create({
         shadowColor: '#5b595b',
     },
     bucketItemContainer: {
-        flexDirection: 'row',
         backgroundColor: 'rgba(252, 240, 200, 1)',
         marginHorizontal: "5%",
-        paddingVertical: "4%",
-        paddingHorizontal: "10%",
-        marginVertical: 10,
-        borderRadius: 30,
-        alignItems: 'center',
+        marginVertical: "2%",
+        paddingVertical: "2%",
+        paddingHorizontal: "5%",
+        borderRadius: 10,
     },
     bucketItemNameContainer: {
         flex: 2,
+        marginVertical: 5,
     },
     bucketItemNameText: {
-        fontSize: 18,
+        fontSize: 16,
     },
     plusButtonTextContainer: {
         backgroundColor: 'rgba(255, 255, 255, 0.6)',
@@ -143,13 +162,9 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         justifyContent: 'center',
         alignItems: 'center',
-        width: 40,
-        height: 40,
-        flex: 1,
-        marginHorizontal: 10,
     },
     countText: {
-        fontSize: 18,
+        fontSize: 16,
     },
     minusButtonTextContainer: {
         backgroundColor: 'rgba(255, 255, 255, 0.6)',
@@ -210,6 +225,35 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     bucketItemNameSubText: {
-        fontSize: 14,
+        fontSize: 12,
+    },
+    listItemMainContainer: {
+        flexDirection: 'row',
+    },
+    itemTopContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    itemTopPriceText: {
+        fontSize: 12,
+    },
+    orderTypeText: {
+        backgroundColor: 'rgb(250,229,121)',
+        paddingHorizontal: "2%",
+        paddingVertical: "1%",
+        borderRadius: 10,
+        fontSize: 10,
+    },
+    typeContainer: {
+        flexDirection: 'row',
+    },
+    mealText: {
+        marginHorizontal: 5,
+        backgroundColor: 'rgba(169,220,57,0.63)',
+        paddingHorizontal: "2%",
+        paddingVertical: "1%",
+        borderRadius: 10,
+        fontSize: 10,
     }
 });

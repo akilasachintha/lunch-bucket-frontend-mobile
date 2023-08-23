@@ -49,23 +49,28 @@ const ListItem = ({itemName, url, checked, handleItemPress, percentage, disabled
 };
 
 export default function ItemList({title, items, handleItemPress, disableCheckbox, isVegi}) {
-    const filteredItems = isVegi ? items.filter(item => item.vegetarian || item.foodType === "Rice") : items;
+    const filteredItemObjects = [];
+    items.forEach((item, index) => {
+        if (isVegi && !(item.vegetarian || item.foodType === "Rice")) {
+            return;
+        }
+        filteredItemObjects.push({index, item});
+    });
 
     return (
         <View>
-            {filteredItems && filteredItems.length > 0 && (
+            {filteredItemObjects && filteredItemObjects.length > 0 && (
                 <View style={styles.itemTextContainer}>
                     <Text style={styles.itemText}>{title}</Text>
                 </View>
             )}
             <View>
-                {filteredItems && filteredItems.length > 0
-                    && filteredItems.map((item, index) => (
+                {filteredItemObjects && filteredItemObjects.map(({index, item}) => (
                     <View key={index}>
                         <ListItem
                             itemName={item.type}
                             checked={item.checked}
-                            url={item && item.url}
+                            url={item.url}
                             handleItemPress={() => handleItemPress(index)}
                             percentage={item.percentage}
                             disabled={disableCheckbox}
@@ -75,7 +80,7 @@ export default function ItemList({title, items, handleItemPress, disableCheckbox
             </View>
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     itemTextContainer: {

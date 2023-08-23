@@ -16,6 +16,7 @@ import {getUserPointsService} from "../../services/userProfileService";
 import ClaimPointsModal from "../../components/modals/ClaimPointsModal";
 
 export default function Checkout() {
+    const [successResult, setSuccessResult] = useState({});
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
@@ -35,6 +36,7 @@ export default function Checkout() {
                 showToast("error", "Order Limit is over. Please try again later.");
             } else {
                 log("success", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");
+                setSuccessResult(result);
                 return true;
             }
         } catch (error) {
@@ -61,10 +63,6 @@ export default function Checkout() {
 
             if (orderPlacedSuccessfully) {
                 setIsVisible(true);
-            }
-
-            if (!isVisible) {
-                navigation.navigate('OrdersList');
             }
 
         } catch (error) {
@@ -100,7 +98,8 @@ export default function Checkout() {
         try {
             setIsLoading(true);
             const userPoints = await getUserPointsService();
-            if (!userPoints) return 0;
+            console.log("userPoints", userPoints);
+            if (!userPoints) setPoints(0);
 
             setPoints(userPoints);
             setIsLoading(false);
@@ -122,7 +121,7 @@ export default function Checkout() {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             {isVisible &&
-                <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible} basket={basket}/>}
+                <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible} basket={basket} successResult={successResult}/>}
             {isPointsApplied &&
                 <ClaimPointsModal points={points.toFixed(2)} isPointsApplied={isPointsApplied}
                                   setIsPointsApplied={setIsPointsApplied}/>}

@@ -22,7 +22,6 @@ const BasketButton = ({
 
     const handleBasketPress = async () => {
         if (isButtonDisabled) {
-            // Button is already disabled, return
             return;
         }
 

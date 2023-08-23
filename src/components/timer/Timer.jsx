@@ -42,9 +42,8 @@ export default function Timer({ title, disableTime }) {
     if (isLoading) {
         return (
             <View style={timerContainerStyle}>
-                <View style={styles.timerBarLeftContainer}>{renderTimerText()}</View>
-                <View style={styles.timerBarRightContainer}>
-                    <ActivityIndicator size="small" color="#0000ff"/>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="small" color="#630A10" />
                 </View>
             </View>
         );
@@ -95,4 +94,5 @@ const styles = StyleSheet.create({
         paddingLeft: 20,
         paddingRight: 20,
     },
+    timerRightTextContainer: {}
 });

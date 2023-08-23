@@ -74,8 +74,10 @@ export default function ListOrdersScreen() {
                                    mealName={order.order_type === "non_vegi" || order.order_type === "vegi" ? "Main Meal" : "Special Meal"}
                                    items={order.items}
                                    id={order.id}
+                                   price={order.price}
                                    count={order.packet_amount} category={order.category} type={order.type}
                                    orderType={order.order_type}
+                                   meal={order.meal}
                                    onDeleteOrder={() => handleDeleteOrder(order.id)}
                         />
                     ))}
