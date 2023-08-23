@@ -8,6 +8,7 @@ import ConfirmDeleteModal from '../modals/ConfirmDeleteModal';
 import {fetchBasket} from '../../services/menuService';
 
 export default function BasketItem({
+                                       venue,
                                        mealName,
                                        mealId,
                                        items,
@@ -19,6 +20,8 @@ export default function BasketItem({
                                        potion,
                                        selectedMealId,
                                        setSelectedMealId,
+                                       totalAmount,
+                                       isVegi
                                    }) {
     const [count, setCount] = useState(itemCount);
     const [onClicked, setOnClicked] = useState(true);
@@ -99,41 +102,61 @@ export default function BasketItem({
                             setOnClicked(false);
                         }}
                 >
-                    <View style={styles.bucketItemNameContainer}>
-                        <Text style={styles.bucketItemNameText}>{mealName}</Text>
-                        <Text style={styles.subMenuBasketItemText}>{items && items[0].type}</Text>
-                    </View>
-                    {
-                        count && count === 2 ? (
-                            <TouchableOpacity style={styles.switchStyles}>
-                                {isSwitchOn ? (
-                                    <Text style={styles.switchTextStyles}>Potion</Text>
+                    <View style={styles.venueContainer}>
+                        <View style={styles.labelTypeContainer}>
+                            {
+                                isSpecial && (
+                                    <Text style={styles.foodTypeText}>Special</Text>
+                                )
+                            }
+                            {
+                                isVegi ? (
+                                    <Text style={styles.foodTypeText}>Veg</Text>
                                 ) : (
-                                    <Text style={styles.switchTextStyles}>Packs</Text>
-                                )}
-                                <Switch
-                                    onValueChange={() => toggleSwitch()}
-                                    value={isSwitchOn}
-                                    style={styles.switchItemStyles}
-                                    trackColor={{false: '#767577', true: '#2C984A'}}
-                                    thumbColor={isSwitchOn ? '#f4f3f4' : '#f4f3f4'}
-                                />
-                            </TouchableOpacity>
-                        ) : (
-                            <View style={styles.switchStyles}>
-                                <Text style={styles.switchTextStyles}>Packs</Text>
-                            </View>
-                        )
-                    }
-                    <TouchableOpacity style={styles.minusButtonTextContainer} onPress={handleMinusPress}>
-                        <Fontisto name="minus-a" size={14} color="black"/>
-                    </TouchableOpacity>
-                    <View style={styles.countTextContainer}>
-                        <Text style={styles.countText}>{itemCount}</Text>
+                                    <Text style={styles.foodTypeText}>Non-Veg</Text>
+                                )
+                            }
+                            <Text style={styles.venueText}>{venue}</Text>
+                        </View>
+                        <Text>Rs. {totalAmount}</Text>
                     </View>
-                    <TouchableOpacity style={styles.plusButtonTextContainer} onPress={handlePlusPress}>
-                        <Fontisto name="plus-a" size={14} color="black"/>
-                    </TouchableOpacity>
+                    <View style={styles.bucketContainer}>
+                        <View style={styles.bucketItemNameContainer}>
+                            <Text style={styles.bucketItemNameText}>{mealName}</Text>
+                            <Text style={styles.subMenuBasketItemText}>{items && items[0].type}</Text>
+                        </View>
+                        {
+                            count && count === 2 ? (
+                                <TouchableOpacity style={styles.switchStyles}>
+                                    {isSwitchOn ? (
+                                        <Text style={styles.switchTextStyles}>Potion</Text>
+                                    ) : (
+                                        <Text style={styles.switchTextStyles}>Packs</Text>
+                                    )}
+                                    <Switch
+                                        onValueChange={() => toggleSwitch()}
+                                        value={isSwitchOn}
+                                        style={styles.switchItemStyles}
+                                        trackColor={{false: '#767577', true: '#2C984A'}}
+                                        thumbColor={isSwitchOn ? '#f4f3f4' : '#f4f3f4'}
+                                    />
+                                </TouchableOpacity>
+                            ) : (
+                                <View style={styles.switchStyles}>
+                                    <Text style={styles.switchTextStyles}>{count === 1 ? "Pack" : "Packs"}</Text>
+                                </View>
+                            )
+                        }
+                        <TouchableOpacity style={styles.minusButtonTextContainer} onPress={handleMinusPress}>
+                            <Fontisto name="minus-a" size={14} color="black"/>
+                        </TouchableOpacity>
+                        <View style={styles.countTextContainer}>
+                            <Text style={styles.countText}>{itemCount}</Text>
+                        </View>
+                        <TouchableOpacity style={styles.plusButtonTextContainer} onPress={handlePlusPress}>
+                            <Fontisto name="plus-a" size={14} color="black"/>
+                        </TouchableOpacity>
+                    </View>
                 </TouchableOpacity>
             )}
             {!onClicked && (
@@ -142,16 +165,28 @@ export default function BasketItem({
                         <View style={styles.bucketItemNameContainer}>
                             <Text style={styles.bucketItemNameText}>{mealName}</Text>
                         </View>
-                        <TouchableOpacity style={styles.switchStyles}>
-                            <Text style={styles.switchTextStyles}>Potion</Text>
-                            <Switch
-                                onValueChange={() => toggleSwitch()}
-                                value={isSwitchOn}
-                                style={styles.switchItemStyles}
-                                trackColor={{false: '#767577', true: '#2C984A'}}
-                                thumbColor={isSwitchOn ? '#f4f3f4' : '#f4f3f4'}
-                            />
-                        </TouchableOpacity>
+                        {
+                            count && count === 2 ? (
+                                <TouchableOpacity style={styles.switchStyles}>
+                                    {isSwitchOn ? (
+                                        <Text style={styles.switchTextStyles}>Potion</Text>
+                                    ) : (
+                                        <Text style={styles.switchTextStyles}>{count === 1 ? "Pack" : "Packs"}</Text>
+                                    )}
+                                    <Switch
+                                        onValueChange={() => toggleSwitch()}
+                                        value={isSwitchOn}
+                                        style={styles.switchItemStyles}
+                                        trackColor={{false: '#767577', true: '#2C984A'}}
+                                        thumbColor={isSwitchOn ? '#f4f3f4' : '#f4f3f4'}
+                                    />
+                                </TouchableOpacity>
+                            ) : (
+                                <View style={styles.switchStyles}>
+                                    <Text style={styles.switchTextStyles}>Packs</Text>
+                                </View>
+                            )
+                        }
                         <TouchableOpacity style={styles.plusButtonTextContainer} onPress={handleMinusPress}>
                             <Fontisto name="minus-a" size={14} color="black"/>
                         </TouchableOpacity>
@@ -196,14 +231,12 @@ const styles = StyleSheet.create({
         shadowColor: '#5b595b',
     },
     bucketItemContainer: {
-        flexDirection: 'row',
         backgroundColor: 'rgba(252, 240, 200, 1)',
         paddingVertical: 10,
-        paddingHorizontal: 30,
+        paddingHorizontal: 20,
         marginVertical: 10,
         marginHorizontal: 20,
-        borderRadius: 30,
-        alignItems: 'center',
+        borderRadius: 10,
     },
     bucketItemNameContainer: {
         flex: 5,
@@ -295,5 +328,33 @@ const styles = StyleSheet.create({
     },
     subMenuBasketItemText: {
         fontSize: 11,
+    },
+    venueContainer: {
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+        flexDirection: 'row',
+    },
+    venueText: {
+        paddingVertical: "1%",
+        paddingHorizontal: "2%",
+        borderRadius: 10,
+        backgroundColor: 'rgba(169,220,57,0.63)',
+        fontSize: 10,
+    },
+    bucketContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    labelTypeContainer: {
+        flexDirection: 'row',
+    },
+    foodTypeText: {
+        paddingVertical: "1%",
+        marginRight: "4%",
+        paddingHorizontal: "2%",
+        borderRadius: 10,
+        backgroundColor: 'rgb(250,229,121)',
+        fontSize: 10,
     }
 });

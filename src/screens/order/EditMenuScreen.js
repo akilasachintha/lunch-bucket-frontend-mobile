@@ -56,6 +56,7 @@ export default function EditMenuScreen({route}) {
             setMeal(result);
 
             if (result.venue === "Dinner") {
+                setIsVegiDinner(result.isVegi);
                 const dinnerMenu = await getDinnerMenuService();
                 const totalDinnerVegetableItems = await getDinnerVegetableMenuService(dinnerMenu);
                 const dinnerVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
@@ -104,6 +105,7 @@ export default function EditMenuScreen({route}) {
             }
 
             if (result.venue === "Lunch") {
+                setIsVegiLunch(result.isVegi);
                 const lunchMenu = await getLunchMenuService();
                 const totalLunchVegetableItems = await getLunchVegetableMenuService(lunchMenu);
                 const lunchVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
@@ -269,16 +271,6 @@ export default function EditMenuScreen({route}) {
         createItemListWithType("Vegetable", dinnerVegetableItems, setDinnerVegetableItems, 2, disableDinnerCheckbox),
         createItemListWithType("Stew", dinnerStewItems, setDinnerStewItems, 1, disableDinnerCheckbox),
         createItemListWithType("Meat", dinnerMeatItems, setDinnerMeatItems, 1, disableDinnerCheckbox),
-    ];
-
-    const lunchVegiItemList = [
-        createItemListWithType("Rice", lunchRiceItems, setLunchRiceItems, 1, disableLunchCheckbox),
-        createItemListWithType("Vegetable", lunchVegetableItems, setLunchVegetableItems, 4, disableLunchCheckbox),
-    ];
-
-    const dinnerVegiItemList = [
-        createItemListWithType("Rice", dinnerRiceItems, setDinnerRiceItems, 1, disableDinnerCheckbox),
-        createItemListWithType("Vegetable", dinnerVegetableItems, setDinnerVegetableItems, 4, disableDinnerCheckbox),
     ];
 
     const getTotalCheckedItemsCount = (itemLists) => {

@@ -6,11 +6,13 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import BorderButton from "../../components/borderButton/BorderButton";
 import BottomButton from "../../components/buttons/BottomButton";
-import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
+import {getDataFromLocalStorage, removeDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 import {log} from "../../helpers/logs/log";
 import {useToast} from "../../helpers/toast/Toast";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
+import moment from "moment/moment";
+import {getUTCDateTime} from "../../services/timeService";
 
 export default function BasketScreen() {
     const [basket, setBasket] = useState({});
@@ -58,7 +60,48 @@ export default function BasketScreen() {
         }, [])
     );
 
-    const handleProceedToOrder = () => {
+    const handleProceedToOrder = async () => {
+        const response = await getUTCDateTime();
+        const {utc_time, utc_date} = response;
+
+        const trimmedUtcDate = utc_date.trim();
+        const currentTime = moment.utc(`${trimmedUtcDate} ${utc_time}`);
+
+        const currentUTCHours = currentTime.hours();
+        const currentUTCMinutes = currentTime.minutes();
+
+        const hasLunchItems = basket.meal.some(meal => meal.venue === "Lunch");
+        const hasDinnerItems = basket.meal.some(meal => meal.venue === "Dinner");
+        console.log("hasLunchItems", hasLunchItems);
+        console.log("hasDinnerItems", hasDinnerItems);
+
+        const isLunch = basket.venue === "Lunch";
+        console.log("isLunch", isLunch);
+
+        // 10 AM to 4 PM
+        if (isLunch && hasLunchItems && (currentUTCHours > 4 || (currentUTCHours === 4 && currentUTCMinutes >= 30)) &&
+            (currentUTCHours < 10 || (currentUTCHours === 10 && currentUTCMinutes < 30))) {
+            showToast("error", "Lunch orders are closed now. Please order for dinner.");
+            await removeDataFromLocalStorage("basket");
+            return;
+        }
+
+        // 4 PM to 12 AM
+        if (isLunch && hasDinnerItems && (currentUTCHours >= 10 || (currentUTCHours < 24)) ||
+            (currentUTCHours === 0 && currentUTCMinutes < 30)) {
+            showToast("error", "Dinner orders are closed now. Please order for lunch.");
+            await removeDataFromLocalStorage("basket");
+            return;
+        }
+
+        // 12 AM to 10 AM
+        if (isLunch && hasDinnerItems && (currentUTCHours >= 0 && currentUTCMinutes >= 0) &&
+            (currentUTCHours < 4 || (currentUTCHours === 4 && currentUTCMinutes < 30))) {
+            showToast("error", "Dinner orders are closed now. Please order for lunch.");
+            await removeDataFromLocalStorage("basket");
+            return;
+        }
+
         if (basket && basket.meal && basket.meal.length > 0) {
             navigation.navigate('Checkout');
         } else {
@@ -89,6 +132,8 @@ export default function BasketScreen() {
                     {
                         basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal) => (
                             <BasketItem
+                                totalAmount={meal.totalPrice}
+                                venue={basket.venue}
                                 setIsModalVisible={setIsModalVisible}
                                 isModalVisible={isModalVisible}
                                 setSelectedMealId={setSelectedMealId}
@@ -101,6 +146,7 @@ export default function BasketScreen() {
                                 itemCount={meal.count}
                                 isSpecial={meal.isSpecial}
                                 potion={meal.potion}
+                                isVegi={meal.isVegi}
                             />
                         ))
                     }

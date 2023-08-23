@@ -34,6 +34,7 @@ const fetchRemainingTimes = async (
         const currentUTCHours = currentTime.hours();
         const currentUTCMinutes = currentTime.minutes();
 
+        // 10 AM to 4 PM
         if (
             (currentUTCHours > 4 || (currentUTCHours === 4 && currentUTCMinutes >= 30)) &&
             (currentUTCHours < 10 || (currentUTCHours === 10 && currentUTCMinutes < 30))
@@ -43,21 +44,25 @@ const fetchRemainingTimes = async (
 
             setRemainingTimeLunchColor("rgb(245,33,33)");
             setRemainingTimeDinnerColor("rgb(10,152,0)");
+
+            // 4 PM to 12 AM
         } else if (
             (currentUTCHours >= 10 || (currentUTCHours < 24)) ||
             (currentUTCHours === 0 && currentUTCMinutes < 30)
         ) {
-            timeLimitDateLunch.add(1, "days").set({hours: 4, minutes: 30, seconds: 0});
-            timeLimitDateDinner.add(1, "days").set({hours: 4, minutes: 30, seconds: 0});
+            timeLimitDateLunch.set({hours: 4, minutes: 30, seconds: 0});
+            timeLimitDateDinner.set({hours: 4, minutes: 30, seconds: 0});
 
             setRemainingTimeLunchColor("rgb(10,152,0)");
             setRemainingTimeDinnerColor("rgb(245,33,33)");
+
+            // 12 AM to 10 AM
         } else if (
             (currentUTCHours >= 0 && currentUTCMinutes >= 0) &&
             (currentUTCHours < 4 || (currentUTCHours === 4 && currentUTCMinutes < 30))
         ) {
-            timeLimitDateLunch.set({hours: 4, minutes: 30, seconds: 0});
-            timeLimitDateDinner.set({hours: 4, minutes: 30, seconds: 0});
+            timeLimitDateLunch.add(1, "days").set({hours: 4, minutes: 30, seconds: 0});
+            timeLimitDateDinner.add(1, "days").set({hours: 4, minutes: 30, seconds: 0});
 
             setRemainingTimeLunchColor("rgb(10,152,0)");
             setRemainingTimeDinnerColor("rgb(245,33,33)");
