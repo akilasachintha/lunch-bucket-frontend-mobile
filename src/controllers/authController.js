@@ -14,7 +14,7 @@ export async function loginController(email, password) {
             {
                 email: email,
                 password: password,
-                project_code: "64a7aec4932166ca272cd176AVT60UVT4300",
+                project_code: "64b611b5999970218fd7b23fAVT60UVT4300",
                 device_token: expoPushToken ? expoPushToken : "",
             }
         );
