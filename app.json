@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "lunch-bucket-frontend-mobile",
-    "slug": "lunch-bucket-frontend-mobile",
-    "scheme": "com.akilasachintha.lunchbucketfrontendmobile",
+    "name": "Lunch Bucket",
+    "slug": "lunch-bucket",
+    "scheme": "com.icode.lunchbucket",
     "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,7 +24,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#9E0808"
       },
       "googleServicesFile": "./google-services.json",
       "package": "com.icode.lunchbucket"
@@ -34,7 +34,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "6dbb61c1-0cad-4945-ae0d-8188d362b395"
+        "projectId": "d93b88ed-359c-4e08-81fc-c9e65522372e"
       }
     }
   }

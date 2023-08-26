@@ -32,7 +32,8 @@ export async function setOrderController(data) {
         }
 
     } catch (error) {
-        log("error", "controller", "setOrderController", error.message, "checkoutController.js");
+        const errorMessage = error.response?.data?.message || error.message;
+        log("error", "controller", "setOrderController", errorMessage, "checkoutController.js");
         return ERROR_STATUS.ERROR;
     }
 }

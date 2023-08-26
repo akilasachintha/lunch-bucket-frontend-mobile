@@ -43,7 +43,6 @@ export default function Login({navigation}) {
 
         try {
             const result = await loginService(values.email, values.password);
-            console.log(result);
 
             if (!result.device_token && result.state) {
                 setDeviceToken(true);
@@ -54,10 +53,16 @@ export default function Login({navigation}) {
                 showToast('success', 'Login Success');
             }
 
-            if (result === ERROR_STATUS.ERROR) {
+            if (result === ERROR_STATUS.LOGIN_API_ERROR || result === ERROR_STATUS.LOGIN_NOT_REGISTERED) {
                 showToast('error', 'Email or Password is incorrect');
                 log("error", "Login", "handleSubmit", "Email or Password is incorrect", "Login.js");
             }
+
+            if (result === ERROR_STATUS.LOGIN_EMAIL_CONFIRMATION_PENDING) {
+                showToast('error', 'Please check your emails and verify your email to Continue.');
+                log("error", "Login", "handleSubmit", "Email confirmation pending", "Login.js");
+            }
+
         } catch (error) {
             log("error", "Login", "handleSubmit", error.message, "Login.js");
             showToast('error', error.message);

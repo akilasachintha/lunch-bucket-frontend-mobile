@@ -14,12 +14,16 @@ export async function loginService(email, password) {
 
         console.log("log", result);
 
-        if (result === "error") {
+        if (result === ERROR_STATUS.ERROR) {
             log("error", "service", "loginService | result", result, "authService.js");
-            return ERROR_STATUS.ERROR;
-        } else if (data && data.state === false) {
+            return ERROR_STATUS.LOGIN_API_ERROR;
+        } else if (data && data.state === false && data.response === "not registered") {
             log("info", "service", "loginService | state", data.state, "authService.js");
-            return ERROR_STATUS.ERROR;
+            return ERROR_STATUS.LOGIN_NOT_REGISTERED;
+        } else if (data && data.state === false && data.response === "email confirmation pending") {
+            log("info", "service", "loginService | state", data.state, "authService.js");
+            return ERROR_STATUS.LOGIN_EMAIL_CONFIRMATION_PENDING;
+
         } else {
             await addDataToLocalStorage('token', data.token);
             await addDataToLocalStorage('customerId', data.id);
@@ -61,10 +65,12 @@ export async function registerService(email, password, contactNo) {
 
 export async function logoutService() {
     try {
-        await removeDataFromLocalStorage('token', "");
-        await removeDataFromLocalStorage('@visited', "");
+        await addDataToLocalStorage('token', "");
+        await addDataToLocalStorage('@visited', "");
         await addDataToLocalStorage('customerId', "");
         await addDataToLocalStorage('loginStatus', "false");
+        await addDataToLocalStorage('expoPushToken', "");
+        await addDataToLocalStorage('basket', "");
 
         log("success", "service", "logoutService", "Logout Success", "authService.js");
         return SUCCESS_STATUS.SUCCESS;

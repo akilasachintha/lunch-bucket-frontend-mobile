@@ -534,6 +534,7 @@ export default function MenuScreen({navigation}) {
                             disableTime={disableLunchCheckbox}
                             onRefresh={onRefresh}
                             refreshing={refreshing}
+                            clearAndFetchData={clearValuesAndFetchData}
                         />
                     )}
                     {!lunch && (
@@ -556,6 +557,7 @@ export default function MenuScreen({navigation}) {
                             disableTime={disableDinnerCheckbox}
                             onRefresh={onRefresh}
                             refreshing={refreshing}
+                            clearAndFetchData={clearValuesAndFetchData}
                         />
                     )}
                 </View>

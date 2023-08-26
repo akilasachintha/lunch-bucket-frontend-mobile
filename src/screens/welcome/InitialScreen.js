@@ -36,8 +36,12 @@ const InitialScreen = () => {
 
     const checkIfVisited = async () => {
         try {
-            const visited = await getDataFromLocalStorage('@visited');
+            let visited = await getDataFromLocalStorage('@visited');
+            if (!visited) visited = 'false';
+
             let loginStatus = await getDataFromLocalStorage('loginStatus');
+
+            console.log("visited", visited);
 
             if (isFocused) {
                 Animated.timing(slideAnim, {

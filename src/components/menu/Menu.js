@@ -15,6 +15,7 @@ import BasketButton from './BasketButton';
 import Timer from '../timer/Timer';
 import {AntDesign, MaterialIcons} from '@expo/vector-icons';
 import PATHS from "../../helpers/paths/paths";
+import {log} from "../../helpers/logs/log";
 
 const Menu = ({
                   specialMenu,
@@ -36,11 +37,17 @@ const Menu = ({
                   refreshing,
                   onRefresh,
                   loading,
+                  clearAndFetchData
               }) => {
     const [totalSpecialPrice, setTotalSpecialPrice] = useState(0);
     const [showSpecialMenu, setShowSpecialMenu] = useState(false);
 
     const toggleSwitch = () => {
+        clearAndFetchData().catch(
+            (error) => {
+                log('error', 'MenuScreen', 'useEffect 2', error.message, 'MenuScreen.js');
+            }
+        );
         setIsVegi((previousState) => !previousState);
     };
 
@@ -118,7 +125,6 @@ const Menu = ({
             />
         </View>
     );
-
 
     return (
         <View style={styles.bodyContentContainer}>
@@ -495,6 +501,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     activityIndicator: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noDataTextContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
