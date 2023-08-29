@@ -9,6 +9,11 @@
       "android": {
         "distribution": "store"
       }
+    },
+    "productionApk": {
+      "android": {
+        "buildType": "apk"
+      }
     }
   }
 }
