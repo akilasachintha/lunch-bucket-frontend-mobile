@@ -121,7 +121,8 @@ export default function Checkout() {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             {isVisible &&
-                <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible} basket={basket} successResult={successResult}/>}
+                <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible} basket={basket}
+                                           successResult={successResult}/>}
             {isPointsApplied &&
                 <ClaimPointsModal points={points.toFixed(2)} isPointsApplied={isPointsApplied}
                                   setIsPointsApplied={setIsPointsApplied}/>}

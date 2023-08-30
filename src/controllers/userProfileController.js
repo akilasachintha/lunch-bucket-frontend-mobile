@@ -1,7 +1,7 @@
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import {log} from "../helpers/logs/log";
-import {auth2API, lunchBucketAPI} from "../apis/lunchBucketAPI";
+import {auth2API, lunchBucketAPI, projectCode} from "../apis/lunchBucketAPI";
 
 export async function getUserDetailsController() {
     try {
@@ -11,7 +11,7 @@ export async function getUserDetailsController() {
         const response = await auth2API.get(`getUser`, {
             headers: {
                 'token': token,
-                'project_code': '64a7aec4932166ca272cd176AVT60UVT4300',
+                'project_code': projectCode,
             }
         });
 

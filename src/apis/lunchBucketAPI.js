@@ -1,9 +1,17 @@
 import axios from 'axios';
 
-// const lunchBucketAPI = axios.create({baseURL: 'https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/'});
+if (process.env.NODE_ENV === "development") {
+    console.log("Running in development mode");
 
-const lunchBucketAPI = axios.create({baseURL: 'https://m9sbeatlg0.execute-api.ap-south-1.amazonaws.com/prod/'});
+} else if (process.env.NODE_ENV === "qa") {
+    console.log("Running in QA mode");
+} else {
+    console.log("Running in production mode");
+}
 
+const lunchBucketAPI = axios.create({baseURL: process.env.LUNCH_BUCKET_APP_URL});
 const auth2API = axios.create({baseURL: 'https://fmrlw0xn6h.execute-api.ap-south-1.amazonaws.com/dev/'});
+const projectCode = process.env.PROJECT_CODE;
 
-export {lunchBucketAPI, auth2API};
+
+export {lunchBucketAPI, auth2API, projectCode};
