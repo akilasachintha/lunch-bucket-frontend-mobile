@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     },
     welcomeBackText: {
         color: '#7E1F24',
-        fontSize: dynamicFont(18),
+        fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: '10%',
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
         paddingBottom: 0,
         paddingVertical: 15,
         marginBottom: 5,
-        fontSize: dynamicFont(10),
+        fontSize: 12,
     },
     underline: {
         textDecorationLine: 'underline',

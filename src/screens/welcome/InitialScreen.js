@@ -4,15 +4,19 @@ import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/nat
 import PATHS from '../../helpers/paths/paths';
 import {StatusBar} from 'expo-status-bar';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
-import {dynamicFont} from "../../helpers/responsive/fontScale";
 import {lunchBucketAPI} from "../../apis/lunchBucketAPI";
 
 const InitialScreen = () => {
+    const [devEnv, setDevEnv] = React.useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
 
     useEffect(() => {
+        if (process.env.NODE_ENV === "development") {
+            setDevEnv(true);
+        }
+
         async function fetchData() {
             const token = await getDataFromLocalStorage('token');
 
@@ -61,15 +65,16 @@ const InitialScreen = () => {
                         }
                     }, 7000);
                 } else {
-                    await addDataToLocalStorage('@visited', 'true');
                     setTimeout(() => {
                         slideAnim.setValue(0);
 
                         navigation.navigate('Welcome');
                     }, 7000);
+                    await addDataToLocalStorage('@visited', 'true');
                 }
             }
         } catch (error) {
+            await addDataToLocalStorage('@visited', 'false');
             console.error(error);
         }
     };
@@ -116,6 +121,11 @@ const InitialScreen = () => {
                     Meal Supplier You Can Trust.
                 </Text>
             </View>
+            <View>
+                <Text style={styles.bottomText}>
+                    {devEnv && 'Development Mode'}
+                </Text>
+            </View>
         </SafeAreaView>
     );
 };
@@ -136,7 +146,7 @@ const styles = StyleSheet.create({
         marginTop: 100,
     },
     titleText: {
-        fontSize: dynamicFont(24),
+        fontSize: 24,
         fontWeight: 'bold',
         color: '#7E1F24',
     },
@@ -173,7 +183,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     bottomText: {
-        fontSize: dynamicFont(12),
+        fontSize: 14,
         textAlign: 'center',
         color: '#630A10',
     },
