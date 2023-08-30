@@ -7,7 +7,6 @@ import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
 import FormFields from "../../components/form/FormFields";
 import LinkButton from "../../components/linkButton/LinkButton";
-import {dynamicFont} from "../../helpers/responsive/fontScale";
 import {loginService} from "../../services/authService";
 import {useToast} from "../../helpers/toast/Toast";
 import {log} from "../../helpers/logs/log";
@@ -167,7 +166,7 @@ const styles = StyleSheet.create({
     },
     welcomeBackText: {
         color: '#7E1F24',
-        fontSize: dynamicFont(20),
+        fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: '10%',
@@ -178,7 +177,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: '5%',
         paddingBottom: 0,
         paddingVertical: '7%',
-        fontSize: dynamicFont(10),
+        fontSize: 12,
     },
     underline: {
         textDecorationLine: 'underline',
