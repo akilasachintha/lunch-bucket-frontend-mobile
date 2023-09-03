@@ -7,7 +7,6 @@ import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
 import FormFields from "../../components/form/FormFields";
 import LinkButton from "../../components/linkButton/LinkButton";
-import {dynamicFont} from "../../helpers/responsive/fontScale";
 import {loginService} from "../../services/authService";
 import {useToast} from "../../helpers/toast/Toast";
 import {log} from "../../helpers/logs/log";
@@ -43,7 +42,6 @@ export default function Login({navigation}) {
 
         try {
             const result = await loginService(values.email, values.password);
-            console.log(result);
 
             if (!result.device_token && result.state) {
                 setDeviceToken(true);
@@ -54,10 +52,16 @@ export default function Login({navigation}) {
                 showToast('success', 'Login Success');
             }
 
-            if (result === ERROR_STATUS.ERROR) {
+            if (result === ERROR_STATUS.LOGIN_API_ERROR || result === ERROR_STATUS.LOGIN_NOT_REGISTERED) {
                 showToast('error', 'Email or Password is incorrect');
                 log("error", "Login", "handleSubmit", "Email or Password is incorrect", "Login.js");
             }
+
+            if (result === ERROR_STATUS.LOGIN_EMAIL_CONFIRMATION_PENDING) {
+                showToast('error', 'Please check your emails and verify your email to Continue.');
+                log("error", "Login", "handleSubmit", "Email confirmation pending", "Login.js");
+            }
+
         } catch (error) {
             log("error", "Login", "handleSubmit", error.message, "Login.js");
             showToast('error', error.message);
@@ -162,7 +166,7 @@ const styles = StyleSheet.create({
     },
     welcomeBackText: {
         color: '#7E1F24',
-        fontSize: dynamicFont(20),
+        fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: '10%',
@@ -173,7 +177,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: '5%',
         paddingBottom: 0,
         paddingVertical: '7%',
-        fontSize: dynamicFont(10),
+        fontSize: 12,
     },
     underline: {
         textDecorationLine: 'underline',

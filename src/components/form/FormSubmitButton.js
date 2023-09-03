@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         paddingVertical: '3%',
         fontWeight: 'bold',
-        fontSize: dynamicFont(12),
+        fontSize: 14,
         backgroundColor: '#FFE662',
         borderRadius: 30,
         color: '#630A10',
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     signInTextError: {
         paddingVertical: '3%',
         fontWeight: 'bold',
-        fontSize: dynamicFont(12),
+        fontSize: 14,
         backgroundColor: '#fae579',
         borderRadius: 30,
         color: '#623539',

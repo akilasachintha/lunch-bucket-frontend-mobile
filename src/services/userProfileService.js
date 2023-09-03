@@ -47,7 +47,7 @@ export async function getUserPointsService() {
         log("info", "service", "getUserPointsService | result", result, "userProfileService.js");
 
         if (result === "error") {
-            return ERROR_STATUS.ERROR;
+            return 0;
         } else {
             const data = await result.data?.points;
             log("success", "service", "getUserPointsService | data", data, "userProfileService.js");

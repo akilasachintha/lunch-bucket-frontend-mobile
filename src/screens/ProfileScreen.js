@@ -121,6 +121,20 @@ export default function ProfileScreen() {
                                         <Text style={styles.profileText}>{userData?.balance_packets}</Text>
                                     </View>
                                 </View>
+                                <View style={styles.fieldHeaderDetailsContainer}>
+                                    <View>
+                                        <Text style={styles.profileText}>Profile Status</Text>
+                                    </View>
+                                    <View>
+                                        {
+                                            userData?.threat_state === false ? (
+                                                <View style={styles.roundedIcon}></View>
+                                            ) : (
+                                                <View style={styles.roundedIconThreat}></View>
+                                            )
+                                        }
+                                    </View>
+                                </View>
                                 <View style={styles.pointsContainer}>
                                     <View>
                                         <Text style={styles.profileText}>Points you Earned</Text>
@@ -177,6 +191,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
     },
     profileText: {
         fontSize: 18,
@@ -197,5 +212,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 10,
         fontSize: 20,
+    },
+    roundedIcon: {
+        width: 10,
+        height: 10,
+        borderRadius: 15,
+        backgroundColor: '#419d02',
+    },
+    roundedIconThreat: {
+        width: 10,
+        height: 10,
+        borderRadius: 15,
+        backgroundColor: '#9d0221',
     }
 });

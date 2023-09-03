@@ -1,4 +1,6 @@
 import TopHeader from "../../components/topHeader/TopHeader";
+import {RefreshControl} from 'react-native';
+
 import {
     ActivityIndicator,
     SafeAreaView,
@@ -26,6 +28,7 @@ export default function ContactOwner() {
     const [chatList, setChatList] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const scrollViewRef = useRef();
     const sendIcon = <MaterialCommunityIcons name="send" size={40} color="#630A10"/>;
 
@@ -53,6 +56,17 @@ export default function ContactOwner() {
             log("error", "screen", "ContactOwner | fetchLatestChatData", error.message, "ContactOwner.js");
         }
     };
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        try {
+            await fetchLatestChatData();
+        } catch (error) {
+            log("error", "screen", "ContactOwner | handleRefresh", error.message, "ContactOwner.js");
+        }
+        setRefreshing(false);
+    };
+
 
     useEffect(() => {
         // Fetch the initial chat data when the component mounts
@@ -128,6 +142,13 @@ export default function ContactOwner() {
                                 style={styles.scrollViewContainer}
                                 ref={scrollViewRef}
                                 onContentSizeChange={() => scrollViewRef.current.scrollToEnd()}
+                                refreshControl={
+                                    <RefreshControl
+                                        refreshing={refreshing}
+                                        onRefresh={handleRefresh}
+                                        colors={['#630A10']}
+                                    />
+                                }
                             >
                                 {chatList && chatList.map((chat, index) => (
                                     <View key={index} style={styles.messageContainer}>
@@ -135,7 +156,7 @@ export default function ContactOwner() {
                                             <View style={styles.conversationTitleContainer}>
                                                 <Text
                                                     style={styles.messageContainerHeaderText}>Conversation {index + 1}</Text>
-                                                {chat && chat.view_admin_state && (
+                                                {chat && chat.view_user_state && (
                                                     <View style={styles.roundedIcon}></View>
                                                 )}
                                             </View>

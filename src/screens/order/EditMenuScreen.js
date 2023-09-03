@@ -182,11 +182,19 @@ export default function EditMenuScreen({route}) {
                 if (type === "Stew") {
                     setLunchMeatItems(lunchMeatItems.map((item) => ({...item, percentage: 0,})));
                 }
-
-            } else if (itemCount >= maxCount) {
-                showToast('warning', `You can select up to ${maxCount} ${type.toLowerCase()} only.`);
-                return;
             } else {
+                if (!(isVegiLunch || isVegiDinner) && itemCount >= maxCount) {
+                    showToast('warning', `You can select up to ${maxCount} ${type.toLowerCase()} only.`);
+                    return;
+                }
+
+                if (isVegiLunch || isVegiDinner) {
+                    if ((type === "Rice" && itemCount > 0) || (type === "Vegetable" && itemCount > 2) || (type === "Stew" && itemCount > 0)) {
+                        showToast('warning', `You can select up to ${type === "Vegetable" ? 3 : maxCount} ${type.toLowerCase()} only.`);
+                        return;
+                    }
+                }
+
                 newItems[index].checked = true;
 
                 if (type === "Vegetable" && itemCount === 1) {

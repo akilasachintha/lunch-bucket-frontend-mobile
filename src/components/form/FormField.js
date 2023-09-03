@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     inputField: {
         color: '#630A10',
         flex: 1,
-        fontSize: dynamicFont(12),
+        fontSize: 14,
     },
     inputFieldError: {
         marginBottom: 0,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     error: {
         marginVertical: 4,
         color: 'red',
-        fontSize: dynamicFont(10),
+        fontSize: 12,
     },
     iconContainer: {
         flexDirection: 'row',

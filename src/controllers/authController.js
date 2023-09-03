@@ -1,10 +1,14 @@
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import {log} from "../helpers/logs/log";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
-import {auth2API, lunchBucketAPI} from "../apis/lunchBucketAPI";
+import {auth2API, lunchBucketAPI, projectCode} from "../apis/lunchBucketAPI";
 
 export async function loginController(email, password) {
     try {
+
+        if(!email || !password) return "Login Failed";
+
+        console.log(email, password);
 
         let expoPushToken = await getDataFromLocalStorage('expoPushToken');
         if (!expoPushToken) expoPushToken = "";
@@ -14,12 +18,10 @@ export async function loginController(email, password) {
             {
                 email: email,
                 password: password,
-                project_code: "64b611b5999970218fd7b23fAVT60UVT4300",
+                project_code: projectCode,
                 device_token: expoPushToken ? expoPushToken : "",
             }
         );
-
-        console.log(response);
 
         if (response.status === 200) {
             log("info", "controller", "loginController", response.data, "authController.js");
@@ -68,10 +70,10 @@ export async function validateTokenController() {
         const response = await lunchBucketAPI.get(
             'lunch/getMenus',
             {
-            headers: {
-                'token': token,
-            }
-        });
+                headers: {
+                    'token': token,
+                }
+            });
 
         if (response.status === 200) return response.data;
 

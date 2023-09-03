@@ -1,6 +1,6 @@
 import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import TopHeader from "../../components/topHeader/TopHeader";
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {deleteOrderService, getOrdersService} from "../../services/ordersService";
 import {log} from "../../helpers/logs/log";
 import OrderItem from "../../components/orderItem/OrderItem";
@@ -8,10 +8,24 @@ import {dynamicFont} from "../../helpers/responsive/fontScale";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import {useFocusEffect} from "@react-navigation/native";
+import {RefreshControl} from 'react-native';
+
 
 export default function ListOrdersScreen() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const handleRefresh = useCallback(async () => {
+        setRefreshing(true);
+        try {
+            await fetchOrders();
+        } catch (error) {
+            log('error', 'ListOrdersScreen', 'handleRefresh', error.message, 'ListOrdersScreen.jsx');
+        }
+        setRefreshing(false);
+    }, []);
+
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -68,7 +82,15 @@ export default function ListOrdersScreen() {
             <DynamicTopBar selectedTab={SelectedTab.PREVIOUS}/>
             <TopHeader headerText="Your Orders" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
-                <ScrollView>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={handleRefresh}
+                            colors={['#630A10']}
+                        />
+                    }
+                >
                     {orders && orders.length > 0 && orders.map((order) => (
                         <OrderItem key={order.id}
                                    mealName={order.order_type === "non_vegi" || order.order_type === "vegi" ? "Main Meal" : "Special Meal"}
