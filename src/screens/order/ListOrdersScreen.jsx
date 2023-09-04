@@ -4,7 +4,6 @@ import React, {useCallback, useState} from "react";
 import {deleteOrderService, getOrdersService} from "../../services/ordersService";
 import {log} from "../../helpers/logs/log";
 import OrderItem from "../../components/orderItem/OrderItem";
-import {dynamicFont} from "../../helpers/responsive/fontScale";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import {useFocusEffect} from "@react-navigation/native";
@@ -30,6 +29,7 @@ export default function ListOrdersScreen() {
     const fetchOrders = async () => {
         setLoading(true);
         const response = await getOrdersService();
+        console.log(response);
         setOrders(response);
         setLoading(false);
     }
@@ -96,6 +96,7 @@ export default function ListOrdersScreen() {
                                    mealName={order.order_type === "non_vegi" || order.order_type === "vegi" ? "Main Meal" : "Special Meal"}
                                    items={order.items}
                                    id={order.id}
+                                   orderCode={order.order_code}
                                    price={order.price}
                                    count={order.packet_amount} category={order.category} type={order.type}
                                    orderType={order.order_type}
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     noOrdersText: {
-        fontSize: dynamicFont(12),
+        fontSize: 14,
         color: '#000',
     },
     activityIndicator: {

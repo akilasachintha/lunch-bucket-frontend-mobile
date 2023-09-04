@@ -122,7 +122,7 @@ export default function Login({navigation}) {
                         <LinkButton
                             text={STRINGS.forgotPassword}
                             style={styles.linkButton}
-                            onPress={() => navigation.navigate('SignUp')}
+                            onPress={() => navigation.navigate('ForgetPassword')}
                         />
                         <Text style={styles.linkButton}>{STRINGS.or}</Text>
                     </View>

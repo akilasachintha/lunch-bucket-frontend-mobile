@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
 
-export default function OrderItem({mealName, count, orderType, items, category, type, price, meal, onDeleteOrder}) {
+export default function OrderItem({mealName, count, orderType, items, category, type, price, meal, onDeleteOrder, orderCode}) {
     const [onClicked, setOnClicked] = useState(true);
 
     return (
@@ -54,6 +54,9 @@ export default function OrderItem({mealName, count, orderType, items, category, 
                             <Text style={styles.countText}>{count} {count === 1 ? "Pack" : "Packs"}</Text>
                         </View>
                     </View>
+                    <View style={styles.orderCodeContainer}>
+                        <Text style={styles.orderCodeText}>Order Code: {orderCode} </Text>
+                    </View>
                 </TouchableOpacity>
             )}
             {!onClicked && (
@@ -79,41 +82,11 @@ export default function OrderItem({mealName, count, orderType, items, category, 
                                 </View>
                             </View>
                         )}
-                        {items && (
-                            <View>
-                                <View style={styles.listItemContainer}>
-                                    <Text style={styles.listItemContainerText}>{items.rice}</Text>
-                                </View>
-                                <View style={styles.listItemContainer}>
-                                    <Text style={styles.listItemContainerText}>{items.vege1}</Text>
-                                </View>
-                                <View style={styles.listItemContainer}>
-                                    <Text style={styles.listItemContainerText}>{items.vege2}</Text>
-                                </View>
-                                {items.vege3 && (
-                                    <View style={styles.listItemContainer}>
-                                        <Text style={styles.listItemContainerText}>{items.vege3}</Text>
-                                    </View>
-                                )}
-                                {
-                                    items.vege4 && (
-                                        <View style={styles.listItemContainer}>
-                                            <Text style={styles.listItemContainerText}>{items.vege4}</Text>
-                                        </View>
-                                    )
-                                }
-                                {items.meat && (
-                                    <View style={styles.listItemContainer}>
-                                        <Text style={styles.listItemContainerText}>{items.meat}</Text>
-                                    </View>
-                                )}
-                                {items.stew && (
-                                    <View style={styles.listItemContainer}>
-                                        <Text style={styles.listItemContainerText}>{items.stew}</Text>
-                                    </View>
-                                )}
-                            </View>
-                        )}
+                        {items && items.map((item, index) => (
+                            <View style={styles.listItemContainer} key={index}>
+                                <Text style={styles.listItemContainerText}>{item}</Text>
+                            </View>  
+                        ))}
                     </View>
                 </View>
             )}
@@ -141,8 +114,9 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     bucketItemNameContainer: {
-        flex: 2,
-        marginVertical: 5,
+        flex: 1,
+        justifyContent: "center",
+        marginTop: 10,
     },
     bucketItemNameText: {
         fontSize: 16,
@@ -255,5 +229,11 @@ const styles = StyleSheet.create({
         paddingVertical: "1%",
         borderRadius: 10,
         fontSize: 10,
+    },
+    orderCodeContainer:{
+
+    },
+    orderCodeText: {
+        fontSize: 12,
     }
 });

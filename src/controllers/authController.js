@@ -113,3 +113,27 @@ export async function validatePushNotificationTokenChange() {
         return ERROR_STATUS.ERROR;
     }
 }
+
+export async function forgetPasswordController(email, password) {
+    try {
+        const response = await auth2API.post(
+            'forgetPassword',
+            {
+                email: email,
+                password: password,
+                project_code: projectCode
+            }
+        );
+
+        console.log(response.data);
+
+        if (response.status === 200) {
+            log("info", "controller", "forgetPasswordController", response.data, "authController.js");
+            return response.data;
+        }
+
+    } catch (error) {
+        log("error", "controller", "forgetPasswordController", error.message, "authController.js");
+        return ERROR_STATUS.ERROR;
+    }
+}

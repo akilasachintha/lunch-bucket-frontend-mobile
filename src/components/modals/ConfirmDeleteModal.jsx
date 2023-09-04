@@ -1,9 +1,8 @@
 import React from 'react';
-import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {dynamicFont} from "../../helpers/responsive/fontScale";
-import {removeMealFromBasketService} from "../../services/menuService";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { removeMealFromBasketService } from "../../services/menuService";
 
-const ConfirmDeleteModal = ({isModalVisible, setIsModalVisible, mealId}) => {
+const ConfirmDeleteModal = ({ isModalVisible, setIsModalVisible, mealId }) => {
     const handleDeletePress = async () => {
         await removeMealFromBasketService(mealId);
         setIsModalVisible(false);
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
         paddingVertical: "5%",
         textAlign: 'center',
         color: '#630A10',
-        fontSize: dynamicFont(14),
+        fontSize: 14,
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -89,7 +88,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#630A10',
         textAlign: "center",
-        fontSize: dynamicFont(10),
+        fontSize: 12,
     },
     buttonConfirmContainer: {
         flexDirection: 'row',
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#fff',
         textAlign: "center",
-        fontSize: dynamicFont(10),
+        fontSize: 12,
     }
 });
 

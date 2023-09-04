@@ -141,17 +141,16 @@ export default function MenuScreen({navigation}) {
                     }
                 }
             } else {
-                if (!(isVegiLunch || isVegiDinner) && itemCount >= maxCount) {
-                    showToast('warning', `You can select up to ${maxCount} ${type.toLowerCase()} only.`);
+                if(type === "Rice" && itemCount > 0){
+                    showToast('warning', `You can select one rice item only.`);
                     return;
                 }
 
-                if (isVegiLunch || isVegiDinner) {
-                    if ((type === "Rice" && itemCount > 0) || (type === "Vegetable" && itemCount > 2) || (type === "Stew" && itemCount > 0)) {
-                        showToast('warning', `You can select up to ${type === "Vegetable" ? 3 : maxCount} ${type.toLowerCase()} only.`);
-                        return;
-                    }
+                if(totalCheckedLunchItemsCount >= 5){
+                    showToast('warning', `You can select up to 5 dishes only.`);
+                    return;
                 }
+               
 
                 newItems[index].checked = true;
 

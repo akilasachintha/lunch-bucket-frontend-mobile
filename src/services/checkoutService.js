@@ -55,11 +55,7 @@ export async function handleCheckoutService() {
                 } else if (meal.isVegi) {
                     checkoutMenu.orders.push({
                         order_type: "vegi",
-                        rice: meal.items[0]?.type || "",
-                        vege1: meal.items[1]?.type || "",
-                        vege2: meal.items[2]?.type || "",
-                        vege3: meal.items[3]?.type || "",
-                        vege4: meal.items[4]?.type || "",
+                        items: [meal.items[0]?.type || "", meal.items[1]?.type || "", meal.items[2]?.type || "", meal.items[3]?.type || "", meal.items[4]?.type || ""],
                         packet_amount: meal.count,
                         order_status: 'pending',
                         meal: meal.venue,
@@ -71,11 +67,7 @@ export async function handleCheckoutService() {
                 } else {
                     checkoutMenu.orders.push({
                         order_type: "non_vegi",
-                        rice: meal.items[0]?.type || "",
-                        vege1: meal.items[1]?.type || "",
-                        vege2: meal.items[2]?.type || "",
-                        stew: meal.items[3]?.type || "",
-                        meat: meal.items[4]?.type || "",
+                        items: [meal.items[0]?.type || "", meal.items[1]?.type || "", meal.items[2]?.type || "", meal.items[3]?.type || "", meal.items[4]?.type || ""],
                         packet_amount: meal.count,
                         order_status: 'pending',
                         meal: meal.venue,

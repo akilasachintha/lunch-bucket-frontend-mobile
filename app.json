@@ -9,8 +9,11 @@
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash1.png",
+      "waitForLoadingScreen": true,
+      "loadingScreenImage": "./assets/splash1.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FCF0C8"
+      "backgroundColor": "#FCF0C8",
+      "loadingScreenBackgroundColor": "#FCF0C8"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

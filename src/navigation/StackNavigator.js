@@ -15,6 +15,7 @@ import PromotionDetails from "../components/promotions/PromotionDetails";
 import ListOrdersScreen from "../screens/order/ListOrdersScreen";
 import EditMenuScreen from "../screens/order/EditMenuScreen";
 import AuthGuard from "../helpers/authGuard/AuthGuard";
+import ForgetPassword from "../screens/auth/ForgetPassword";
 
 const Stack = createNativeStackNavigator();
 export default function StackNavigator() {
@@ -27,6 +28,7 @@ export default function StackNavigator() {
                 <Stack.Screen name="Welcome" component={WelcomeScreen}/>
                 <Stack.Screen name="Login" component={Login}/>
                 <Stack.Screen name="SignUp" component={SignUp}/>
+                <Stack.Screen name="ForgetPassword" component={ForgetPassword}/>
                 <Stack.Screen name="Menu" component={MenuScreen}/>
                 <Stack.Screen name="Basket" component={BasketScreen}/>
                 <Stack.Screen name="EditMenu" component={EditMenuScreen}/>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import {log} from "../helpers/logs/log";
+import { log } from "../helpers/logs/log";
 import moment from "moment";
 
 const getUTCDateTime = async () => {
@@ -23,7 +23,7 @@ const fetchRemainingTimes = async (
 ) => {
     try {
         const response = await getUTCDateTime();
-        const {utc_time, utc_date} = response;
+        const { utc_time, utc_date } = response;
 
         const trimmedUtcDate = utc_date.trim();
         const currentTime = moment.utc(`${trimmedUtcDate} ${utc_time}`);
@@ -31,46 +31,47 @@ const fetchRemainingTimes = async (
         const timeLimitDateLunch = moment.utc(currentTime);
         const timeLimitDateDinner = moment.utc(currentTime);
 
-        const currentUTCHours = currentTime.hours();
-        const currentUTCMinutes = currentTime.minutes();
+        const currentUTCHours = currentTime.hours() + 5;
+        const currentUTCMinutes = currentTime.minutes() + 30;
+
+        console.log(currentUTCHours, currentUTCMinutes);
 
         // 10 AM to 4 PM
         if (
-            (currentUTCHours > 4 || (currentUTCHours === 4 && currentUTCMinutes >= 30)) &&
-            (currentUTCHours < 10 || (currentUTCHours === 10 && currentUTCMinutes < 30))
+            (currentUTCHours > 10 || (currentUTCHours === 10 && currentUTCMinutes >= 0)) &&
+            (currentUTCHours < 16 || (currentUTCHours === 4 && currentUTCMinutes < 0))
         ) {
-            timeLimitDateLunch.set({hours: 10, minutes: 30, seconds: 0});
-            timeLimitDateDinner.set({hours: 10, minutes: 30, seconds: 0});
+            console.log("10 AM to 4 PM");
+            timeLimitDateLunch.set({ hours: 4, minutes: 0, seconds: 0 });
+            timeLimitDateDinner.set({ hours: 4, minutes: 0, seconds: 0 });
 
             setRemainingTimeLunchColor("rgb(245,33,33)");
             setRemainingTimeDinnerColor("rgb(10,152,0)");
 
             // 4 PM to 12 AM
         } else if (
-            (currentUTCHours < 10 || (currentUTCHours === 10 && currentUTCMinutes < 30)) &&
-            (currentUTCHours < 0 || (currentUTCHours === 0 && currentUTCMinutes < 30))
+            (currentUTCHours > 16 || (currentUTCHours === 4 && currentUTCMinutes >= 0)) &&
+            (currentUTCHours < 24 || (currentUTCHours === 0 && currentUTCMinutes < 0))
         ) {
             console.log("4 PM to 12 AM");
-            timeLimitDateLunch.add(1, "days").set({hours: 4, minutes: 30, seconds: 0});
-            timeLimitDateDinner.add(1, "days").set({hours: 4, minutes: 30, seconds: 0});
+            timeLimitDateLunch.add(1, "days").set({ hours: 10, minutes: 0, seconds: 0 });
+            timeLimitDateDinner.add(1, "days").set({ hours: 10, minutes: 0, seconds: 0 });
 
             setRemainingTimeLunchColor("rgb(10,152,0)");
             setRemainingTimeDinnerColor("rgb(245,33,33)");
-
-            // 12 AM to 10 AM
-        } else if (
-            (currentUTCHours > 0 || (currentUTCHours === 0 && currentUTCMinutes < 30)) &&
-            (currentUTCHours < 4 || (currentUTCHours === 4 && currentUTCMinutes < 30))
-        ) {
-            timeLimitDateLunch.set({hours: 4, minutes: 30, seconds: 0});
-            timeLimitDateDinner.set({hours: 4, minutes: 30, seconds: 0});
+        }
+        else if ((currentUTCHours > 0 || (currentUTCHours === 0 && currentUTCMinutes >= 0)) &&
+            (currentUTCHours < 10 || (currentUTCHours === 10 && currentUTCMinutes < 0))) {
+            console.log("12 AM to 10 AM");
+            timeLimitDateLunch.add(0, "days").set({ hours: 10, minutes: 0, seconds: 0 });
+            timeLimitDateDinner.add(0, "days").set({ hours: 10, minutes: 0, seconds: 0 });
 
             setRemainingTimeLunchColor("rgb(10,152,0)");
             setRemainingTimeDinnerColor("rgb(245,33,33)");
         }
 
         setInterval(() => {
-            const updatedCurrentTime = moment.utc();
+            let updatedCurrentTime = moment.utc().add(5, 'hours').add(30, 'minutes');
             const lunchTimeDifference = timeLimitDateLunch.diff(updatedCurrentTime);
             const dinnerTimeDifference = timeLimitDateDinner.diff(updatedCurrentTime);
 
@@ -109,4 +110,4 @@ const fetchRemainingTimes = async (
     }
 };
 
-export {getUTCDateTime, fetchRemainingTimes}
+export { getUTCDateTime, fetchRemainingTimes }

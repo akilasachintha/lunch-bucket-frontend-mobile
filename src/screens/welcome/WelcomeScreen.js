@@ -1,8 +1,11 @@
 import Swiper from 'react-native-swiper';
-import {StyleSheet} from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
 import STRINGS from "../../helpers/strings/strings";
 import PATHS from "../../helpers/paths/paths";
 import WelcomeSlide from "../../components/welcomeSlide/WelcomeSlide";
+import { addDataToLocalStorage } from '../../helpers/storage/asyncStorage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const slides = [
     {
@@ -20,11 +23,22 @@ const slides = [
         headerText: STRINGS.welcome3Text,
         contentText: STRINGS.welcome3Content,
         buttonText: "Get Started",
-        onPress: (navigation) => navigation.navigate('Login'),
+        onPress: async (navigation) => {
+            await addDataToLocalStorage('@visited', 'true');
+            navigation.replace('Login');
+        },
     },
 ];
 
-const WelcomeScreen = ({navigation}) => {
+const WelcomeScreen = ({ navigation }) => {
+    const [refreshed, setRefreshed] = React.useState(false);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            setRefreshed(prevState => !prevState);
+        }, [])
+    );
+
     return (
         <Swiper
             loop={false}

@@ -51,7 +51,7 @@ const InitialScreen = () => {
                 Animated.timing(slideAnim, {
                     toValue: 1,
                     duration: 6000,
-                    useNativeDriver: true,
+                    useNativeDriver: false,
                 }).start();
 
                 if (visited === 'true') {
@@ -64,13 +64,12 @@ const InitialScreen = () => {
                             navigation.navigate('Login');
                         }
                     }, 7000);
-                } else {
+                } else if(visited === 'false') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
 
                         navigation.navigate('Welcome');
                     }, 7000);
-                    await addDataToLocalStorage('@visited', 'true');
                 }
             }
         } catch (error) {

@@ -1,4 +1,4 @@
-import {loginController, registerController, validateTokenController} from "../controllers/authController";
+import {forgetPasswordController, loginController, registerController, validateTokenController} from "../controllers/authController";
 import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
 import {addDataToLocalStorage, removeDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {log} from "../helpers/logs/log";
@@ -59,6 +59,31 @@ export async function registerService(email, password, contactNo) {
         }
     } catch (error) {
         log("error", "service", "registerService", error.message, "authService.js");
+        return ERROR_STATUS.ERROR;
+    }
+}
+
+export async function forgetPasswordService(email, password) {
+    try {
+        if (email === "" || password === "") {
+            return ERROR_STATUS.ERROR;
+        }
+
+        const result = await forgetPasswordController(email, password);
+        const data = await result.data;
+
+        if (result === "error") {
+            log("error", "service", "forgetPasswordService | result", data.response, "authService.js");
+            return ERROR_STATUS.ERROR;
+        } else if (data && data.state === false) {
+            log("error", "service", "forgetPasswordService | state", data.state, "authService.js");
+            return ERROR_STATUS.ERROR;
+        } else {
+            log("success", "service", "forgetPasswordService", "Register Success", "authService.js");
+            return SUCCESS_STATUS.SUCCESS;
+        }
+    } catch (error) {
+        log("error", "service", "forgetPasswordService", error.message, "authService.js");
         return ERROR_STATUS.ERROR;
     }
 }
