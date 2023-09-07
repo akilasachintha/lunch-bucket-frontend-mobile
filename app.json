@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Lunch Bucket",
+    "description": "Online food delivery Application.",
     "slug": "lunch-bucket",
     "scheme": "com.icode.lunchbucket",
     "version": "1.0.0",
@@ -11,7 +12,7 @@
       "image": "./assets/splash1.png",
       "waitForLoadingScreen": true,
       "loadingScreenImage": "./assets/splash1.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#FCF0C8",
       "loadingScreenBackgroundColor": "#FCF0C8"
     },
@@ -30,7 +31,8 @@
         "backgroundColor": "#9E0808"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "com.icode.lunchbucket"
+      "package": "com.icode.lunchbucket",
+      "versionCode" : 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
