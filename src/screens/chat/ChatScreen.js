@@ -3,7 +3,6 @@ import TopHeader from "../../components/topHeader/TopHeader";
 import React from "react";
 import BorderButton from "../../components/borderButton/BorderButton";
 import {useNavigation} from "@react-navigation/native";
-import StaticTopBar from "../../components/topBar/StaticTopBar";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 

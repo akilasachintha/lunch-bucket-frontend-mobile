@@ -20,10 +20,7 @@ export async function setOrderController(data) {
             }
         );
 
-        log("info", "controller", "setOrderController | response", response.data, "checkoutController.js");
-
         if (response.status === 200) {
-            log("info", "controller", "setOrderController", response.data, "checkoutController.js");
             return response.data;
         }
         if (response && response.data && response.data.state === false) {
@@ -34,6 +31,36 @@ export async function setOrderController(data) {
     } catch (error) {
         const errorMessage = error.response?.data?.message || error.message;
         log("error", "controller", "setOrderController", errorMessage, "checkoutController.js");
+        return ERROR_STATUS.ERROR;
+    }
+}
+
+export async function setOderTimeController(data) {
+    try {
+        const token = await getDataFromLocalStorage('token');
+        if (!token) return ERROR_STATUS.ERROR;
+
+        const response = await lunchBucketAPI.post(
+            'updateOrderDeliveryTime',
+            data,
+            {
+                headers: {
+                    'token': token,
+                }
+            }
+        );
+
+        if (response.status === 200) {
+            return response.data;
+        }
+        if (response && response.data && response.data.state === false) {
+            log("error", "controller", "setOderTimeController", response.data, "checkoutController.js");
+            return ERROR_STATUS.ERROR;
+        }
+
+    } catch (error) {
+        const errorMessage = error.response?.data?.message || error.message;
+        log("error", "controller", "setOderTimeController", errorMessage, "checkoutController.js");
         return ERROR_STATUS.ERROR;
     }
 }

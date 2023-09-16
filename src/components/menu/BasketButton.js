@@ -3,6 +3,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {setMenuBasketService, updateBasketFromId} from '../../services/menuService';
 import {useToast} from '../../helpers/toast/Toast';
+import {useSelector} from "react-redux";
 
 const BasketButton = ({
                           totalCheckedItemsCount,
@@ -10,18 +11,26 @@ const BasketButton = ({
                           totalAmount,
                           totalCheckedItems,
                           venue,
-                          editMenu,
                           mealId,
-                          isVegi,
+                          isVeg,
                           totalCheckedSpecialItemsCount,
                           totalCheckedSpecialItems,
                       }) => {
     const navigation = useNavigation();
     const {showToast} = useToast();
+
+    const isEditMenu = useSelector(state => state.menu.isEditMenu);
+
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const handleBasketPress = async () => {
         if (isButtonDisabled) {
+            return;
+        }
+
+        console.log(totalCheckedItemsCount);
+        if (totalCheckedItemsCount > 5) {
+            showToast('error', 'You can select only 5 dishes.');
             return;
         }
 
@@ -36,12 +45,15 @@ const BasketButton = ({
             const basketItems = totalCheckedSpecialItems.filter(item => item.checked === true);
 
             try {
-                if (editMenu && mealId > 0) {
+                console.log(mealId);
+                console.log(isVeg);
+                if (isEditMenu && mealId > 0) {
                     await updateBasketFromId(mealId, basketItems);
                     showToast('success', 'Basket updated successfully');
                     navigation.navigate('Basket');
                 } else {
-                    await setMenuBasketService(basketItems, totalAmount, venue, isVegi, true);
+                    console.log(isVeg);
+                    await setMenuBasketService(basketItems, totalAmount, venue, isVeg, true);
                     navigation.navigate('Basket');
                 }
             } catch (error) {
@@ -55,12 +67,12 @@ const BasketButton = ({
             const basketItems = totalCheckedItems.filter(item => item.checked === true);
 
             try {
-                if (editMenu && mealId > 0) {
+                if (isEditMenu && mealId > 0) {
                     await updateBasketFromId(mealId, basketItems);
                     showToast('success', 'Basket updated successfully');
                     navigation.navigate('Basket');
                 } else if (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5) {
-                    await setMenuBasketService(basketItems, totalAmount, venue, isVegi, false);
+                    await setMenuBasketService(basketItems, totalAmount, venue, isVeg, false);
                     navigation.navigate('Basket');
                 } else {
                     showToast('error', 'Please select 5 items to proceed.');
@@ -83,7 +95,7 @@ const BasketButton = ({
     return (
         <View style={styles.priceContainer}>
             <TouchableOpacity style={styles.priceContainerLeft} onPress={() => handleBasketPress()}>
-                {!editMenu ? (
+                {!isEditMenu ? (
                     <Text style={styles.priceContainerLeftText}>
                         {(totalCheckedItemsCount <= 0 && totalCheckedSpecialItemsCount <= 0) ? 'View ' : 'Add to '}
                         Basket {totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0 ? `(${totalCheckedItemsCount + totalCheckedSpecialItemsCount})` : ''}

@@ -7,7 +7,6 @@ import {validatePushNotificationTokenChange} from "../../controllers/authControl
 const PushNotificationDeviceChangeModal = ({
                                                deviceToken,
                                                setDeviceToken,
-                                               isDeviceTokenChanged,
                                                setIsDeviceTokenChanged,
                                            }) => {
 
@@ -23,8 +22,7 @@ const PushNotificationDeviceChangeModal = ({
 
     const handleChange = async () => {
         try {
-            const result = await validatePushNotificationTokenChange();
-
+            await validatePushNotificationTokenChange();
             navigation.navigate('Menu');
             showToast('success', 'Login Success');
 

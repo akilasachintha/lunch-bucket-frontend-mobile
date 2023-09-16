@@ -1,7 +1,7 @@
-import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
-import {ERROR_STATUS} from "../errorLogs/errorStatus";
-import {log} from "../helpers/logs/log";
-import {lunchBucketAPI} from "../apis/lunchBucketAPI";
+import { getDataFromLocalStorage } from "../helpers/storage/asyncStorage";
+import { ERROR_STATUS } from "../errorLogs/errorStatus";
+import { log } from "../helpers/logs/log";
+import { lunchBucketAPI } from "../apis/lunchBucketAPI";
 
 export async function getChatsController() {
     try {
@@ -11,7 +11,7 @@ export async function getChatsController() {
         if (!customerId) return ERROR_STATUS.ERROR;
 
         const response = await lunchBucketAPI.get(`getUserChat/${customerId}`, {
-            headers: {'token': token,}
+            headers: { 'token': token, }
         });
 
         log("info", "controller", "getChatsController", response.data, "chatController.js");
@@ -34,7 +34,7 @@ export async function createNewConversationController(customerId, message) {
             customer_id: customerId,
             message: message,
         }, {
-            headers: {'token': token,}
+            headers: { 'token': token, }
         });
 
         log("info", "controller", "createNewConversationController", response.data, "chatController.js");
@@ -56,7 +56,7 @@ export async function sendMessageToConversation(chatId, message) {
             chat_id: chatId,
             message: message,
         }, {
-            headers: {'token': token,}
+            headers: { 'token': token, }
         });
 
         log("info", "controller", "sendMessageToConversation", response.data, "chatController.js");
@@ -65,6 +65,25 @@ export async function sendMessageToConversation(chatId, message) {
 
     } catch (error) {
         log("error", "controller", "sendMessageToConversation", error.message, "chatController.js");
+        return ERROR_STATUS.ERROR;
+    }
+}
+
+export async function setUserViewController(id) {
+    try {
+        const token = await getDataFromLocalStorage('token');
+        if (!token) return ERROR_STATUS.ERROR;
+
+        const response = await lunchBucketAPI.get(`setUserView/${id}`, {
+            headers: { 'token': token, }
+        });
+
+        log("info", "controller", "setUserViewController", response.data, "chatController.js");
+
+        if (response.status === 200) return response.data;
+
+    } catch (error) {
+        log("error", "controller", "setUserViewController", error.message, "chatController.js");
         return ERROR_STATUS.ERROR;
     }
 }

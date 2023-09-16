@@ -1,4 +1,4 @@
-import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
+import {ActivityIndicator, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import React, {useCallback, useState} from "react";
 import {deleteOrderService, getOrdersService} from "../../services/ordersService";
@@ -7,8 +7,6 @@ import OrderItem from "../../components/orderItem/OrderItem";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import {useFocusEffect} from "@react-navigation/native";
-import {RefreshControl} from 'react-native';
-
 
 export default function ListOrdersScreen() {
     const [orders, setOrders] = useState([]);
@@ -97,11 +95,14 @@ export default function ListOrdersScreen() {
                                    items={order.items}
                                    id={order.id}
                                    orderCode={order.order_code}
+                                   updateState={order.update_status}
+                                   orderStatus={order.order_status}
                                    price={order.price}
                                    count={order.packet_amount} category={order.category} type={order.type}
                                    orderType={order.order_type}
                                    meal={order.meal}
                                    onDeleteOrder={() => handleDeleteOrder(order.id)}
+                                   deliveryTime={order.delivery_time}
                         />
                     ))}
                 </ScrollView>

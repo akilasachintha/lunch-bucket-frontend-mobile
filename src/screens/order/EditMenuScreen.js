@@ -11,11 +11,9 @@ import {
     getDinnerStewMenuService,
     getDinnerVegetableMenuService,
     getLunchMeetMenuService,
-    getLunchMeetPercentageService,
     getLunchMenuService,
     getLunchRiceMenuService,
     getLunchStewMenuService,
-    getLunchStewPercentageService,
     getLunchVegetableMenuService,
 } from "../../services/menuService";
 import {log} from "../../helpers/logs/log";
@@ -27,13 +25,13 @@ export default function EditMenuScreen({route}) {
     const {showToast} = useToast();
     const {mealId} = route.params;
 
-    const [refreshing, setRefreshing] = useState(false);
+    const [refreshing] = useState(false);
 
     const [isVisible, setIsVisible] = useState(true);
     const [loading, setLoading] = useState(true);
 
     const [meal, setMeal] = useState({});
-    const [lunch, setLunch] = useState(true);
+    const [, setLunch] = useState(true);
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
     const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState(false);
 
@@ -47,16 +45,17 @@ export default function EditMenuScreen({route}) {
     const [dinnerStewItems, setDinnerStewItems] = useState([]);
     const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
 
-    const [isVegiLunch, setIsVegiLunch] = useState(false);
-    const [isVegiDinner, setIsVegiDinner] = useState(false);
+    const [isVegLunch, setIsVegLunch] = useState(false);
+    const [isVegDinner, setIsVegDinner] = useState(false);
 
     const fetchMealById = async (mealId) => {
         const result = await getByMealIdFromBasketService(mealId);
+
         if (result != null) {
             setMeal(result);
 
             if (result.venue === "Dinner") {
-                setIsVegiDinner(result.isVegi);
+                setIsVegDinner(result.isVegi);
                 const dinnerMenu = await getDinnerMenuService();
                 const totalDinnerVegetableItems = await getDinnerVegetableMenuService(dinnerMenu);
                 const dinnerVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
@@ -105,8 +104,9 @@ export default function EditMenuScreen({route}) {
             }
 
             if (result.venue === "Lunch") {
-                setIsVegiLunch(result.isVegi);
+                setIsVegLunch(result.isVegi);
                 const lunchMenu = await getLunchMenuService();
+
                 const totalLunchVegetableItems = await getLunchVegetableMenuService(lunchMenu);
                 const lunchVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
                 const updatedLunchVegetableItems = totalLunchVegetableItems.map((item) => {
@@ -173,92 +173,26 @@ export default function EditMenuScreen({route}) {
 
             if (itemChecked) {
                 newItems[index].checked = false;
-
-                if (type === "Vegetable") {
-                    setLunchMeatItems(lunchMeatItems.map((item) => ({...item, percentage: 0,})));
-                    setLunchStewItems(lunchStewItems.map((item) => ({...item, percentage: 0,})));
-                }
-
-                if (type === "Stew") {
-                    setLunchMeatItems(lunchMeatItems.map((item) => ({...item, percentage: 0,})));
-                }
             } else {
-                if (!(isVegiLunch || isVegiDinner) && itemCount >= maxCount) {
-                    showToast('warning', `You can select up to ${maxCount} ${type.toLowerCase()} only.`);
-                    return;
-                }
-
-                if (isVegiLunch || isVegiDinner) {
-                    if ((type === "Rice" && itemCount > 0) || (type === "Vegetable" && itemCount > 2) || (type === "Stew" && itemCount > 0)) {
-                        showToast('warning', `You can select up to ${type === "Vegetable" ? 3 : maxCount} ${type.toLowerCase()} only.`);
+                if (type === "Rice") {
+                    if (itemCount === 0) {
+                        newItems[index].checked = true;
+                    } else {
+                        showToast('warning', `You can select one rice item only.`);
                         return;
                     }
-                }
+                } else {
+                    const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
 
-                newItems[index].checked = true;
-
-                if (type === "Vegetable" && itemCount === 1) {
-                    const updatedLunchStewItems = lunchStewItems.map(async (item) => {
-                        const checkedVegetables = lunchVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-
-                        const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                        const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-
-                        const newPercentage = await getLunchStewPercentageService(vegi1, vegi2, item.food_id);
-
-                        return {
-                            ...item,
-                            percentage: newPercentage,
-                        };
-                    });
-
-                    Promise.all(updatedLunchStewItems).then(updatedItems => {
-                        setLunchStewItems(updatedItems);
-                    });
-                }
-
-                if (type === "Vegetable" && itemCount === 1 && lunchStewItems.filter(item => item.checked && item.foodType === "Stew").length === 1) {
-                    const updatedLunchMeetItems = lunchMeatItems.map(async (item) => {
-                        const checkedVegetables = lunchVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-                        const checkedStews = lunchStewItems.filter(item => item.checked && item.foodType === "Stew");
-
-                        const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                        const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-                        const stew = checkedStews.length >= 1 ? checkedStews[0].food_id : null;
-
-                        const newPercentage = await getLunchMeetPercentageService(vegi1, vegi2, stew, item.food_id);
-
-                        return {
-                            ...item,
-                            percentage: newPercentage,
-                        };
-                    });
-
-                    Promise.all(updatedLunchMeetItems).then(updatedItems => {
-                        setLunchMeatItems(updatedItems);
-                    });
-                }
-
-                if (type === "Stew" && itemCount === 0 && lunchVegetableItems.filter(item => item.checked && item.foodType === "Vegetable").length === 2) {
-                    const updatedLunchMeetItems = lunchMeatItems.map(async (item) => {
-                        const checkedVegetables = lunchVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-                        const checkedStews = lunchStewItems.filter(item => item.checked && item.foodType === "Stew");
-
-                        const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                        const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-                        const stew = checkedStews.length >= 1 ? checkedStews[0].food_id : null;
-
-                        const newPercentage = await getLunchMeetPercentageService(vegi1, vegi2, stew, item.food_id);
-
-                        return {
-                            ...item,
-                            percentage: newPercentage,
-                        };
-                    });
-
-                    Promise.all(updatedLunchMeetItems).then(updatedItems => {
-                        setLunchMeatItems(updatedItems);
-                    });
+                    if (!hasCheckedLunchRiceItem && (totalCheckedLunchItemsCount >= 4 || totalCheckedDinnerItemsCount >= 4)) {
+                        showToast('warning', `Need to select one rice item.`);
+                        return;
+                    } else if (totalCheckedLunchItemsCount >= 5 || totalCheckedDinnerItemsCount >= 5) {
+                        showToast('warning', `You can select up to 5 dishes only.`);
+                        return;
+                    } else {
+                        newItems[index].checked = true;
+                    }
                 }
             }
             setItems(newItems);
@@ -392,7 +326,7 @@ export default function EditMenuScreen({route}) {
                         totalCheckedItems={meal.venue === "Lunch" ? getTotalCheckedItems(lunchItemList) : getTotalCheckedItems(dinnerItemList)}
                         totalAmount={meal.venue === "Lunch" ? lunchTotalPrice : dinnerTotalPrice}
                         isVisible={isVisible}
-                        isVegi={meal.venue === "Lunch" ? isVegiLunch : isVegiDinner}
+                        isVeg={meal.venue === "Lunch" ? isVegLunch : isVegDinner}
                         setIsVisible={setIsVisible}
                         disableTime={meal.venue === "Lunch" ? disableLunchCheckbox : disableDinnerCheckbox}
                         editMenu={true}

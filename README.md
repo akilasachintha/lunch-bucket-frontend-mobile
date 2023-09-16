@@ -16,3 +16,7 @@ npm run qa
 
 ### prod-build
 npm run build
+
+npx expo-doctor
+npx expo install --check
+eas credentials

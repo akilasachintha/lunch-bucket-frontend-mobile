@@ -1,37 +1,56 @@
 import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-import {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import Menu from "../../components/menu/Menu";
 import {useToast} from "../../helpers/toast/Toast";
 import {getUTCDateTime} from "../../services/timeService";
 import {
     fetchMenuData,
-    getDinnerMeetPercentageService,
+    getByMealIdFromBasketService,
+    getDinnerMeetMenuService,
     getDinnerMenuService,
-    getDinnerStewPercentageService,
-    getLunchMeetPercentageService,
+    getDinnerRiceMenuService,
+    getDinnerStewMenuService,
+    getDinnerVegetableMenuService,
+    getLunchMeetMenuService,
     getLunchMenuService,
-    getLunchStewPercentageService,
-    getLunchVegetablePercentageService
+    getLunchRiceMenuService,
+    getLunchStewMenuService,
+    getLunchVegetableMenuService
 } from "../../services/menuService";
 import {log} from "../../helpers/logs/log";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import moment from "moment/moment";
+import Timer from "../../components/timer/Timer";
+import {useDispatch, useSelector} from "react-redux";
+import {useFocusEffect} from "@react-navigation/native";
+import {
+    fetchMenuPercentageDinnerForThreeIDs,
+    fetchMenuPercentageDinnerForTwoIDs,
+    fetchMenuPercentageLunchForThreeIDs,
+    fetchMenuPercentageLunchForTwoIDs
+} from "../../redux/menuPercentageSlice";
 
-export default function MenuScreen({navigation}) {
+export default function MenuScreen({route}) {
     const {showToast} = useToast();
+    const isEditMenu = useSelector(state => state.menu.isEditMenu);
+    const menuPercentageDinnerForTwoIDs = useSelector(state => state.menuPercentage.menuPercentageDinnerForTwoIDs);
+    const menuPercentageLunchForTwoIDs = useSelector(state => state.menuPercentage.menuPercentageLunchForTwoIDs);
+    const menuPercentageDinnerForThreeIDs = useSelector(state => state.menuPercentage.menuPercentageDinnerForThreeIDs);
+    const menuPercentageLunchForThreeIDs = useSelector(state => state.menuPercentage.menuPercentageLunchForThreeIDs);
+
+    const dispatch = useDispatch();
+    const [selectedItems, setSelectedItems] = useState([]);
 
     const [refreshing, setRefreshing] = useState(false);
-
-    // Common
-    const [isVisible, setIsVisible] = useState(true);
     const [loading, setLoading] = useState(true);
-
-    const [isVegiLunch, setIsVegiLunch] = useState(false);
-    const [isVegiDinner, setIsVegiDinner] = useState(false);
+    const [isVegLunch, setIsVegLunch] = useState(false);
+    const [isVegDinner, setIsVegDinner] = useState(false);
+    const [mealId, setMealId] = useState(0);
+    const [, setMeal] = useState({});
 
     // Lunch
-    const [lunch, setLunch] = useState(true);
+    const [isLunch, setIsLunch] = useState(true);
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
     const [lunchSpecialItems, setLunchSpecialItems] = useState([]);
     const [lunchRiceItems, setLunchRiceItems] = useState([]);
@@ -47,10 +66,119 @@ export default function MenuScreen({navigation}) {
     const [dinnerStewItems, setDinnerStewItems] = useState([]);
     const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
 
+    const fetchMealById = async (mealId) => {
+        const result = await getByMealIdFromBasketService(mealId);
+
+        if (result != null) {
+            setMeal(result);
+
+            if (result.venue === "Dinner") {
+                setIsVegDinner(result.isVeg);
+                const dinnerMenu = await getDinnerMenuService();
+                const totalDinnerVegetableItems = await getDinnerVegetableMenuService(dinnerMenu);
+                const dinnerVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
+                const updatedDinnerVegetableItems = totalDinnerVegetableItems.map((item) => {
+                    const foundItem = dinnerVegetableItems.find((dinnerItem) => dinnerItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                const totalDinnerStewItems = await getDinnerStewMenuService(dinnerMenu);
+                const dinnerStewItems = result.items.filter((item) => item.foodType === "Stew");
+                const updatedDinnerStewItems = totalDinnerStewItems.map((item) => {
+                    const foundItem = dinnerStewItems.find((dinnerItem) => dinnerItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                const totalDinnerMeatItems = await getDinnerMeetMenuService(dinnerMenu);
+                const dinnerMeatItems = result.items.filter((item) => item.foodType === "Meat");
+                const updatedDinnerMeatItems = totalDinnerMeatItems.map((item) => {
+                    const foundItem = dinnerMeatItems.find((dinnerItem) => dinnerItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                const totalDinnerRiceItems = await getDinnerRiceMenuService(dinnerMenu);
+                const dinnerRiceItems = result.items.filter((item) => item.foodType === "Rice");
+                const updatedDinnerRiceItems = totalDinnerRiceItems.map((item) => {
+                    const foundItem = dinnerRiceItems.find((dinnerItem) => dinnerItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                setDinnerRiceItems(updatedDinnerRiceItems);
+                setDinnerVegetableItems(updatedDinnerVegetableItems);
+                setDinnerStewItems(updatedDinnerStewItems);
+                setDinnerMeatItems(updatedDinnerMeatItems);
+            }
+
+            if (result.venue === "Lunch") {
+                setIsVegLunch(result.isVeg);
+                const lunchMenu = await getLunchMenuService();
+
+                const totalLunchVegetableItems = await getLunchVegetableMenuService(lunchMenu);
+                const lunchVegetableItems = result.items.filter((item) => item.foodType === "Vegetable");
+                const updatedLunchVegetableItems = totalLunchVegetableItems.map((item) => {
+                    const foundItem = lunchVegetableItems.find((lunchItem) => lunchItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                const totalLunchStewItems = await getLunchStewMenuService(lunchMenu);
+                const lunchStewItems = result.items.filter((item) => item.foodType === "Stew");
+                const updatedLunchStewItems = totalLunchStewItems.map((item) => {
+                    const foundItem = lunchStewItems.find((lunchItem) => lunchItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                const totalLunchMeatItems = await getLunchMeetMenuService(lunchMenu);
+                const lunchMeatItems = result.items.filter((item) => item.foodType === "Meat");
+                const updatedLunchMeatItems = totalLunchMeatItems.map((item) => {
+                    const foundItem = lunchMeatItems.find((lunchItem) => lunchItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                const totalLunchRiceItems = await getLunchRiceMenuService(lunchMenu);
+                const lunchRiceItems = result.items.filter((item) => item.foodType === "Rice");
+                const updatedLunchRiceItems = totalLunchRiceItems.map((item) => {
+                    const foundItem = lunchRiceItems.find((lunchItem) => lunchItem.id === item.id);
+                    return {
+                        ...item,
+                        checked: foundItem ? foundItem.checked : false,
+                    };
+                });
+
+                setLunchRiceItems(updatedLunchRiceItems);
+                setLunchVegetableItems(updatedLunchVegetableItems);
+                setLunchStewItems(updatedLunchStewItems);
+                setLunchMeatItems(updatedLunchMeatItems);
+            }
+        }
+        setLoading(false);
+    };
+
     const clearValuesAndFetchData = async () => {
         setLoading(true);
 
         // Clear values
+        setSelectedItems([]);
         setLunchSpecialItems([]);
         setLunchSpecialItems([]);
         setLunchRiceItems([]);
@@ -87,23 +215,8 @@ export default function MenuScreen({navigation}) {
             showToast("error", "Error fetching menus");
             log("error", "MenuScreen", "useEffect 1", error.message, "MenuScreen.js");
         }
-
         setLoading(false);
     };
-
-    useEffect(() => {
-
-        // Initial load
-        clearValuesAndFetchData().catch(
-            (error) => {
-                showToast('error', 'Error fetching menus');
-                log('error', 'MenuScreen', 'useEffect 2', error.message, 'MenuScreen.js');
-            }
-        );
-
-        return navigation.addListener('focus', clearValuesAndFetchData);
-    }, [navigation]);
-
 
     const createItemListWithType = (type, items, setItems, maxCount, disableCheckbox) => {
         const handleItemPress = (index) => {
@@ -111,236 +224,38 @@ export default function MenuScreen({navigation}) {
             const itemChecked = newItems[index].checked;
             const itemCount = newItems.filter(item => item.checked && item.foodType === type).length;
 
-            if (itemChecked) {
-                newItems[index].checked = false;
+            const isItemAlreadySelected = selectedItems.some(item => item.id === newItems[index].id);
 
-                if (type === "Vegetable") {
-                    if (lunch) {
-                        const updatedLunchVegetableItems = lunchVegetableItems.map((item) => {
-                            return {
-                                ...item,
-                                percentage: 0,
-                            }
-                        });
-                        newItems[index].percentage = 0;
-                        setLunchVegetableItems([updatedLunchVegetableItems]);
-
-                        setLunchMeatItems(lunchMeatItems.map((item) => ({...item, percentage: 0,})));
-                        setLunchStewItems(lunchStewItems.map((item) => ({...item, percentage: 0,})));
-                    } else {
-                        setDinnerVegetableItems(dinnerVegetableItems.map((item) => ({...item, percentage: 0,})));
-                        setDinnerMeatItems(dinnerMeatItems.map((item) => ({...item, percentage: 0,})));
-                        setDinnerStewItems(dinnerStewItems.map((item) => ({...item, percentage: 0,})));
+            switch (itemChecked) {
+                case true:
+                    setSelectedItems(selectedItems.filter(item => item.id !== newItems[index].id));
+                    newItems[index].checked = false;
+                    console.log("item unchecked");
+                    break;
+                case false:
+                    if (isItemAlreadySelected) {
+                        return;
                     }
-                }
-                if (type === "Stew") {
-                    if (lunch) {
-                        setLunchMeatItems(lunchMeatItems.map((item) => ({...item, percentage: 0,})));
-                    } else {
-                        setDinnerMeatItems(dinnerMeatItems.map((item) => ({...item, percentage: 0,})));
+                    if (type === "Rice" && itemCount === 0) {
+                        setSelectedItems([...selectedItems, newItems[index]]);
+                        newItems[index].checked = true;
+                    } else if (type === "Rice" && itemCount > 0) {
+                        showToast('warning', `You can select one rice item only.`);
+                        return;
                     }
-                }
-            } else {
-                if(type === "Rice" && itemCount > 0){
-                    showToast('warning', `You can select one rice item only.`);
-                    return;
-                }
+                    const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
+                    const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
 
-                if(totalCheckedLunchItemsCount >= 5){
-                    showToast('warning', `You can select up to 5 dishes only.`);
-                    return;
-                }
-               
-
-                newItems[index].checked = true;
-
-                if (type === "Vegetable" && itemCount === 1) {
-                    if (lunch) {
-                        const selectedVegetables = [];
-
-                        for (const item of lunchVegetableItems) {
-                            if (item.checked && item.foodType === "Vegetable") {
-                                selectedVegetables.push(item);
-                            }
-                        }
-
-                        if (selectedVegetables.length === 2) {
-                            const [vegi1, vegi2] = selectedVegetables.map((item) => item.food_id);
-
-                            getLunchVegetablePercentageService(vegi1, vegi2)
-                                .then((newPercentage) => {
-                                    const updatedLunchVegetableItems = lunchVegetableItems.map((item) => {
-                                        if (item === selectedVegetables[0]) {
-                                            return {
-                                                ...item,
-                                                percentage: newPercentage,
-                                            };
-                                        } else if (item === selectedVegetables[1]) {
-                                            return {
-                                                ...item,
-                                                percentage: newPercentage,
-                                            };
-                                        } else {
-                                            return {
-                                                ...item,
-                                                percentage: 0,
-                                            };
-                                        }
-                                    });
-
-                                    setLunchVegetableItems(updatedLunchVegetableItems);
-                                })
-                                .catch((error) => {
-                                    console.error("Error calculating percentage: ", error);
-                                });
-                        } else {
-                            console.log("Please select exactly two vegetable items.");
-                        }
+                    if (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= 4 || totalCheckedDinnerItemsCount >= 4)) {
+                        showToast('warning', `Need to select one rice item.`);
+                        return;
+                    } else if (totalCheckedLunchItemsCount >= 5 || totalCheckedDinnerItemsCount >= 5) {
+                        showToast('warning', `You can select up to 5 dishes only.`);
+                        return;
                     } else {
-                        const updatedDinnerStewItems = dinnerStewItems.map(async (item) => {
-                            const checkedVegetables = dinnerVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-
-                            const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                            const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-
-                            const newPercentage = await getDinnerStewPercentageService(vegi1, vegi2, item.food_id);
-
-                            return {
-                                ...item,
-                                percentage: newPercentage,
-                            };
-                        });
-
-                        Promise.all(updatedDinnerStewItems).then(updatedItems => {
-                            setDinnerStewItems(updatedItems);
-                        });
+                        newItems[index].checked = true;
+                        setSelectedItems([...selectedItems, newItems[index]]);
                     }
-                }
-                if (type === "Vegetable" && itemCount === 1) {
-                    if (lunch) {
-                        const updatedLunchStewItems = lunchStewItems.map(async (item) => {
-                            const checkedVegetables = lunchVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-
-                            const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                            const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-
-                            const newPercentage = await getLunchStewPercentageService(vegi1, vegi2, item.food_id);
-
-                            return {
-                                ...item,
-                                percentage: newPercentage,
-                            };
-                        });
-
-                        Promise.all(updatedLunchStewItems).then(updatedItems => {
-                            setLunchStewItems(updatedItems);
-                        });
-                    } else {
-                        const updatedDinnerStewItems = dinnerStewItems.map(async (item) => {
-                            const checkedVegetables = dinnerVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-
-                            const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                            const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-
-                            const newPercentage = await getDinnerStewPercentageService(vegi1, vegi2, item.food_id);
-
-                            return {
-                                ...item,
-                                percentage: newPercentage,
-                            };
-                        });
-
-                        Promise.all(updatedDinnerStewItems).then(updatedItems => {
-                            setDinnerStewItems(updatedItems);
-                        });
-                    }
-                }
-                if (type === "Vegetable" && itemCount === 1 && (lunchStewItems.filter(item => item.checked && item.foodType === "Stew").length === 1 || dinnerStewItems.filter(item => item.checked && item.foodType === "Stew").length === 1)) {
-                    if (lunch) {
-                        const updatedLunchMeetItems = lunchMeatItems.map(async (item) => {
-                            const checkedVegetables = lunchVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-                            const checkedStews = lunchStewItems.filter(item => item.checked && item.foodType === "Stew");
-
-                            const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                            const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-                            const stew = checkedStews.length >= 1 ? checkedStews[0].food_id : null;
-
-                            const newPercentage = await getLunchMeetPercentageService(vegi1, vegi2, stew, item.food_id);
-
-                            return {
-                                ...item,
-                                percentage: newPercentage,
-                            };
-                        });
-
-                        Promise.all(updatedLunchMeetItems).then(updatedItems => {
-                            setLunchMeatItems(updatedItems);
-                        });
-                    } else {
-                        const updatedDinnerMeetItems = dinnerMeatItems.map(async (item) => {
-                            const checkedVegetables = dinnerVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-                            const checkedStews = dinnerStewItems.filter(item => item.checked && item.foodType === "Stew");
-
-                            const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                            const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-                            const stew = checkedStews.length >= 1 ? checkedStews[0].food_id : null;
-
-                            const newPercentage = await getDinnerStewPercentageService(vegi1, vegi2, stew, item.food_id);
-
-                            return {
-                                ...item,
-                                percentage: newPercentage,
-                            };
-                        });
-
-                        Promise.all(updatedDinnerMeetItems).then(updatedItems => {
-                            setDinnerMeatItems(updatedItems);
-                        });
-                    }
-                }
-                if (type === "Stew" && itemCount === 0 && (lunchVegetableItems.filter(item => item.checked && item.foodType === "Vegetable").length === 2 || dinnerVegetableItems.filter(item => item.checked && item.foodType === "Vegetable").length === 2)) {
-                    if (lunch) {
-                        const updatedLunchMeetItems = lunchMeatItems.map(async (item) => {
-                            const checkedVegetables = lunchVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-                            const checkedStews = lunchStewItems.filter(item => item.checked && item.foodType === "Stew");
-
-                            const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                            const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-                            const stew = checkedStews.length >= 1 ? checkedStews[0].food_id : null;
-
-                            const newPercentage = await getLunchMeetPercentageService(vegi1, vegi2, stew, item.food_id);
-
-                            return {
-                                ...item,
-                                percentage: newPercentage,
-                            };
-                        });
-
-                        Promise.all(updatedLunchMeetItems).then(updatedItems => {
-                            setLunchMeatItems(updatedItems);
-                        });
-                    } else {
-                        const updatedDinnerMeetItems = dinnerMeatItems.map(async (item) => {
-                            const checkedVegetables = dinnerVegetableItems.filter(item => item.checked && item.foodType === "Vegetable");
-                            const checkedStews = dinnerStewItems.filter(item => item.checked && item.foodType === "Stew");
-
-                            const vegi1 = checkedVegetables.length >= 1 ? checkedVegetables[0].food_id : null;
-                            const vegi2 = checkedVegetables.length >= 2 ? checkedVegetables[1].food_id : null;
-                            const stew = checkedStews.length >= 1 ? checkedStews[0].food_id : null;
-
-                            const newPercentage = await getDinnerMeetPercentageService(vegi1, vegi2, stew, item.food_id);
-
-                            return {
-                                ...item,
-                                percentage: newPercentage,
-                            };
-                        });
-
-                        Promise.all(updatedDinnerMeetItems).then(updatedItems => {
-                            setDinnerMeatItems(updatedItems);
-                        });
-                    }
-                }
             }
             setItems(newItems);
         };
@@ -459,32 +374,18 @@ export default function MenuScreen({navigation}) {
             const currentUTCHours = currentTime.hours();
             const currentUTCMinutes = currentTime.minutes();
 
-            console.log(currentUTCHours, currentUTCMinutes);
-
-            if ((currentUTCHours > 4 || (currentUTCHours === 4 && currentUTCMinutes >= 30)) &&
-                (currentUTCHours < 10 || (currentUTCHours === 10 && currentUTCMinutes < 30))) {
+            if ((currentUTCHours > 5 || (currentUTCHours === 5 && currentUTCMinutes >= 30)) &&
+                (currentUTCHours < 11 || (currentUTCHours === 11 && currentUTCMinutes < 30))) {
                 setDisableLunchCheckbox(true);
                 setDisableDinnerCheckbox(false);
             } else {
                 setDisableDinnerCheckbox(true);
                 setDisableLunchCheckbox(false);
             }
-
-            console.log(disableLunchCheckbox, disableDinnerCheckbox);
-
         } catch (error) {
             log('error', 'MenuScreen', 'handleDisabledMenu', error.message, 'MenuScreen.js');
         }
     }
-
-    useEffect(() => {
-        handleDisabledMenu().catch(
-            (error) => {
-                showToast('error', 'Error fetching menus');
-                log('error', 'MenuScreen', 'useEffect 3', error.message, 'MenuScreen.js');
-            }
-        );
-    }, []);
 
     const onRefresh = async () => {
         setRefreshing(true);
@@ -497,68 +398,170 @@ export default function MenuScreen({navigation}) {
         setRefreshing(false);
     };
 
-    const lunchStyles = [styles.lunchContainer, !lunch && styles.lunchContainerNotSelected];
-    const dinnerStyles = [styles.dinnerContainer, lunch && styles.dinnerContainerNotSelected];
+    useFocusEffect(
+        React.useCallback(() => {
+            if (!isEditMenu) {
+                clearValuesAndFetchData()
+                    .then(() => {
+                        showToast('success', 'Successfully loaded menus');
+                    })
+                    .catch((error) => {
+                        showToast('error', 'Error fetching menus');
+                        log('error', 'MenuScreen', 'useEffect 2', error.message, 'MenuScreen.js');
+                    });
+            }
+        }, [isEditMenu])
+    );
+
+    useEffect(() => {
+        console.log(JSON.stringify(selectedItems, null, 2));
+    }, [selectedItems]);
+    useEffect(() => {
+        const countWithoutRiceCategory = selectedItems.filter(item => item.category !== "rice").length;
+        console.log(countWithoutRiceCategory);
+
+        const foodIdsListWithoutRiceCategory = selectedItems
+            .filter(item => item.category !== "rice")
+            .map(item => item.food_id);
+
+        if (countWithoutRiceCategory === 1) {
+            if (isLunch) {
+                setLunchVegetableItems(addSuitabilityToItemsZero(lunchVegetableItems));
+                setLunchMeatItems(addSuitabilityToItemsZero(lunchMeatItems));
+                setLunchStewItems(addSuitabilityToItemsZero(lunchStewItems));
+            } else {
+                setDinnerVegetableItems(addSuitabilityToItemsZero(dinnerVegetableItems));
+                setDinnerMeatItems(addSuitabilityToItemsZero(dinnerMeatItems));
+                setDinnerStewItems(addSuitabilityToItemsZero(dinnerStewItems));
+            }
+        }
+
+        if (countWithoutRiceCategory === 2) {
+            if (isLunch) {
+                dispatch(fetchMenuPercentageLunchForTwoIDs({
+                    id1: foodIdsListWithoutRiceCategory[0],
+                    id2: foodIdsListWithoutRiceCategory[1]
+                }));
+
+                setLunchVegetableItems(addSuitabilityToItems(lunchVegetableItems, menuPercentageLunchForTwoIDs && menuPercentageLunchForTwoIDs.vegi_suitability));
+                setLunchMeatItems(addSuitabilityToItems(lunchMeatItems, menuPercentageLunchForTwoIDs && menuPercentageLunchForTwoIDs.meat_suitability));
+                setLunchStewItems(addSuitabilityToItems(lunchStewItems, menuPercentageLunchForTwoIDs && menuPercentageLunchForTwoIDs.stew_suitability));
+            } else {
+                dispatch(fetchMenuPercentageDinnerForTwoIDs({
+                    id1: foodIdsListWithoutRiceCategory[0],
+                    id2: foodIdsListWithoutRiceCategory[1]
+                }));
+
+                setDinnerVegetableItems(addSuitabilityToItems(dinnerVegetableItems, menuPercentageDinnerForTwoIDs && menuPercentageDinnerForTwoIDs.vegi_suitability));
+                setDinnerMeatItems(addSuitabilityToItems(dinnerMeatItems, menuPercentageDinnerForTwoIDs && menuPercentageDinnerForTwoIDs.meat_suitability));
+                setDinnerStewItems(addSuitabilityToItems(dinnerStewItems, menuPercentageDinnerForTwoIDs && menuPercentageDinnerForTwoIDs.stew_suitability));
+            }
+        }
+
+        if (countWithoutRiceCategory === 3) {
+            if (isLunch) {
+                console.log("count 3 lunch");
+                dispatch(fetchMenuPercentageLunchForThreeIDs({
+                    id1: foodIdsListWithoutRiceCategory[0],
+                    id2: foodIdsListWithoutRiceCategory[1],
+                    id3: foodIdsListWithoutRiceCategory[2]
+                }));
+
+                setLunchVegetableItems(addSuitabilityToItems(lunchVegetableItems, menuPercentageLunchForThreeIDs && menuPercentageLunchForThreeIDs.vegi_suitability));
+                setLunchMeatItems(addSuitabilityToItems(lunchMeatItems, menuPercentageLunchForThreeIDs && menuPercentageLunchForThreeIDs.meat_suitability));
+                setLunchStewItems(addSuitabilityToItems(lunchStewItems, menuPercentageLunchForThreeIDs && menuPercentageLunchForThreeIDs.stew_suitability));
+            } else {
+                dispatch(fetchMenuPercentageDinnerForThreeIDs({
+                    id1: foodIdsListWithoutRiceCategory[0],
+                    id2: foodIdsListWithoutRiceCategory[1],
+                    id3: foodIdsListWithoutRiceCategory[2]
+                }));
+
+                setDinnerVegetableItems(addSuitabilityToItems(dinnerVegetableItems, menuPercentageDinnerForThreeIDs && menuPercentageDinnerForThreeIDs.vegi_suitability));
+                setDinnerMeatItems(addSuitabilityToItems(dinnerMeatItems, menuPercentageDinnerForThreeIDs && menuPercentageDinnerForThreeIDs.meat_suitability));
+                setDinnerStewItems(addSuitabilityToItems(dinnerStewItems, menuPercentageDinnerForThreeIDs && menuPercentageDinnerForThreeIDs.stew_suitability));
+            }
+        }
+    }, [selectedItems]);
+
+    function addSuitabilityToItems(menuArray, suitabilityData) {
+        return menuArray && menuArray.map(item => {
+            const percentageItem = suitabilityData && suitabilityData.find(percentage => percentage.id.id === item.id);
+            if (percentageItem) {
+                return {
+                    ...item,
+                    percentage: percentageItem.suitability,
+                };
+            }
+            return item;
+        });
+    }
+
+    function addSuitabilityToItemsZero(menuArray) {
+        return menuArray?.map(item => ({...item, percentage: 0})) || [];
+    }
+
+    useEffect(() => {
+        if (isEditMenu && route.params && route.params.mealId > 0) {
+            setMealId(route.params.mealId);
+
+            fetchMealById(route.params.mealId).catch(
+                (error) => {
+                    showToast('error', 'Error fetching menus');
+                    log('error', 'EditMenuScreen', 'useEffect', error.message, 'EditMenuScreen.js');
+                }
+            );
+        }
+    }, [route.params]);
+
+    useEffect(() => {
+        handleDisabledMenu().catch(
+            (error) => {
+                showToast('error', 'Error fetching menus');
+                log('error', 'MenuScreen', 'useEffect 3', error.message, 'MenuScreen.js');
+            }
+        );
+    }, []);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <View style={styles.mainContainer}>
                 <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
                 <View style={styles.bodyTopBar}>
-                    <TouchableOpacity style={lunchStyles} onPress={() => setLunch(true)}>
+                    <TouchableOpacity style={[styles.lunchContainer, !isLunch && styles.lunchContainerNotSelected]}
+                                      onPress={() => setIsLunch(true)}>
                         <Text style={styles.lunchContainerText}>Lunch</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={dinnerStyles} onPress={() => setLunch(false)}>
+                    <TouchableOpacity style={[styles.dinnerContainer, isLunch && styles.dinnerContainerNotSelected]}
+                                      onPress={() => setIsLunch(false)}>
                         <Text style={styles.dinnerContainerText}>Dinner</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.bodyContainer}>
-                    {lunch && (
-                        <Menu
-                            specialMenu={lunchSpecialItems}
-                            loading={loading}
-                            setLoading={setLoading}
-                            title="Lunch"
-                            totalCheckedSpecialItemsCount={totalCheckedSpecialLunchItemsCount}
-                            setSpecialMenu={setLunchSpecialItems}
-                            isVegi={isVegiLunch}
-                            setIsVegi={setIsVegiLunch}
-                            itemList={lunchItemList}
-                            totalCheckedItemsCount={totalCheckedLunchItemsCount}
-                            totalCheckedItems={getTotalCheckedItems(lunchItemList)}
-                            totalCheckedSpecialItems={getTotalCheckedSpecialItems(lunchSpecialItems)}
-                            totalAmount={lunchTotalPrice}
-                            isVisible={isVisible}
-                            setIsVisible={setIsVisible}
-                            disableTime={disableLunchCheckbox}
-                            onRefresh={onRefresh}
-                            refreshing={refreshing}
-                            clearAndFetchData={clearValuesAndFetchData}
-                        />
-                    )}
-                    {!lunch && (
-                        <Menu
-                            title="Dinner"
-                            loading={loading}
-                            setLoading={setLoading}
-                            specialMenu={dinnerSpecialItems}
-                            totalCheckedSpecialItemsCount={totalCheckedSpecialDinnerItemsCount}
-                            setSpecialMenu={setDinnerSpecialItems}
-                            isVegi={isVegiDinner}
-                            setIsVegi={setIsVegiDinner}
-                            itemList={dinnerItemList}
-                            totalCheckedItemsCount={totalCheckedDinnerItemsCount}
-                            totalCheckedItems={getTotalCheckedItems(dinnerItemList)}
-                            totalCheckedSpecialItems={getTotalCheckedSpecialItems(dinnerSpecialItems)}
-                            totalAmount={dinnerTotalPrice}
-                            isVisible={isVisible}
-                            setIsVisible={setIsVisible}
-                            disableTime={disableDinnerCheckbox}
-                            onRefresh={onRefresh}
-                            refreshing={refreshing}
-                            clearAndFetchData={clearValuesAndFetchData}
-                        />
-                    )}
+                    <Timer title={isLunch ? "Lunch" : "Dinner"}
+                           disableTime={isLunch ? disableLunchCheckbox : disableDinnerCheckbox}/>
+                    <Menu
+                        loading={loading}
+                        setLoading={setLoading}
+                        title={isLunch ? "Lunch" : "Dinner"}
+                        specialMenu={isLunch ? lunchSpecialItems : dinnerSpecialItems}
+                        totalCheckedSpecialItemsCount={isLunch ? totalCheckedSpecialLunchItemsCount : totalCheckedSpecialDinnerItemsCount}
+                        setSpecialMenu={isLunch ? setLunchSpecialItems : setDinnerSpecialItems}
+                        isVeg={isLunch ? isVegLunch : isVegDinner}
+                        setIsVeg={isLunch ? setIsVegLunch : setIsVegDinner}
+                        itemList={isLunch ? lunchItemList : dinnerItemList}
+                        totalCheckedItemsCount={isLunch ? totalCheckedLunchItemsCount : totalCheckedDinnerItemsCount}
+                        totalCheckedItems={isLunch ? getTotalCheckedItems(lunchItemList) : getTotalCheckedItems(dinnerItemList)}
+                        totalCheckedSpecialItems={isLunch ? getTotalCheckedSpecialItems(lunchSpecialItems) : getTotalCheckedSpecialItems(dinnerSpecialItems)}
+                        totalAmount={isLunch ? lunchTotalPrice : dinnerTotalPrice}
+                        disableTime={isLunch ? disableLunchCheckbox : disableDinnerCheckbox}
+                        onRefresh={onRefresh}
+                        refreshing={refreshing}
+                        isEditMenu={isEditMenu}
+                        clearAndFetchData={clearValuesAndFetchData}
+                        mealId={mealId}
+                        editMenu={isEditMenu}
+                    />
                 </View>
             </View>
         </SafeAreaView>

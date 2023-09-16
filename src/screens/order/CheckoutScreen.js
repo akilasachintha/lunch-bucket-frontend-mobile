@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {useNavigation} from "@react-navigation/native";
 import CheckoutItem from "../../components/checkoutItem/CheckoutItem";
 import TopHeader from "../../components/topHeader/TopHeader";
 import OrderPlaceSuccessfulModal from "../../components/modals/OrderPlaceSuccessfulModal";
@@ -23,9 +22,8 @@ export default function Checkout() {
     const [basket, setBasket] = useState({});
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
     const [points, setPoints] = useState(0);
+    const [pointsCopy, setPointsCopy] = useState(0);
     const [isPointsApplied, setIsPointsApplied] = useState(false);
-
-    const navigation = useNavigation();
     const {showToast} = useToast();
 
     const fetchCheckout = async () => {
@@ -86,7 +84,11 @@ export default function Checkout() {
                 });
 
                 basketItems.totalPrice = totalAmount;
-                setTotalAmount(totalAmount);
+                if (totalAmount >= pointsCopy) {
+                    setTotalAmount(totalAmount - pointsCopy);
+                } else {
+                    setTotalAmount(0);
+                }
             }
             setBasket(basketItems);
         } catch (error) {
@@ -118,14 +120,18 @@ export default function Checkout() {
         );
     }, []);
 
+    useEffect(() => {
+        setTotalAmount(basket.totalPrice - pointsCopy);
+    }, [pointsCopy]);
+
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             {isVisible &&
                 <OrderPlaceSuccessfulModal isVisible={isVisible} setIsVisible={setIsVisible} basket={basket}
                                            successResult={successResult}/>}
             {isPointsApplied &&
-                <ClaimPointsModal points={points.toFixed(2)} isPointsApplied={isPointsApplied}
-                                  setIsPointsApplied={setIsPointsApplied}/>}
+                <ClaimPointsModal points={points} isPointsApplied={isPointsApplied} setPoints={setPoints}
+                                  setIsPointsApplied={setIsPointsApplied} setPointsCopy={setPointsCopy}/>}
             <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
             <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>
@@ -140,21 +146,29 @@ export default function Checkout() {
                         <TouchableOpacity style={styles.claimPointsContainer} onPress={() => setIsPointsApplied(true)}>
                             {isLoading ?
                                 <ActivityIndicator size="small" color="#018525"/> :
-                                <Text style={styles.claimPointsText}>Claim Your Points Rs {points.toFixed(2)}</Text>
+                                <Text style={styles.claimPointsText}>Claim Your Points Rs {points}</Text>
                             }
                         </TouchableOpacity>
                     </View>
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.amountLeftContainer}>Bill Amount</Text>
-                        <Text style={styles.amountRightContainer}>Rs {totalAmount}.00</Text>
+                        <Text style={styles.amountRightContainer}>Rs {totalAmount.toFixed(2)}</Text>
                     </TouchableOpacity>
+                    {
+                        pointsCopy > 0 && (
+                            <TouchableOpacity style={styles.amountContainer}>
+                                <Text style={styles.amountLeftContainer}>Your Points</Text>
+                                <Text style={styles.amountRightContainer}> - Rs {pointsCopy}</Text>
+                            </TouchableOpacity>
+                        )
+                    }
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.amountLeftContainer}>Delivery Fee</Text>
-                        <Text style={styles.amountRightContainer}>Rs 0.00</Text>
+                        <Text style={styles.amountRightContainer}>Rs {(0).toFixed(2)}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.totalAmountLeftContainer}>Total Amount</Text>
-                        <Text style={styles.totalAmountRightContainer}>Rs {totalAmount}.00</Text>
+                        <Text style={styles.totalAmountRightContainer}>Rs {totalAmount.toFixed(2)}</Text>
                     </TouchableOpacity>
                 </View>
                 <BottomButton buttonText="Place Order" onPress={handleCheckout} isLoading={isPlacingOrder}/>

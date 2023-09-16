@@ -1,6 +1,11 @@
-import {forgetPasswordController, loginController, registerController, validateTokenController} from "../controllers/authController";
+import {
+    forgetPasswordController,
+    loginController,
+    registerController,
+    validateTokenController
+} from "../controllers/authController";
 import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
-import {addDataToLocalStorage, removeDataFromLocalStorage} from "../helpers/storage/asyncStorage";
+import {addDataToLocalStorage} from "../helpers/storage/asyncStorage";
 import {log} from "../helpers/logs/log";
 
 export async function loginService(email, password) {

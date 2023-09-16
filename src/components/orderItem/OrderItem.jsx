@@ -1,15 +1,34 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {MaterialIcons} from '@expo/vector-icons';
+import {Entypo, MaterialIcons} from '@expo/vector-icons';
 
-export default function OrderItem({mealName, count, orderType, items, category, type, price, meal, onDeleteOrder, orderCode}) {
+export default function OrderItem({
+                                      mealName,
+                                      count,
+                                      orderType,
+                                      items,
+                                      category,
+                                      type,
+                                      price,
+                                      meal,
+                                      onDeleteOrder,
+                                      orderCode,
+                                      updateState,
+                                      orderStatus,
+                                      deliveryTime
+                                  }) {
     const [onClicked, setOnClicked] = useState(true);
+
+    const bucketItemContainerStyle = {
+        ...styles.bucketItemContainer,
+        backgroundColor: orderStatus ? styles.bucketItemContainer.backgroundColor : '#c8c9c9',
+    };
 
     return (
         <View>
             {onClicked && (
                 <TouchableOpacity
-                    style={[styles.bucketItemContainer, styles.elevation, styles.shadowProp]}
+                    style={[bucketItemContainerStyle, styles.elevation, styles.shadowProp]}
                     onPress={() => setOnClicked(false)}
                 >
                     <View style={styles.itemTopContainer}>
@@ -56,6 +75,11 @@ export default function OrderItem({mealName, count, orderType, items, category, 
                     </View>
                     <View style={styles.orderCodeContainer}>
                         <Text style={styles.orderCodeText}>Order Code: {orderCode} </Text>
+                        {orderStatus ? (
+                            <Text style={styles.orderApprovedText}>Delivery at {deliveryTime} </Text>
+                        ) : (
+                            <Text style={styles.orderRejectedText}> Rejected </Text>
+                        )}
                     </View>
                 </TouchableOpacity>
             )}
@@ -68,11 +92,13 @@ export default function OrderItem({mealName, count, orderType, items, category, 
                         <View style={styles.countTextContainer}>
                             <Text style={styles.countText}>{count} {count === 1 ? "Pack" : "Packs"}</Text>
                         </View>
-                        <View style={styles.editButtonContainer}>
-                            <TouchableOpacity onPress={onDeleteOrder} style={styles.deleteButtonTextContainer}>
-                                <MaterialIcons name="delete-forever" size={24} color="black"/>
-                            </TouchableOpacity>
-                        </View>
+                        {updateState && (
+                            <View style={styles.editButtonContainer}>
+                                <TouchableOpacity onPress={onDeleteOrder} style={styles.deleteButtonTextContainer}>
+                                    <MaterialIcons name="delete-forever" size={24} color="black"/>
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </TouchableOpacity>
                     <View style={[styles.itemListContainer, styles.elevation, styles.shadowProp]}>
                         {orderType === 'special' && (
@@ -82,10 +108,17 @@ export default function OrderItem({mealName, count, orderType, items, category, 
                                 </View>
                             </View>
                         )}
-                        {items && items.map((item, index) => (
+                        {!orderStatus && (
+                            <View style={styles.listItemContainerRejected}>
+                                <Entypo name="emoji-sad" size={25} color="rgba(189,43,43,0.71)"/>
+                                <Text style={styles.listItemContainerRejectedText}>
+                                    Your order is rejected. Please chat with Admin to clarify more
+                                    details.</Text>
+                            </View>)}
+                        {orderStatus && items && items.map((item, index) => (
                             <View style={styles.listItemContainer} key={index}>
                                 <Text style={styles.listItemContainerText}>{item}</Text>
-                            </View>  
+                            </View>
                         ))}
                     </View>
                 </View>
@@ -106,7 +139,7 @@ const styles = StyleSheet.create({
         shadowColor: '#5b595b',
     },
     bucketItemContainer: {
-        backgroundColor: 'rgba(252, 240, 200, 1)',
+        backgroundColor: 'rgb(255,239,196)',
         marginHorizontal: "5%",
         marginVertical: "2%",
         paddingVertical: "2%",
@@ -181,13 +214,12 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(252, 240, 200, 0.3)',
         paddingVertical: 20,
         paddingHorizontal: 40,
-        marginVertical: 10,
         alignItems: 'center',
     },
     listItemContainer: {
         marginHorizontal: 40,
         paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingVertical: 8,
         borderColor: '#fff',
         borderBottomColor: 'rgba(197, 194, 194, 0.5)',
         borderWidth: 2,
@@ -230,10 +262,39 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         fontSize: 10,
     },
-    orderCodeContainer:{
-
+    orderCodeContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between"
     },
     orderCodeText: {
         fontSize: 12,
+    },
+    orderApprovedText: {
+        padding: "1%",
+        paddingLeft: "2%",
+        borderRadius: 5,
+        backgroundColor: "rgba(166,234,160,0.52)",
+        fontSize: 10,
+    },
+    orderRejectedText: {
+        padding: "1%",
+        borderRadius: 10,
+        backgroundColor: "rgba(189,43,43,0.71)",
+        fontSize: 10,
+    },
+    listItemContainerRejected: {
+        flexDirection: "row",
+        marginHorizontal: 40,
+        marginVertical: 10,
+        borderRadius: 10,
+        alignItems: "center",
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        backgroundColor: "rgba(196,186,186,0.71)",
+    },
+    listItemContainerRejectedText: {
+        fontSize: 14,
+        marginLeft: 10,
+        color: '#630A10',
     }
 });

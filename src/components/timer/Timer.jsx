@@ -41,7 +41,7 @@ export default function Timer({ title, disableTime }) {
 
     if (isLoading) {
         return (
-            <View style={timerContainerStyle}>
+            <View>
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="small" color="#630A10" />
                 </View>

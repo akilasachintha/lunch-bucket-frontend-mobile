@@ -75,10 +75,14 @@ export default function Login({navigation}) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.mainContainer}>
-                <PushNotificationDeviceChangeModal deviceToken={deviceToken}
-                                                   setDeviceToken={setDeviceToken}
-                                                   isDeviceTokenChanged={isDeviceTokenChanged}
-                                                   setIsDeviceTokenChanged={setIsDeviceTokenChanged}/>
+                {
+                    deviceToken && (
+                        <PushNotificationDeviceChangeModal deviceToken={deviceToken}
+                                                           setDeviceToken={setDeviceToken}
+                                                           isDeviceTokenChanged={isDeviceTokenChanged}
+                                                           setIsDeviceTokenChanged={setIsDeviceTokenChanged}/>
+                    )
+                }
                 <View style={styles.headerContainer}>
                     <Image
                         style={styles.headerImage}

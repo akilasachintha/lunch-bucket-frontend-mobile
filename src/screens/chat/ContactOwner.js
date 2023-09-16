@@ -18,7 +18,8 @@ import React, {useEffect, useRef, useState} from 'react';
 import {
     createNewConversationService,
     getChatsService,
-    sendMessageToConversationService
+    sendMessageToConversationService,
+    setUserViewService
 } from "../../services/chatService";
 import {log} from "../../helpers/logs/log";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
@@ -46,6 +47,7 @@ export default function ContactOwner() {
             const formattedChatList = updatedChatData.map((chat) => ({
                 id: chat.id,
                 view_user_state: chat.view_user_state,
+                view_admin_state: chat.view_admin_state,
                 expanded: false,
                 messages: chat.messages,
             }));
@@ -54,6 +56,15 @@ export default function ContactOwner() {
             setIsLoading(false);
         } catch (error) {
             log("error", "screen", "ContactOwner | fetchLatestChatData", error.message, "ContactOwner.js");
+        }
+    };
+
+    const fetchUserView = async (id) => {
+        try {
+            await setUserViewService(id);
+            log("success", "screen", "ContactOwner | fetchUserView", "User View Success.", "ContactOwner.js");
+        } catch (error) {
+            log("error", "screen", "ContactOwner | fetchUserView", error.message, "ContactOwner.js");
         }
     };
 
@@ -71,7 +82,7 @@ export default function ContactOwner() {
     useEffect(() => {
         // Fetch the initial chat data when the component mounts
         fetchLatestChatData().catch(
-            (error) => log("error", "screen", "ContactOwner | useEffect", error.message, "ContactOwner.js"),
+            (error) => log("error", "screen", "ContactOwner | useEffect | fetchLatestChatData", error.message, "ContactOwner.js"),
         );
     }, []);
 
@@ -107,6 +118,13 @@ export default function ContactOwner() {
         setChatList((prevChatList) => {
             const updatedChatList = [...prevChatList];
             updatedChatList[chatIndex].expanded = !updatedChatList[chatIndex].expanded;
+            if(updatedChatList[chatIndex].expanded && updatedChatList[chatIndex].view_admin_state){
+                updatedChatList[chatIndex].view_user_state = false;
+                fetchUserView(updatedChatList[chatIndex].id)
+                .catch(
+                    (error) => log("error", "screen", "ContactOwner | useEffect | fetchUserView", error.message, "ContactOwner.js"),
+                );
+            }
             return updatedChatList;
         });
     };

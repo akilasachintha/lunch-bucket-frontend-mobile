@@ -5,36 +5,48 @@ import PATHS from '../../helpers/paths/paths';
 import {StatusBar} from 'expo-status-bar';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
 import {lunchBucketAPI} from "../../apis/lunchBucketAPI";
+import {getCelebrationService} from "../../services/celebrationService";
 
 const InitialScreen = () => {
     const [devEnv, setDevEnv] = React.useState(false);
+    const [isCelebration, setIsCelebration] = React.useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
+
+    const fetchCelebrationData = async () => {
+        try {
+            const result = await getCelebrationService();
+            setIsCelebration(result);
+        } catch (error) {
+            log("error", "controller", "fetchCelebrationData", error.message, "InitialScreen.js");
+            setIsCelebration(false);
+        }
+    }
+
+    async function fetchData() {
+        const token = await getDataFromLocalStorage('token');
+
+        if (token) {
+            await lunchBucketAPI.get('dinner/invokeSuitabilities', {
+                headers: {
+                    'token': token,
+                }
+            });
+
+            await lunchBucketAPI.get('lunch/invokeSuitabilities', {
+                headers: {
+                    'token': token,
+                }
+            });
+        }
+    }
 
     useEffect(() => {
         if (process.env.NODE_ENV === "development") {
             setDevEnv(true);
         }
-
-        async function fetchData() {
-            const token = await getDataFromLocalStorage('token');
-
-            if (token) {
-                await lunchBucketAPI.get('dinner/invokeSuitabilities', {
-                    headers: {
-                        'token': token,
-                    }
-                });
-
-                await lunchBucketAPI.get('lunch/invokeSuitabilities', {
-                    headers: {
-                        'token': token,
-                    }
-                });
-            }
-        }
-
+        fetchCelebrationData().catch(console.error);
         fetchData().catch(console.error);
     }, []);
 
@@ -58,10 +70,14 @@ const InitialScreen = () => {
                     setTimeout(() => {
                         slideAnim.setValue(0);
 
-                        if (loginStatus === 'true') {
-                            navigation.navigate('Menu');
+                        if (isCelebration) {
+                            navigation.navigate('Celebration');
                         } else {
-                            navigation.navigate('Login');
+                            if (loginStatus === 'true') {
+                                navigation.navigate('Menu');
+                            } else {
+                                navigation.navigate('Login');
+                            }
                         }
                     }, 7000);
                 } else if(visited === 'false') {

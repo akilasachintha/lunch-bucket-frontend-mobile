@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, {useState} from 'react';
+import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from '../../helpers/paths/paths';
-import { Formik } from 'formik';
+import {Formik} from 'formik';
 import * as Yup from 'yup';
 import FormSubmitButton from '../../components/form/FormSubmitButton';
 import FormFields from '../../components/form/FormFields';
-import { forgetPasswordService, registerService } from '../../services/authService';
-import { useToast } from '../../helpers/toast/Toast';
-import { log } from '../../helpers/logs/log';
-import { StatusBar } from 'expo-status-bar';
+import {forgetPasswordService} from '../../services/authService';
+import {useToast} from '../../helpers/toast/Toast';
+import {log} from '../../helpers/logs/log';
+import {StatusBar} from 'expo-status-bar';
 import LinkButton from '../../components/linkButton/LinkButton';
 
 const validationSchema = Yup.object().shape({

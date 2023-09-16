@@ -43,7 +43,7 @@ async function registerForPushNotificationsAsync() {
 }
 
 export default function App() {
-    const [expoPushToken, setExpoPushToken] = useState('');
+    const [, setExpoPushToken] = useState('');
 
     const storeToken = async () => {
         try {

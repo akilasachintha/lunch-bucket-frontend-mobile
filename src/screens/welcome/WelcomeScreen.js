@@ -1,11 +1,12 @@
 import Swiper from 'react-native-swiper';
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
 import STRINGS from "../../helpers/strings/strings";
 import PATHS from "../../helpers/paths/paths";
 import WelcomeSlide from "../../components/welcomeSlide/WelcomeSlide";
-import { addDataToLocalStorage } from '../../helpers/storage/asyncStorage';
-import { useFocusEffect } from '@react-navigation/native';
+import {addDataToLocalStorage} from '../../helpers/storage/asyncStorage';
+import {useFocusEffect} from '@react-navigation/native';
+import {getCelebrationService} from "../../services/celebrationService";
 
 const slides = [
     {
@@ -25,13 +26,18 @@ const slides = [
         buttonText: "Get Started",
         onPress: async (navigation) => {
             await addDataToLocalStorage('@visited', 'true');
-            navigation.replace('Login');
+            const result = await getCelebrationService();
+            if (result) {
+                navigation.replace('Celebration');
+            } else {
+                navigation.replace('Login');
+            }
         },
     },
 ];
 
 const WelcomeScreen = ({ navigation }) => {
-    const [refreshed, setRefreshed] = React.useState(false);
+    const [, setRefreshed] = React.useState(false);
 
     useFocusEffect(
         React.useCallback(() => {

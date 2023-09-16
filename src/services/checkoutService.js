@@ -1,6 +1,6 @@
 import {log} from "../helpers/logs/log";
 import {getDataFromLocalStorage, removeDataFromLocalStorage} from "../helpers/storage/asyncStorage";
-import {setOrderController} from "../controllers/checkoutController";
+import {setOderTimeController, setOrderController} from "../controllers/checkoutController";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 
 export async function handleCheckoutService() {
@@ -9,8 +9,6 @@ export async function handleCheckoutService() {
             getDataFromLocalStorage("basket"),
             getDataFromLocalStorage("customerId"),
         ]);
-
-        log("info", "checkoutService", "handleCheckoutService | basket", JSON.stringify(basket), "checkoutService.js");
 
         if (!basket) {
             log("error", "checkoutService", "handleCheckoutService | basket", basket, "checkoutService.js");
@@ -52,7 +50,7 @@ export async function handleCheckoutService() {
                         potion: false,
                         special_meal: meal.items[0]?.id || "",
                     });
-                } else if (meal.isVegi) {
+                } else if (meal.isVeg) {
                     checkoutMenu.orders.push({
                         order_type: "vegi",
                         items: [meal.items[0]?.type || "", meal.items[1]?.type || "", meal.items[2]?.type || "", meal.items[3]?.type || "", meal.items[4]?.type || ""],
@@ -78,8 +76,6 @@ export async function handleCheckoutService() {
                     });
                 }
             });
-
-            log("info", "checkoutService", "handleCheckoutService | checkoutMenu", checkoutMenu, "checkoutService.js");
         } else {
             log("error", "checkoutService", "handleCheckoutService | basketItems.meal", basketItems.meal, "checkoutService.js");
             return ERROR_STATUS.ERROR;
@@ -96,12 +92,32 @@ export async function handleCheckoutService() {
             log("error", "checkoutService", "handleCheckoutService", data.data, "checkoutService.js");
             return ERROR_STATUS.ERROR;
         } else {
-            log("success", "checkoutService", "handleCheckoutService", data.data, "checkoutService.js");
             await removeDataFromLocalStorage("basket");
             return data;
         }
     } catch (error) {
         log("error", "checkoutService", "handleCheckoutService", error.message, "checkoutService.js");
+        return ERROR_STATUS.ERROR;
+    }
+}
+
+export async function handleCheckoutTimeService(data) {
+    try {
+        const result = await setOderTimeController(data);
+        const dataResult = await result.data;
+
+        if (result === ERROR_STATUS.ERROR) {
+            log("error", "checkoutService", "handleCheckoutTimeService | result", result, "checkoutService.js");
+            return ERROR_STATUS.ERROR;
+        } else if (dataResult.state === false) {
+            log("error", "checkoutService", "handleCheckoutTimeService", dataResult.data, "checkoutService.js");
+            return ERROR_STATUS.ERROR;
+        } else {
+            log("success", "checkoutService", "handleCheckoutTimeService", dataResult.data, "checkoutService.js");
+            return dataResult;
+        }
+    } catch (error) {
+        log("error", "checkoutService", "handleCheckoutTimeService", error.message, "checkoutService.js");
         return ERROR_STATUS.ERROR;
     }
 }
