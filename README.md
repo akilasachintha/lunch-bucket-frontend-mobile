@@ -20,3 +20,4 @@ npm run build
 npx expo-doctor
 npx expo install --check
 eas credentials
+npx expo prebuild --clean
