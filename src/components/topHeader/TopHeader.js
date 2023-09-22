@@ -1,12 +1,23 @@
 import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
+import {useDispatch} from "react-redux";
+import {setIsEditMenuFalseReducer} from "../../redux/menuSlice";
 
 export default function TopHeader({headerText, backButtonPath}) {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+
+    const handleBackButton = () => {
+        if (backButtonPath === "Menu") {
+            dispatch(setIsEditMenuFalseReducer());
+        }
+        navigation.navigate(backButtonPath);
+    }
+
     return (
         <View style={styles.bodyTopBar}>
-            <TouchableOpacity style={styles.backButtonContainer} onPress={() => navigation.navigate(backButtonPath)}>
+            <TouchableOpacity style={styles.backButtonContainer} onPress={handleBackButton}>
                 <Ionicons style={styles.backButtonIcon} name="ios-chevron-back-outline" size={30} color="#fff"/>
             </TouchableOpacity>
             <View style={styles.topTextContainer}>

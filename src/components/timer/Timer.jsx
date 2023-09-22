@@ -31,7 +31,7 @@ export default function Timer({ title, disableTime }) {
     ];
 
     const renderTimerText = () => {
-        const time = title === 'Lunch' ? (disableTime ? '4 PM' : '10 AM') : disableTime ? '10 AM' : '4 PM';
+        const time = title === 'Lunch' ? (disableTime ? '5 PM' : '11 AM') : disableTime ? '11 AM' : '5 PM';
         return (
             <Text style={timerContainerStyle}>
                 You can{disableTime ? ' not' : ''} place {title} orders until {time}
@@ -41,7 +41,7 @@ export default function Timer({ title, disableTime }) {
 
     if (isLoading) {
         return (
-            <View style={timerContainerStyle}>
+            <View>
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="small" color="#630A10" />
                 </View>

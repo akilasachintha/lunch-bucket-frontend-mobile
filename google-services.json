@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "173303033470",
-    "project_id": "lunchbucket-notification",
-    "storage_bucket": "lunchbucket-notification.appspot.com"
+    "project_number": "983343413507",
+    "project_id": "lunchbucket-mobile",
+    "storage_bucket": "lunchbucket-mobile.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:173303033470:android:c9c3d2ec1b6297a579322f",
+        "mobilesdk_app_id": "1:983343413507:android:1681cbb4197e50d272d136",
         "android_client_info": {
-          "package_name": "com.icode.lunchbucket"
+          "package_name": "com.lunchbucket"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "173303033470-co7koct4uoevoejmn7vn7egnkmpothlh.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBYhoa16aUgH4WU-FcB3PunloTDD3SUH4M"
+          "current_key": "AIzaSyB6wZP_vTCcdP7VNe2JOu2QrKM7ZXE1VFQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "173303033470-co7koct4uoevoejmn7vn7egnkmpothlh.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

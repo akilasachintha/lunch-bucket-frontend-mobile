@@ -1,6 +1,5 @@
 import React from 'react';
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const FormSubmitButton = ({handleSubmit, buttonText, isValid, isLoading}) => {
     const inputStyles = [

@@ -1,42 +1,48 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/native';
 import PATHS from '../../helpers/paths/paths';
 import {StatusBar} from 'expo-status-bar';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
 import {lunchBucketAPI} from "../../apis/lunchBucketAPI";
+import {getCelebrationService} from "../../services/celebrationService";
+import {log} from "../../helpers/logs/log";
 
 const InitialScreen = () => {
-    const [devEnv, setDevEnv] = React.useState(false);
+    const [devEnv, setDevEnv] = useState(false);
+    const [isCelebration, setIsCelebration] = useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
 
-    useEffect(() => {
-        if (process.env.NODE_ENV === "development") {
-            setDevEnv(true);
+    const fetchCelebrationData = async () => {
+        try {
+            const result = await getCelebrationService();
+            console.log("API Response - isCelebration:", result);
+            setIsCelebration(result);
+        } catch (error) {
+            log("error", "controller", "fetchCelebrationData", error.message, "InitialScreen.js");
+            setIsCelebration(false);
         }
+    }
 
-        async function fetchData() {
-            const token = await getDataFromLocalStorage('token');
+    async function fetchData() {
+        const token = await getDataFromLocalStorage('token');
 
-            if (token) {
-                await lunchBucketAPI.get('dinner/invokeSuitabilities', {
-                    headers: {
-                        'token': token,
-                    }
-                });
+        if (token) {
+            await lunchBucketAPI.get('dinner/invokeSuitabilities', {
+                headers: {
+                    'token': token,
+                }
+            });
 
-                await lunchBucketAPI.get('lunch/invokeSuitabilities', {
-                    headers: {
-                        'token': token,
-                    }
-                });
-            }
+            await lunchBucketAPI.get('lunch/invokeSuitabilities', {
+                headers: {
+                    'token': token,
+                }
+            });
         }
-
-        fetchData().catch(console.error);
-    }, []);
+    }
 
     const checkIfVisited = async () => {
         try {
@@ -51,26 +57,30 @@ const InitialScreen = () => {
                 Animated.timing(slideAnim, {
                     toValue: 1,
                     duration: 6000,
-                    useNativeDriver: true,
+                    useNativeDriver: false,
                 }).start();
 
                 if (visited === 'true') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
 
-                        if (loginStatus === 'true') {
-                            navigation.navigate('Menu');
-                        } else {
-                            navigation.navigate('Login');
+                        console.log("isCelebration", isCelebration);
+                        if (isCelebration) {
+                            navigation.navigate('Celebration');
+                        } else if (!isCelebration) {
+                            if (loginStatus === 'true') {
+                                navigation.navigate('Menu');
+                            } else {
+                                navigation.navigate('Login');
+                            }
                         }
                     }, 7000);
-                } else {
+                } else if(visited === 'false') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
 
                         navigation.navigate('Welcome');
                     }, 7000);
-                    await addDataToLocalStorage('@visited', 'true');
                 }
             }
         } catch (error) {
@@ -79,10 +89,20 @@ const InitialScreen = () => {
         }
     };
 
+    useEffect(() => {
+        fetchCelebrationData().catch(console.error);
+    }, [isCelebration]);
+
     useFocusEffect(
         useCallback(() => {
+            if (process.env.NODE_ENV === "development") {
+                setDevEnv(true);
+            }
+
+            fetchCelebrationData().catch(console.error);
+            fetchData().catch(console.error);
             checkIfVisited().catch(console.error);
-        }, [isFocused])
+        }, [isFocused, isCelebration])
     );
 
     return (
@@ -119,11 +139,6 @@ const InitialScreen = () => {
             <View style={styles.bottomTextContainer}>
                 <Text style={styles.bottomText}>
                     Meal Supplier You Can Trust.
-                </Text>
-            </View>
-            <View>
-                <Text style={styles.bottomText}>
-                    {devEnv && 'Development Mode'}
                 </Text>
             </View>
         </SafeAreaView>

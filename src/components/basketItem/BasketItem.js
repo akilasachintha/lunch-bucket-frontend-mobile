@@ -6,6 +6,8 @@ import {log} from '../../helpers/logs/log';
 import {useNavigation} from '@react-navigation/native';
 import ConfirmDeleteModal from '../modals/ConfirmDeleteModal';
 import {fetchBasket} from '../../services/menuService';
+import {useDispatch, useSelector} from "react-redux";
+import {setIsEditMenuTrueReducer} from "../../redux/menuSlice";
 
 export default function BasketItem({
                                        venue,
@@ -21,8 +23,11 @@ export default function BasketItem({
                                        selectedMealId,
                                        setSelectedMealId,
                                        totalAmount,
-                                       isVegi
+                                       isVeg
                                    }) {
+    const isEditMenu = useSelector(state => state.menu.isEditMenu);
+    const dispatch = useDispatch();
+
     const [count, setCount] = useState(itemCount);
     const [onClicked, setOnClicked] = useState(true);
     const navigation = useNavigation();
@@ -82,7 +87,8 @@ export default function BasketItem({
     };
 
     const handleEditMealPress = () => {
-        navigation.navigate('EditMenu', {mealId});
+        dispatch(setIsEditMenuTrueReducer());
+        navigation.navigate('Menu', {mealId});
     };
 
     return (
@@ -110,7 +116,7 @@ export default function BasketItem({
                                 )
                             }
                             {
-                                isVegi ? (
+                                isVeg ? (
                                     <Text style={styles.foodTypeText}>Veg</Text>
                                 ) : (
                                     <Text style={styles.foodTypeText}>Non-Veg</Text>

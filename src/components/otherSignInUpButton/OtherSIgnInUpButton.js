@@ -1,7 +1,6 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const OtherSignInUpButton = ({ iconName, signInText }) => {
     return (
@@ -31,7 +30,7 @@ const styles = StyleSheet.create({
         marginRight: '5%',
     },
     otherSignInText: {
-        fontSize: dynamicFont(11),
+        fontSize: 12,
         color: '#630A10',
     },
 });

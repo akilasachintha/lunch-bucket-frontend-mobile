@@ -55,7 +55,7 @@ export default function ProfileScreen() {
     }, []);
 
     const fields = [
-        {name: 'code', label: 'Code', placeholder: userData?.code},
+        {name: 'code', label: 'User Code', placeholder: userData?.code},
         {name: 'contact_no', label: 'Contact', placeholder: userData.contact_no},
     ];
 
@@ -84,7 +84,7 @@ export default function ProfileScreen() {
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
-                    {({values, handleChange, errors, setFieldTouched, touched, handleSubmit}) => (
+                    {({values, handleChange, errors, setFieldTouched, touched}) => (
                         <View style={styles.formikContainer}>
                             <ScrollView style={styles.scrollViewContainer}>
                                 <View style={styles.fieldHeaderContainer}>
@@ -115,7 +115,7 @@ export default function ProfileScreen() {
                                 </View>
                                 <View style={styles.fieldHeaderDetailsContainer}>
                                     <View>
-                                        <Text style={styles.profileText}>Balance Packets</Text>
+                                        <Text style={styles.profileText}>Missed Packets</Text>
                                     </View>
                                     <View>
                                         <Text style={styles.profileText}>{userData?.balance_packets}</Text>
