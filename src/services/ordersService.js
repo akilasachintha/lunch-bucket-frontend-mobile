@@ -23,6 +23,7 @@ export async function deleteOrderService(id) {
         if (!id) return false;
 
         const result = await deleteOrdersController(id);
+        console.log("res" + result);
         log("info", "service", "deleteOrderService | result", result, "ordersService.js");
 
         if (result === "error") {

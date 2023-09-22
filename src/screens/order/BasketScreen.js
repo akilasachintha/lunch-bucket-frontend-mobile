@@ -13,8 +13,13 @@ import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import moment from "moment/moment";
 import {getUTCDateTime} from "../../services/timeService";
+import {useDispatch} from "react-redux";
+import {setIsEditMenuFalseReducer} from "../../redux/menuSlice";
 
 export default function BasketScreen() {
+    const {showToast} = useToast();
+    const dispatch = useDispatch();
+
     const [basket, setBasket] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -22,8 +27,6 @@ export default function BasketScreen() {
 
     const navigation = useNavigation();
     const plusIcon = <Fontisto name="plus-a" size={18} color="#7E1F24"/>;
-
-    const {showToast} = useToast();
 
     const fetchBasket = async () => {
         try {
@@ -67,38 +70,42 @@ export default function BasketScreen() {
         const trimmedUtcDate = utc_date.trim();
         const currentTime = moment.utc(`${trimmedUtcDate} ${utc_time}`);
 
-        const currentUTCHours = currentTime.hours();
-        const currentUTCMinutes = currentTime.minutes();
+        let currentUTCHours = currentTime.hours() + 5;
+        let currentUTCMinutes = currentTime.minutes() + 30;
+
+        if (currentUTCMinutes >= 60) {
+            currentUTCHours += 1;
+            currentUTCMinutes -= 60;
+        }
 
         const hasLunchItems = basket.meal.some(meal => meal.venue === "Lunch");
         const hasDinnerItems = basket.meal.some(meal => meal.venue === "Dinner");
-        console.log("hasLunchItems", hasLunchItems);
-        console.log("hasDinnerItems", hasDinnerItems);
-
         const isLunch = basket.venue === "Lunch";
-        console.log("isLunch", isLunch);
 
         // 10 AM to 4 PM
-        if (isLunch && hasLunchItems && (currentUTCHours > 4 || (currentUTCHours === 4 && currentUTCMinutes >= 30)) &&
-            (currentUTCHours < 10 || (currentUTCHours === 10 && currentUTCMinutes < 30))) {
+        if (isLunch && hasLunchItems && (currentUTCHours > 11 || (currentUTCHours === 11 && currentUTCMinutes >= 0)) &&
+            (currentUTCHours < 17 || (currentUTCHours === 17 && currentUTCMinutes < 0))) {
             showToast("error", "Lunch orders are closed now. Please order for dinner.");
             await removeDataFromLocalStorage("basket");
+            await fetchBasket();
             return;
         }
 
         // 4 PM to 12 AM
-        if (isLunch && hasDinnerItems && (currentUTCHours >= 10 || (currentUTCHours < 24)) ||
-            (currentUTCHours === 0 && currentUTCMinutes < 30)) {
+        if (isLunch && hasDinnerItems && (currentUTCHours > 17 || (currentUTCHours === 17 && currentUTCMinutes >= 0)) &&
+            (currentUTCHours < 24 || (currentUTCHours === 0 && currentUTCMinutes < 0))) {
             showToast("error", "Dinner orders are closed now. Please order for lunch.");
             await removeDataFromLocalStorage("basket");
+            await fetchBasket();
             return;
         }
 
         // 12 AM to 10 AM
-        if (isLunch && hasDinnerItems && (currentUTCHours >= 0 && currentUTCMinutes >= 0) &&
-            (currentUTCHours < 4 || (currentUTCHours === 4 && currentUTCMinutes < 30))) {
+        if (isLunch && hasDinnerItems && (currentUTCHours > 0 || (currentUTCHours === 0 && currentUTCMinutes >= 0)) &&
+            (currentUTCHours < 11 || (currentUTCHours === 11 && currentUTCMinutes < 0))) {
             showToast("error", "Dinner orders are closed now. Please order for lunch.");
             await removeDataFromLocalStorage("basket");
+            await fetchBasket();
             return;
         }
 
@@ -107,6 +114,11 @@ export default function BasketScreen() {
         } else {
             showToast("error", "Please add at least one meal to proceed.");
         }
+    }
+
+    const handleAddMeal = () => {
+        dispatch(setIsEditMenuFalseReducer());
+        navigation.navigate('Menu');
     }
 
     if (isLoading) {
@@ -146,12 +158,12 @@ export default function BasketScreen() {
                                 itemCount={meal.count}
                                 isSpecial={meal.isSpecial}
                                 potion={meal.potion}
-                                isVegi={meal.isVegi}
+                                isVeg={meal.isVeg}
                             />
                         ))
                     }
                 </ScrollView>
-                <BorderButton text="Add Meal" onPress={() => navigation.navigate('Menu')} icon={plusIcon}/>
+                <BorderButton text="Add Meal" onPress={handleAddMeal} icon={plusIcon}/>
                 <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder} isLoading={isLoading}/>
             </View>
         </SafeAreaView>

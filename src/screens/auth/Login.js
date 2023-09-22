@@ -1,7 +1,7 @@
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from "../../helpers/paths/paths";
-import {useState} from "react";
+import React, {useState} from "react";
 import {Formik} from "formik";
 import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
@@ -40,6 +40,8 @@ export default function Login({navigation}) {
         setIsSubmitting(true);
         setIsLoading(true);
 
+        console.log(deviceToken);
+
         try {
             const result = await loginService(values.email, values.password);
 
@@ -75,10 +77,14 @@ export default function Login({navigation}) {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.mainContainer}>
-                <PushNotificationDeviceChangeModal deviceToken={deviceToken}
-                                                   setDeviceToken={setDeviceToken}
-                                                   isDeviceTokenChanged={isDeviceTokenChanged}
-                                                   setIsDeviceTokenChanged={setIsDeviceTokenChanged}/>
+                {
+                    deviceToken && (
+                        <PushNotificationDeviceChangeModal deviceToken={deviceToken}
+                                                           setDeviceToken={setDeviceToken}
+                                                           isDeviceTokenChanged={isDeviceTokenChanged}
+                                                           setIsDeviceTokenChanged={setIsDeviceTokenChanged}/>
+                    )
+                }
                 <View style={styles.headerContainer}>
                     <Image
                         style={styles.headerImage}
@@ -122,7 +128,7 @@ export default function Login({navigation}) {
                         <LinkButton
                             text={STRINGS.forgotPassword}
                             style={styles.linkButton}
-                            onPress={() => navigation.navigate('SignUp')}
+                            onPress={() => navigation.navigate('ForgetPassword')}
                         />
                         <Text style={styles.linkButton}>{STRINGS.or}</Text>
                     </View>

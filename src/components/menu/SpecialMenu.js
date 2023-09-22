@@ -1,64 +1,110 @@
 import React from 'react';
-import {ScrollView, StyleSheet, Switch, Text, View} from 'react-native';
-import ItemList from '../list/ItemList';
-import BasketButton from './BasketButton';
-import Timer from "../timer/Timer";
+import {Image, StyleSheet, Text, View} from 'react-native';
+import {AntDesign, MaterialIcons} from "@expo/vector-icons";
 
-const SpecialMenu = ({
-                         itemList,
-                         title,
-                         totalCheckedItemsCount,
-                         totalAmount,
-                         totalCheckedItems,
-                         remainingTime,
-                         remainingTimeColor,
-                         disableTime,
-                         editMenu = false,
-                         mealId = 0,
-                         isVegi,
-                         setIsVegi,
-                     }) => {
+const SpecialMenu = ({specialMenu, setSpecialMenu, totalCheckedItemsCount, disableTime, setTotalSpecialPrice}) => {
 
-    const toggleSwitch = () => {
-        setIsVegi((previousState) => !previousState);
+    const handleItemPress = (mainIndex, subIndex) => {
+        setSpecialMenu((prevMenuItems) => {
+            const updatedMenuItems = [...prevMenuItems];
+            updatedMenuItems[mainIndex].category[subIndex].checked = !updatedMenuItems[mainIndex].category[subIndex].checked;
+            return updatedMenuItems;
+        });
+
+        const totalSpecialItems = calculateSpecialMenuPrice();
+        setTotalSpecialPrice(totalSpecialItems);
+    };
+
+    const calculateSpecialMenuPrice = () => {
+        let totalPrice = 0;
+
+        specialMenu.forEach((menuCategory) => {
+            menuCategory.category.forEach((menuItem) => {
+                if (menuItem.checked) {
+                    totalPrice += menuItem.price;
+                }
+            });
+        });
+
+        return totalPrice;
     };
 
     return (
-        <View style={styles.bodyContentContainer}>
-            <Timer remainingTime={remainingTime}
-                   remainingTimeColor={remainingTimeColor}
-                   title={title}
-                   disableTime={disableTime}/>
-            <ScrollView style={styles.scrollViewContainer} showsVerticalScrollIndicator={false}>
-                <View style={styles.descriptionContainer}>
-                    <Text style={styles.pickUpDishesText}>You can pick up to 5 dishes.</Text>
-                    <Switch
-                        onValueChange={toggleSwitch}
-                        value={isVegi}
-                    />
-                </View>
-                <View style={styles.itemContainer}>
-                    {itemList?.length > 0 &&
-                        itemList.map((list, index) => (
-                            <ItemList
-                                key={index}
-                                title={list.type}
-                                items={list.items}
-                                disableCheckbox={disableTime}
-                                handleItemPress={list.handleItemPress}
-                            />
-                        ))}
-                </View>
-            </ScrollView>
-            <BasketButton
-                totalCheckedItemsCount={totalCheckedItemsCount}
-                totalCheckedItems={totalCheckedItems}
-                totalAmount={totalAmount}
-                venue={title}
-                editMenu={editMenu}
-                mealId={mealId}
-                isVegi={isVegi}
-            />
+        <View>
+            <View style={styles.specialMenu}>
+                {totalCheckedItemsCount <= 0 && specialMenu && specialMenu.length > 0 && specialMenu.map((item, index) => (
+                    <View key={index} style={styles.specialMenuItemContainer}>
+                        <View style={styles.specialItemLeftContainer}>
+                            <View style={styles.specialMenuItem}>
+                                <View style={styles.mainSpecialItemTextContainer}>
+                                    <Text style={styles.specialMenuText}>{item.category_name}</Text>
+                                </View>
+                                {item && item.category && item.category.length > 0 && item.category.map((subItem, subIndex) => (
+                                    <View key={subIndex} style={styles.specialMenuCategoryContainer}>
+                                        <View style={styles.specialMenuSubItemLeftContainer}>
+                                            <View style={styles.specialMenuItemTitle}>
+                                                <View style={styles.subItemMainText}>
+                                                    <View
+                                                        style={styles.specialMenuSubItemTextContainer}>
+                                                        <Text
+                                                            style={styles.subItemText}>{subItem.type}</Text>
+                                                        <Text
+                                                            style={styles.subItemPriceText}>Rs. {subItem.price}.00</Text>
+                                                    </View>
+                                                    {!subItem.checked && !disableTime && (
+                                                        <View
+                                                            style={styles.listItemRightContainer}>
+                                                            <MaterialIcons
+                                                                name="radio-button-unchecked"
+                                                                size={30}
+                                                                color="rgba(57, 57, 57, 0.5)"
+                                                                onPress={() => handleItemPress(index, subIndex)}
+                                                            />
+                                                        </View>
+                                                    )}
+                                                    {subItem.checked && !disableTime && (
+                                                        <View
+                                                            style={styles.listItemRightContainer}>
+                                                            <AntDesign
+                                                                name="checkcircle"
+                                                                size={24}
+                                                                color="rgba(44, 152, 74, 1)"
+                                                                onPress={() => handleItemPress(index, subIndex)}
+                                                            />
+                                                        </View>
+                                                    )}
+                                                </View>
+                                            </View>
+                                            <View style={styles.specialSubMenuContainer}>
+                                                <View style={styles.specialSubMenuLeftContainer}>
+                                                    {subItem && subItem.items && subItem.items.length && subItem.items.length > 0 && subItem.items.map((subSubItem, subSubIndex) => (
+                                                        <View key={subSubIndex}
+                                                              style={styles.subSubItemsContainer}>
+                                                            <Text
+                                                                style={styles.subSubItemsTextContainer}
+                                                                key={subSubIndex}>
+                                                                {subSubItem}
+                                                            </Text>
+                                                        </View>
+                                                    ))}
+                                                </View>
+                                                <View
+                                                    style={styles.specialSubMenuRightContainer}>
+                                                    {subItem && subItem.url && (
+                                                        <Image source={{uri: subItem && subItem.url}}
+                                                               style={styles.specialSubMenuImage}
+                                                        />
+                                                    )}
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </View>
+                                ))}
+                            </View>
+                        </View>
+                    </View>
+                ))}
+            </View>
         </View>
     );
 };
@@ -66,6 +112,41 @@ const SpecialMenu = ({
 export default SpecialMenu;
 
 const styles = StyleSheet.create({
+    specialMenu: {},
+    specialMenuItemContainer: {},
+    specialItemLeftContainer: {},
+    specialMenuItem: {
+        paddingVertical: 10,
+    }, mainSpecialItemTextContainer: {
+        borderRadius: 10,
+        alignItems: 'center',
+        marginBottom: "4%",
+    },
+    specialMenuCategoryContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    specialMenuSubItemLeftContainer: {
+        flex: 8,
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+    },
+    specialMenuItemTitle: {
+        backgroundColor: 'rgba(255, 209, 90, 0.3)',
+        paddingVertical: "3%",
+    },
+    subItemMainText: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: "10%",
+        width: '100%',
+    },
+    subItemText: {
+        fontSize: 18,
+        flex: 5,
+    },
+
+
     bodyContentContainer: {
         flex: 6,
     },
@@ -73,14 +154,149 @@ const styles = StyleSheet.create({
     scrollViewContainer: {},
     pickUpDishesText: {
         textAlign: 'center',
-        fontSize: 15,
+        fontSize: 14,
+        marginTop: 10,
         color: '#4D4D4D',
     },
     descriptionContainer: {
-        paddingVertical: '2%',
         paddingHorizontal: '10%',
+        paddingVertical: '1%',
+        flexDirection: 'row',
+    },
+    subSubItemsContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        paddingVertical: "2%",
+    },
+    specialMenuMainTextContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginVertical: "2%",
+        paddingHorizontal: '10%',
+    },
+    specialMenuMainText: {
+        fontSize: 18,
+        marginRight: 10,
+        textAlign: 'center',
+    },
+    specialMenuContainer: {},
+    itemTextContainer: {
+        marginTop: 20,
+        paddingHorizontal: 40,
+        backgroundColor: 'rgba(252, 240, 200, 0.3)',
+        paddingVertical: 20,
+    },
+    itemText: {
+        fontSize: 18,
+    },
+    listItemContainer: {
+        flexDirection: 'row',
+        marginHorizontal: 40,
+    },
+    listItemText: {
+        paddingTop: 18,
+        fontSize: 18,
+    },
+    listItemLeftContainer: {
+        flex: 8,
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+    },
+    subMenuText: {
+        fontSize: 12,
+    },
+    subItemIcon: {
+        marginRight: 10,
+    },
+    specialMenuText: {
+        fontSize: 18,
+        paddingHorizontal: 40,
+        textAlign: 'left',
+    },
+    specialMenuSubItemTextContainer: {
+        flex: 1,
+    },
+    subItemPriceText: {
+        fontSize: 14,
+    },
+    listItemRightContainer: {
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+    },
+
+
+    specialMenuRightContainer: {},
+
+    subSubItemsTextContainer: {
+        fontSize: 12,
+        color: 'rgba(14,12,12,0.95)',
+    },
+    normalMealContainer: {},
+    specialMenuSubItemContainer: {},
+    specialMenuSubItem: {},
+    specialMenuSubItemText: {},
+    chooseTypeContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingBottom: 10,
+        paddingHorizontal: 40,
+        marginTop: 10,
+    },
+    chooseTypeIcon: {
+        width: 40,
+        height: 30,
+        marginBottom: 10,
+    },
+    chooseTypeItemLeft: {
+        flex: 1,
+        paddingVertical: 10,
+        borderRadius: 10,
+        borderColor: '#FFF1F1',
+        borderWidth: 2,
+        marginRight: 10,
         alignItems: 'center',
-    }
+    },
+    chooseTypeItemRight: {
+        flex: 1,
+        paddingVertical: 10,
+        alignItems: 'center',
+        borderColor: '#FFF1F1',
+        borderWidth: 2,
+        borderRadius: 10,
+    },
+    chooseTypeText: {
+        fontSize: 14,
+        textAlign: 'center',
+    },
+    selectedMenu: {
+        borderWidth: 2,
+        borderColor: 'rgb(134,36,43)',
+    },
+    selectedMenuText: {
+        color: 'black',
+    },
+    specialSubMenuContainer: {
+        flexDirection: 'row',
+        paddingVertical: "4%",
+        paddingHorizontal: "10%",
+        alignItems: 'center',
+    },
+    specialSubMenuLeftContainer: {
+        flex: 4,
+    },
+    specialSubMenuRightContainer: {
+        flex: 1,
+        paddingRight: "10%",
+    },
+    specialSubMenuImage: {
+        width: 100,
+        height: 80,
+        borderRadius: 10,
+    },
+    activityIndicator: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });

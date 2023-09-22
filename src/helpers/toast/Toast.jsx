@@ -2,10 +2,10 @@ import React, {useContext, useEffect, useRef} from 'react';
 import {Animated, StyleSheet, Text} from 'react-native';
 import Constants from "expo-constants/src/Constants";
 
-const ToastContext = React.createContext();
+const ToastContext = React.createContext(undefined, undefined);
 
 export const ToastProvider = ({children}) => {
-    const [toastMessage, setToastMessage] = React.useState(null);
+    const [toastMessage, setToastMessage] = React.useState("");
 
     const showToast = (type, message) => {
         setToastMessage({type, message});
@@ -28,7 +28,9 @@ export const ToastProvider = ({children}) => {
     return (
         <ToastContext.Provider value={{showToast, hideToast}}>
             {children}
-            {toastMessage && <Toast {...toastMessage} />}
+            {toastMessage ?
+                <Toast {...toastMessage} />
+                : null}
         </ToastContext.Provider>
     );
 };
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
         zIndex: 9999,
     },
     text: {
-        color: 'white',
+        color: '#fff',
         fontSize: 14,
         textAlign: 'center',
         paddingTop: Constants.statusBarHeight,

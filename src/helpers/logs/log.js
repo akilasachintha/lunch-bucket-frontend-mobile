@@ -10,7 +10,7 @@ export function log(type, layer, method, message, fileName) {
         hour12: true,
     });
 
-    let logColor = '';
+    let logColor;
 
     // Set the color based on the log type
     switch (type.toLowerCase()) {

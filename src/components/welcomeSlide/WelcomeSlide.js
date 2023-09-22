@@ -1,6 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {dynamicFont} from "../../helpers/responsive/fontScale";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const WelcomeSlide = ({ imagePath, headerText, contentText, buttonText, onPress }) => {
     return (
@@ -53,13 +52,13 @@ const styles = StyleSheet.create({
     },
     headerText: {
         color: '#630A10',
-        fontSize: dynamicFont(20),
+        fontSize: 22,
         fontWeight: 'bold',
     },
     contentText: {
         marginTop: "5%",
         color: '#630A10',
-        fontSize: dynamicFont(12),
+        fontSize: 14,
     },
     headerImageImage: {
         top: 20,
@@ -84,6 +83,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#630A10',
         textAlign: "center",
-        fontSize: dynamicFont(10),
+        fontSize: 12,
     }
 });

@@ -2,6 +2,7 @@ import {StatusBar, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import {SelectedTab} from "../../helpers/enums/enums";
+import {useDispatch, useSelector} from "react-redux";
 
 const iconsData = [
     {
@@ -27,11 +28,17 @@ const iconsData = [
 ];
 
 function TabIcon({name, tabName, screenName, selectedTab, onPress}) {
+    const isEditMenu = useSelector(state => state.menu.isEditMenu);
+    const dispatch = useDispatch();
+
     const navigation = useNavigation();
 
     const color = selectedTab === tabName ? '#FFC42D' : '#7E1F24';
 
     const handlePress = () => {
+        if (tabName === SelectedTab.MAIN) {
+            dispatch({type: 'menu/setIsEditMenuFalseReducer'});
+        }
         if (screenName) {
             navigation.navigate(screenName);
         }

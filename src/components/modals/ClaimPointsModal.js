@@ -2,10 +2,10 @@ import React from 'react';
 import {Image, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import PATHS from "../../helpers/paths/paths";
 import {Entypo} from '@expo/vector-icons';
-import {getDataFromLocalStorage, addDataToLocalStorage} from "../../helpers/storage/asyncStorage";
+import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 import {log} from "../../helpers/logs/log";
 
-const ClaimPointsModal = ({points, isPointsApplied, setIsPointsApplied}) => {
+const ClaimPointsModal = ({points, isPointsApplied, setIsPointsApplied, setPoints, setPointsCopy}) => {
 
     const handlePressCash = async () => {
         try {
@@ -14,6 +14,8 @@ const ClaimPointsModal = ({points, isPointsApplied, setIsPointsApplied}) => {
 
             basketItems = JSON.parse(basketItems);
             basketItems.isCash = true;
+            setPointsCopy(points);
+            setPoints(0);
             console.log(basketItems);
 
             await addDataToLocalStorage('basket', JSON.stringify(basketItems));

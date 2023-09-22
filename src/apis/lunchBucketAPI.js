@@ -1,22 +1,8 @@
 import axios from 'axios';
 
-let lunchBucketAPI = axios.create({baseURL: 'https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/'});
-let projectCode = "64a7aec4932166ca272cd176AVT60UVT4300";
+export const lunchBucketAPI = axios.create({baseURL: process.env.EXPO_PUBLIC_LUNCHBUCKET_API});
+export const projectCode = process.env.EXPO_PUBLIC_PROJECT_CODE;
+export const auth2API = axios.create({baseURL: process.env.EXPO_PUBLIC_AUTH2_API});
+export const ENV_STRING = process.env.EXPO_PUBLIC_ENV.toUpperCase() + ' ENVIRONMENT';
+export const ENV = process.env.EXPO_PUBLIC_ENV;
 
-// if (process.env.NODE_ENV === "development") {
-//     console.log("Running in development mode");
-//
-// } else if (process.env.NODE_ENV === "qa") {
-//     projectCode = process.env.PROJECT_CODE;
-//     lunchBucketAPI = axios.create({baseURL: process.env.LUNCH_BUCKET_APP_URL});
-//     console.log("Running in QA mode");
-// } else {
-//     projectCode = process.env.PROJECT_CODE;
-//     lunchBucketAPI = axios.create({baseURL: process.env.LUNCH_BUCKET_APP_URL});
-//     console.log("Running in production mode");
-// }
-
-const auth2API = axios.create({baseURL: 'https://fmrlw0xn6h.execute-api.ap-south-1.amazonaws.com/dev/'});
-
-
-export {lunchBucketAPI, auth2API, projectCode};

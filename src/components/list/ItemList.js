@@ -48,10 +48,11 @@ const ListItem = ({itemName, url, checked, handleItemPress, percentage, disabled
     );
 };
 
-export default function ItemList({title, items, handleItemPress, disableCheckbox, isVegi}) {
+export default function ItemList({title, items, handleItemPress, disableCheckbox, isVeg}) {
     const filteredItemObjects = [];
+
     items.forEach((item, index) => {
-        if (isVegi && !(item.vegetarian || item.foodType === "Rice")) {
+        if (isVeg && !(item.vegetarian || item.foodType === "Rice")) {
             return;
         }
         filteredItemObjects.push({index, item});

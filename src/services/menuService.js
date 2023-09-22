@@ -1,12 +1,4 @@
-import {
-    getDinnerMeetPercentageController,
-    getDinnerMenuController,
-    getDinnerStewPercentageController,
-    getLunchMeetPercentageController,
-    getLunchMenuController,
-    getLunchStewPercentageController,
-    getLunchVegetablePercentageController,
-} from "../controllers/menuController";
+import {getDinnerMenuController, getLunchMenuController,} from "../controllers/menuController";
 import {addDataToLocalStorage, getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
 import {getUTCDateTime} from "./timeService";
@@ -253,7 +245,7 @@ export async function getDinnerStewMenuService(dinnerMenu) {
     }
 }
 
-export async function setMenuBasketService(totalCheckedItems, totalAmount, venue, isVegi, isSpecial) {
+export async function setMenuBasketService(totalCheckedItems, totalAmount, venue, isVeg, isSpecial) {
     try {
         const response = await getUTCDateTime();
         const {utc_time, utc_date} = response;
@@ -279,7 +271,7 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
                         unitPrice: item.price,
                         totalPrice: item.price,
                         venue: venue,
-                        isVegi: isVegi,
+                        isVeg: isVeg,
                         isSpecial: isSpecial,
                     };
 
@@ -292,14 +284,14 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
 
                 const meal = {
                     id: id,
-                    name: isVegi ? 'Veg Meal' : 'Non-Veg Meal',
+                    name: isVeg ? 'Veg Meal' : 'Non-Veg Meal',
                     items: totalCheckedItems,
                     date: currentTime.toISOString(),
                     count: 1,
                     unitPrice: totalAmount,
                     totalPrice: totalAmount,
                     venue: venue,
-                    isVegi: isVegi,
+                    isVeg: isVeg,
                     isSpecial: isSpecial,
                 };
 
@@ -431,103 +423,6 @@ export async function fetchMenuData(lunchMenu, dinnerMenu) {
         };
     } catch (error) {
         throw new Error("Error fetching menus");
-    }
-}
-
-export async function getLunchStewPercentageService(vegiId1, vegiId2, stewId) {
-    try {
-        const data = await getLunchStewPercentageController(vegiId1, vegiId2);
-        if (data.code !== 0) return 0;
-
-        const stew = data && data.data && data.data.data && data.data.data.find(item => item.id.number === stewId);
-        if (stew && stew.suitability) {
-            return parseInt(stew.suitability);
-        } else {
-            return 0;
-        }
-
-    } catch (error) {
-        log("error", "service", "getStewPercentage", error.message, "menuService.js");
-        return 0;
-    }
-}
-
-export async function getLunchMeetPercentageService(vegiId1, vegiId2, stewId, meetId) {
-    try {
-        if (!vegiId1 || !vegiId2 || !stewId || !meetId) return 0;
-
-        const data = await getLunchMeetPercentageController(vegiId1, vegiId2, stewId);
-        if (data.code !== 0) return 0;
-
-        const meet = data && data.data && data.data.data && data.data.data.find(item => item.id.number === meetId);
-        if (meet && meet.suitability) {
-            return parseInt(meet.suitability);
-        } else {
-            return 0;
-        }
-
-    } catch (error) {
-        log("error", "service", "getMeetPercentage", error.message, "menuService.js");
-        return 0;
-    }
-}
-
-export async function getLunchVegetablePercentageService(vegiId1, vegiId2) {
-    try {
-        if (!vegiId1 || !vegiId2) return 0;
-        console.log(vegiId1, vegiId2);
-
-        const data = await getLunchVegetablePercentageController(vegiId1, vegiId2);
-
-        const veg = data && data.data.data;
-        if (veg) {
-            return parseInt(veg);
-        } else {
-            return 0;
-        }
-
-    } catch (error) {
-        log("error", "service", "getMeetPercentage", error.message, "menuService.js");
-        return 0;
-    }
-}
-
-
-
-export async function getDinnerStewPercentageService(vegiId1, vegiId2, stewId) {
-    try {
-        const data = await getDinnerStewPercentageController(vegiId1, vegiId2);
-        if (data.code !== 0) return 0;
-
-        const stew = data && data.data && data.data.data && data.data.data.find(item => item.id.number === stewId);
-        if (stew && stew.suitability) {
-            return parseInt(stew.suitability);
-        } else {
-            return 0;
-        }
-
-    } catch (error) {
-        log("error", "service", "getStewPercentage", error.message, "menuService.js");
-        return 0;
-    }
-}
-
-export async function getDinnerMeetPercentageService(vegiId1, vegiId2, stewId, meetId) {
-    try {
-        if (!vegiId1 || !vegiId2 || !stewId || !meetId) return 0;
-
-        const data = await getDinnerMeetPercentageController(vegiId1, vegiId2, stewId);
-        if (data.code !== 0) return 0;
-
-        const meet = data && data.data && data.data.data && data.data.data.find(item => item.id.number === meetId);
-        if (meet && meet.suitability) {
-            return parseInt(meet.suitability);
-        } else {
-            return 0;
-        }
-    } catch (error) {
-        log("error", "service", "getMeetPercentage", error.message, "menuService.js");
-        return 0;
     }
 }
 

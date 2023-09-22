@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {Text, View} from 'react-native';
-import InitialScreen from "./InitialScreen";
 
 const SplashScreen = ({onFinish}) => {
     useEffect(() => {

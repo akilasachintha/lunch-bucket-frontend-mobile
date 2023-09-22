@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
-import {dynamicFont} from "../../helpers/responsive/fontScale";
 
 const EyeIcon = ({onPress, visible, error, onBlur}) => {
     return (

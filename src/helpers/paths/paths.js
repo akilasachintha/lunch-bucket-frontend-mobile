@@ -13,6 +13,8 @@ const PATHS = {
     logo: require('../../../assets/images/logo.png'),
     foodcup: require('../../../assets/images/foodcup.png'),
     food: require('../../../assets/images/food.png'),
+    forget: require('../../../assets/images/forget.png'),
+    celebration: require('../../../assets/images/celebration.png'),
 }
 
 export default PATHS;

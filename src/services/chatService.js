@@ -1,7 +1,8 @@
 import {
     createNewConversationController,
     getChatsController,
-    sendMessageToConversation
+    sendMessageToConversation,
+    setUserViewController
 } from "../controllers/chatController";
 import {log} from "../helpers/logs/log";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
@@ -46,5 +47,17 @@ export async function sendMessageToConversationService(chatId, message) {
         return result.data;
     } catch (e) {
         log("error", "service", "sendMessageToConversationService", e.message, "chatService.js");
+    }
+}
+
+export async function setUserViewService(id) {
+    try {
+        const result = await setUserViewController(id);
+        if (result === "error") return ERROR_STATUS.ERROR;
+
+        log("info", "service", "setUserViewService", result.data, "chatService.js");
+        return result.data;
+    } catch (e) {
+        log("error", "service", "setUserViewService", e.message, "chatService.js");
     }
 }
