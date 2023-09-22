@@ -12,7 +12,10 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-build-*.apk
+
+/build/
+build-*.*
+yarn.lock
 
 # macOS
 .DS_Store
