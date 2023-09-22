@@ -16,12 +16,11 @@ export async function getOrdersController() {
             headers: {'token': token,}
         });
 
-        console.log(response.data);
-
         if (response.status === 200) return response.data;
 
     } catch (error) {
-        log("error", "controller", "getLunchMeetPercentageController", error.message, "menuController.js");
+        console.error(error.response.data);
+        log("error", "controller", "getOrdersController", error.message, "orderController.js");
         return ERROR_STATUS.ERROR;
     }
 }

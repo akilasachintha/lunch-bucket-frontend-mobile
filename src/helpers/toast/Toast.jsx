@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         zIndex: 9999,
     },
     text: {
-        color: 'white',
+        color: '#fff',
         fontSize: 14,
         textAlign: 'center',
         paddingTop: Constants.statusBarHeight,

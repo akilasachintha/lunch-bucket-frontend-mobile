@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Entypo, MaterialIcons} from '@expo/vector-icons';
+import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
 
 export default function OrderItem({
                                       mealName,
@@ -11,13 +12,17 @@ export default function OrderItem({
                                       type,
                                       price,
                                       meal,
-                                      onDeleteOrder,
                                       orderCode,
                                       updateState,
                                       orderStatus,
-                                      deliveryTime
+                                      deliveryTime,
+                                      setLoading,
+                                      setOrders,
+                                      id
                                   }) {
     const [onClicked, setOnClicked] = useState(true);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
 
     const bucketItemContainerStyle = {
         ...styles.bucketItemContainer,
@@ -26,6 +31,15 @@ export default function OrderItem({
 
     return (
         <View>
+            {isModalVisible && (
+                <ConfirmDeleteModal
+                    id={id}
+                    isModalVisible={isModalVisible}
+                    setIsModalVisible={setIsModalVisible}
+                    setLoading={setLoading}
+                    setOrders={setOrders}
+                />
+            )}
             {onClicked && (
                 <TouchableOpacity
                     style={[bucketItemContainerStyle, styles.elevation, styles.shadowProp]}
@@ -85,7 +99,10 @@ export default function OrderItem({
             )}
             {!onClicked && (
                 <View>
-                    <TouchableOpacity style={styles.bucketItemExpandContainer} onPress={() => setOnClicked(true)}>
+                    <TouchableOpacity style={styles.bucketItemExpandContainer} onPress={() => {
+                        setOnClicked(true);
+                        setSelectedId(id);
+                    }}>
                         <View style={styles.bucketItemNameContainer}>
                             <Text style={styles.bucketItemNameText}>{mealName}</Text>
                         </View>
@@ -94,7 +111,8 @@ export default function OrderItem({
                         </View>
                         {updateState && (
                             <View style={styles.editButtonContainer}>
-                                <TouchableOpacity onPress={onDeleteOrder} style={styles.deleteButtonTextContainer}>
+                                <TouchableOpacity onPress={() => setIsModalVisible(true)}
+                                                  style={styles.deleteButtonTextContainer}>
                                     <MaterialIcons name="delete-forever" size={24} color="black"/>
                                 </TouchableOpacity>
                             </View>

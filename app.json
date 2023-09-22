@@ -34,7 +34,8 @@
         "backgroundColor": "#9E0808"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "com.lunchbucket"
+      "package": "com.lunchbucket",
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"

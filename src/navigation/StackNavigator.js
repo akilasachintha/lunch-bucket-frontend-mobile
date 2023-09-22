@@ -23,6 +23,9 @@ export default function StackNavigator() {
         <AuthGuard>
             <Stack.Navigator screenOptions={{
                 headerShown: false,
+                cardShadowEnabled: false,
+                cardOverlayEnabled: false,
+                gestureEnabled: false,
             }}>
                 <Stack.Screen name="Initial" component={InitialScreen}/>
                 <Stack.Screen name="Welcome" component={WelcomeScreen}/>

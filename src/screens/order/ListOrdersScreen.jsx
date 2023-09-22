@@ -1,7 +1,7 @@
 import {ActivityIndicator, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View} from "react-native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import React, {useCallback, useState} from "react";
-import {deleteOrderService, getOrdersService} from "../../services/ordersService";
+import {getOrdersService} from "../../services/ordersService";
 import {log} from "../../helpers/logs/log";
 import OrderItem from "../../components/orderItem/OrderItem";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
@@ -39,15 +39,6 @@ export default function ListOrdersScreen() {
             });
         }, [])
     );
-
-    const handleDeleteOrder = async (orderId) => {
-        try {
-            await deleteOrderService(orderId);
-            await fetchOrders();
-        } catch (error) {
-            log('error', 'ListOrdersScreen', 'handleDeleteOrder', error.message, 'ListOrdersScreen.jsx');
-        }
-    };
 
     if (loading) {
         return (
@@ -101,8 +92,9 @@ export default function ListOrdersScreen() {
                                    count={order.packet_amount} category={order.category} type={order.type}
                                    orderType={order.order_type}
                                    meal={order.meal}
-                                   onDeleteOrder={() => handleDeleteOrder(order.id)}
                                    deliveryTime={order.delivery_time}
+                                   setLoading={setLoading}
+                                   setOrders={setOrders}
                         />
                     ))}
                 </ScrollView>

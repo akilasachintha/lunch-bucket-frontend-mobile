@@ -4,7 +4,7 @@
   "scripts": {
     "start": "expo start --dev-client",
     "dev": "cross-env NODE_ENV=development expo start -c",
-    "qa": "cross-env NODE_ENV=qa expo start -c",
+    "test": "cross-env NODE_ENV=test expo start -c",
     "build:dev:apk": "cross-env NODE_ENV=development eas build -p android --profile development",
     "build:prod:aab": "cross-env NODE_ENV=production eas build -p android --profile production",
     "build:prod:apk": "cross-env NODE_ENV=production eas build -p android --profile productionApk",

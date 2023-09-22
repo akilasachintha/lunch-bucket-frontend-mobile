@@ -1,5 +1,5 @@
 import {log} from "../helpers/logs/log";
-import {getCelebrationController} from "../controllers/celebrationController";
+import {getCelebrationController, setCelebrationController} from "../controllers/celebrationController";
 
 export async function getCelebrationService() {
     try {
@@ -12,6 +12,21 @@ export async function getCelebrationService() {
         }
     } catch (error) {
         log("error", "service", "getCelebrationService", error.message, "celebrationService.js");
+        return false;
+    }
+}
+
+export async function setCelebrationService() {
+    try {
+        const result = await setCelebrationController();
+
+        if (result === "error") {
+            return false;
+        } else {
+            return result && result.data && result.data.state;
+        }
+    } catch (error) {
+        log("error", "service", "setCelebrationService", error.message, "celebrationService.js");
         return false;
     }
 }

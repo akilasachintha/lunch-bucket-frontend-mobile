@@ -19,6 +19,7 @@ export default function Checkout() {
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [totalAmountCopy, setTotalAmountCopy] = useState(0);
     const [basket, setBasket] = useState({});
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
     const [points, setPoints] = useState(0);
@@ -53,7 +54,6 @@ export default function Checkout() {
 
             basketItems = JSON.parse(basketItems);
             basketItems.isCash = !!(basketItems && basketItems.isCash);
-            console.log(basketItems);
 
             await addDataToLocalStorage('basket', JSON.stringify(basketItems));
 
@@ -84,6 +84,8 @@ export default function Checkout() {
                 });
 
                 basketItems.totalPrice = totalAmount;
+                setTotalAmountCopy(totalAmount);
+
                 if (totalAmount >= pointsCopy) {
                     setTotalAmount(totalAmount - pointsCopy);
                 } else {
@@ -152,7 +154,7 @@ export default function Checkout() {
                     </View>
                     <TouchableOpacity style={styles.amountContainer}>
                         <Text style={styles.amountLeftContainer}>Bill Amount</Text>
-                        <Text style={styles.amountRightContainer}>Rs {totalAmount.toFixed(2)}</Text>
+                        <Text style={styles.amountRightContainer}>Rs {totalAmountCopy.toFixed(2)}</Text>
                     </TouchableOpacity>
                     {
                         pointsCopy > 0 && (

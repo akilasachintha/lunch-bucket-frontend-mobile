@@ -19,3 +19,20 @@ export async function getCelebrationController() {
         return ERROR_STATUS.ERROR;
     }
 }
+
+export async function setCelebrationController() {
+    try {
+        const response = await auth2API.get('openProjectSend', {
+            headers: {
+                project_code: projectCode,
+            }
+        });
+
+        if (response.status === 200) return response.data;
+        else return ERROR_STATUS.ERROR;
+
+    } catch (error) {
+        log("error", "controller", "setCelebrationController", error.message, "celebrationController.js");
+        return ERROR_STATUS.ERROR;
+    }
+}

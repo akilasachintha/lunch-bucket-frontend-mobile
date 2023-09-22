@@ -39,6 +39,10 @@ const fetchRemainingTimes = async (
             currentUTCMinutes -= 60;
         }
 
+        if (currentUTCHours >= 23 || (currentUTCHours === 23 && currentUTCMinutes === 59)) {
+            currentUTCHours = 0;
+        }
+
         console.log(currentUTCHours, currentUTCMinutes);
 
         // 10 AM to 4 PM
@@ -56,7 +60,7 @@ const fetchRemainingTimes = async (
             // 4 PM to 12 AM
         } else if (
             (currentUTCHours > 17 || (currentUTCHours === 17 && currentUTCMinutes >= 0)) &&
-            (currentUTCHours < 24 || (currentUTCHours === 0 && currentUTCMinutes < 0))
+            (currentUTCHours < 0 || (currentUTCHours === 0 && currentUTCMinutes < 0))
         ) {
             console.log("5 PM to 12 AM");
             timeLimitDateLunch.add(1, "days").set({hours: 11, minutes: 0, seconds: 0});
@@ -67,9 +71,9 @@ const fetchRemainingTimes = async (
         }
         else if ((currentUTCHours > 0 || (currentUTCHours === 0 && currentUTCMinutes >= 0)) &&
             (currentUTCHours < 11 || (currentUTCHours === 11 && currentUTCMinutes < 0))) {
-            console.log("12 AM to 10 AM");
-            timeLimitDateLunch.add(0, "days").set({hours: 11, minutes: 0, seconds: 0});
-            timeLimitDateDinner.add(0, "days").set({hours: 11, minutes: 0, seconds: 0});
+            console.log("12 AM to 11 AM");
+            timeLimitDateLunch.add(1, "days").set({hours: 11, minutes: 0, seconds: 0});
+            timeLimitDateDinner.add(1, "days").set({hours: 11, minutes: 0, seconds: 0});
 
             setRemainingTimeLunchColor("rgb(10,152,0)");
             setRemainingTimeDinnerColor("rgb(245,33,33)");
@@ -81,8 +85,8 @@ const fetchRemainingTimes = async (
             const dinnerTimeDifference = timeLimitDateDinner.diff(updatedCurrentTime);
 
             if (lunchTimeDifference <= 0) {
-                log("info", "service", "timeService", "fetchRemainingTimes", "Lunch time is over");
                 setRemainingTimeLunch("00:00:00");
+                return;
             } else {
                 const lunchTotalSeconds = Math.floor(lunchTimeDifference / 1000);
                 const lunchHours = Math.floor(lunchTotalSeconds / 3600);
@@ -97,6 +101,7 @@ const fetchRemainingTimes = async (
 
             if (dinnerTimeDifference <= 0) {
                 setRemainingTimeDinner("00:00:00");
+                return;
             } else {
                 const dinnerTotalSeconds = Math.floor(dinnerTimeDifference / 1000);
                 const dinnerHours = Math.floor(dinnerTotalSeconds / 3600);

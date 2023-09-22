@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/native';
 import PATHS from '../../helpers/paths/paths';
@@ -6,10 +6,11 @@ import {StatusBar} from 'expo-status-bar';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
 import {lunchBucketAPI} from "../../apis/lunchBucketAPI";
 import {getCelebrationService} from "../../services/celebrationService";
+import {log} from "../../helpers/logs/log";
 
 const InitialScreen = () => {
-    const [devEnv, setDevEnv] = React.useState(false);
-    const [isCelebration, setIsCelebration] = React.useState(false);
+    const [devEnv, setDevEnv] = useState(false);
+    const [isCelebration, setIsCelebration] = useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
@@ -17,6 +18,7 @@ const InitialScreen = () => {
     const fetchCelebrationData = async () => {
         try {
             const result = await getCelebrationService();
+            console.log("API Response - isCelebration:", result);
             setIsCelebration(result);
         } catch (error) {
             log("error", "controller", "fetchCelebrationData", error.message, "InitialScreen.js");
@@ -42,14 +44,6 @@ const InitialScreen = () => {
         }
     }
 
-    useEffect(() => {
-        if (process.env.NODE_ENV === "development") {
-            setDevEnv(true);
-        }
-        fetchCelebrationData().catch(console.error);
-        fetchData().catch(console.error);
-    }, []);
-
     const checkIfVisited = async () => {
         try {
             let visited = await getDataFromLocalStorage('@visited');
@@ -70,9 +64,10 @@ const InitialScreen = () => {
                     setTimeout(() => {
                         slideAnim.setValue(0);
 
+                        console.log("isCelebration", isCelebration);
                         if (isCelebration) {
                             navigation.navigate('Celebration');
-                        } else {
+                        } else if (!isCelebration) {
                             if (loginStatus === 'true') {
                                 navigation.navigate('Menu');
                             } else {
@@ -94,10 +89,20 @@ const InitialScreen = () => {
         }
     };
 
+    useEffect(() => {
+        fetchCelebrationData().catch(console.error);
+    }, [isCelebration]);
+
     useFocusEffect(
         useCallback(() => {
+            if (process.env.NODE_ENV === "development") {
+                setDevEnv(true);
+            }
+
+            fetchCelebrationData().catch(console.error);
+            fetchData().catch(console.error);
             checkIfVisited().catch(console.error);
-        }, [isFocused])
+        }, [isFocused, isCelebration])
     );
 
     return (

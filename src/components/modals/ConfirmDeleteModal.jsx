@@ -1,12 +1,28 @@
-import React from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { removeMealFromBasketService } from "../../services/menuService";
+import React, {useState} from 'react';
+import {ActivityIndicator, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {deleteOrderService, getOrdersService} from "../../services/ordersService";
+import {log} from "../../helpers/logs/log";
 
-const ConfirmDeleteModal = ({ isModalVisible, setIsModalVisible, mealId }) => {
-    const handleDeletePress = async () => {
-        await removeMealFromBasketService(mealId);
-        setIsModalVisible(false);
+const ConfirmDeleteModal = ({isModalVisible, setIsModalVisible, id, setLoading, setOrders}) => {
+    const [isPressed, setIsPressed] = useState(false);
+    const fetchOrders = async () => {
+        setLoading(true);
+        const response = await getOrdersService();
+        setOrders(response);
+        setLoading(false);
     }
+
+    const handleDeleteOrder = async (id) => {
+        try {
+            setIsPressed(true);
+            await deleteOrderService(id);
+            setIsPressed(false);
+            await fetchOrders();
+
+        } catch (error) {
+            log('error', 'ConfirmDeleteModal', 'handleDeleteOrder', error.message, 'ConfirmDeleteModal.jsx');
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -31,10 +47,16 @@ const ConfirmDeleteModal = ({ isModalVisible, setIsModalVisible, mealId }) => {
                         </View>
                         <View style={styles.buttonConfirmContainer}>
                             <TouchableOpacity
-                                onPress={() => handleDeletePress()}
+                                onPress={() => handleDeleteOrder(id)}
                             >
                                 <View style={styles.getStartedButtonConfirmTextContainer}>
-                                    <Text style={styles.buttonConfirmText}>Delete</Text>
+                                    {
+                                        isPressed ? (
+                                            <ActivityIndicator size={24} color="#fff"/>
+                                        ) : (
+                                            <Text style={styles.buttonConfirmText}>Delete</Text>
+                                        )
+                                    }
                                 </View>
                             </TouchableOpacity>
                         </View>

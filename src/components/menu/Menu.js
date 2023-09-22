@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
         borderColor: 'rgb(134,36,43)',
     },
     selectedMenuText: {
-        color: 'black',
+        color: '#000',
     },
     chooseTypeIcon: {
         width: 40,

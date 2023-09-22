@@ -64,12 +64,14 @@ export default function OrderPlaceSuccessfulModal({
                                         <Text style={styles.earnedText}>You Earned
                                             Points: {successResult && successResult.earned_points}</Text>
                                         <Text style={styles.earnedText}>Your Total
-                                            Points: {(successResult && successResult.balance_points).toFixed(2)}</Text>
+                                            Points: {successResult && (successResult.balance_points).toFixed(2)}</Text>
                                         <View style={styles.space}/>
                                         <Text style={styles.earnedText}>Your Total
-                                            Payment: Rs. {(successResult && successResult.time_state && successResult.time_state.total_payment).toFixed(2)}</Text>
+                                            Payment:
+                                            Rs. {successResult && successResult.time_state && (successResult.time_state.total_payment).toFixed(2)}</Text>
                                         <Text style={styles.earnedText}>Your Extra
-                                            Payment: Rs. {(successResult && successResult.time_state && successResult.time_state.extra_payment).toFixed(2)}</Text>
+                                            Payment:
+                                            Rs. {successResult && successResult.time_state && (successResult.time_state.extra_payment).toFixed(2)}</Text>
                                     </View>
                                     {successResult && successResult.time_state && successResult.time_state.delivery_select_state && (
                                         <View>
