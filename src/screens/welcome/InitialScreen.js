@@ -141,11 +141,6 @@ const InitialScreen = () => {
                     Meal Supplier You Can Trust.
                 </Text>
             </View>
-            <View>
-                <Text style={styles.bottomText}>
-                    {devEnv && 'Development Mode'}
-                </Text>
-            </View>
         </SafeAreaView>
     );
 };

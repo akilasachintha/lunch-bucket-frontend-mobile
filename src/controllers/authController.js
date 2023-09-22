@@ -104,7 +104,7 @@ export async function validatePushNotificationTokenChange() {
             }
         );
 
-        console.log(response.data);
+        console.log(expoPushToken);
 
         if (response.status === 200) return response.data;
 

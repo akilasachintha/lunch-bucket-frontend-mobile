@@ -1,17 +1,35 @@
 {
   "build": {
     "development": {
+      "env": {
+        "EXPO_PUBLIC_LUNCHBUCKET_API": "https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/",
+        "EXPO_PUBLIC_PROJECT_CODE": "64fef5352733ffb579bdc92dAVT60UVT8600",
+        "EXPO_PUBLIC_AUTH2_API": "https://fw2svr60sl.execute-api.ap-south-1.amazonaws.com/beta",
+        "EXPO_PUBLIC_ENV": "development"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
+      "env": {
+        "EXPO_PUBLIC_LUNCHBUCKET_API": "https://m9sbeatlg0.execute-api.ap-south-1.amazonaws.com/prod/",
+        "EXPO_PUBLIC_PROJECT_CODE": "64fdb96f15be57cccddf86bbAVT60UVT8600",
+        "EXPO_PUBLIC_AUTH2_API": "https://a2og6gjwae.execute-api.ap-south-1.amazonaws.com/prod/",
+        "EXPO_PUBLIC_ENV": "production"
+      },
       "autoIncrement": true,
       "android": {
         "distribution": "store"
       }
     },
     "productionApk": {
+      "env": {
+        "EXPO_PUBLIC_LUNCHBUCKET_API": "https://m9sbeatlg0.execute-api.ap-south-1.amazonaws.com/prod/",
+        "EXPO_PUBLIC_PROJECT_CODE": "64fdb96f15be57cccddf86bbAVT60UVT8600",
+        "EXPO_PUBLIC_AUTH2_API": "https://a2og6gjwae.execute-api.ap-south-1.amazonaws.com/prod/",
+        "EXPO_PUBLIC_ENV": "production"
+      },
       "autoIncrement": true,
       "android": {
         "buildType": "apk"

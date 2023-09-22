@@ -72,8 +72,8 @@ const fetchRemainingTimes = async (
         else if ((currentUTCHours > 0 || (currentUTCHours === 0 && currentUTCMinutes >= 0)) &&
             (currentUTCHours < 11 || (currentUTCHours === 11 && currentUTCMinutes < 0))) {
             console.log("12 AM to 11 AM");
-            timeLimitDateLunch.add(1, "days").set({hours: 11, minutes: 0, seconds: 0});
-            timeLimitDateDinner.add(1, "days").set({hours: 11, minutes: 0, seconds: 0});
+            timeLimitDateLunch.add(0, "days").set({hours: 11, minutes: 0, seconds: 0});
+            timeLimitDateDinner.add(0, "days").set({hours: 11, minutes: 0, seconds: 0});
 
             setRemainingTimeLunchColor("rgb(10,152,0)");
             setRemainingTimeDinnerColor("rgb(245,33,33)");

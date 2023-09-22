@@ -1,7 +1,7 @@
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from "../../helpers/paths/paths";
-import {useState} from "react";
+import React, {useState} from "react";
 import {Formik} from "formik";
 import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
@@ -39,6 +39,8 @@ export default function Login({navigation}) {
     const handleSubmit = async (values, actions) => {
         setIsSubmitting(true);
         setIsLoading(true);
+
+        console.log(deviceToken);
 
         try {
             const result = await loginService(values.email, values.password);
