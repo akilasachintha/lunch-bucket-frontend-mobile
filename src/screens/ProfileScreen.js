@@ -38,7 +38,6 @@ export default function ProfileScreen() {
     const fetchUserData = async () => {
         try {
             const result = await getUserFullDetailsService();
-            console.log(result);
             setUserData(result);
             setIsLoading(false);
             log('info', 'screen', 'ProfileScreen | result', result, 'ProfileScreen.js');

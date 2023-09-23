@@ -7,7 +7,6 @@ export async function getOrdersController() {
     try {
         const token = await getDataFromLocalStorage('token');
         const customerId = await getDataFromLocalStorage('customerId');
-        console.log(customerId);
 
         if (!token) return ERROR_STATUS.ERROR;
         if (!customerId) return ERROR_STATUS.ERROR;

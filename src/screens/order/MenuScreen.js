@@ -414,11 +414,7 @@ export default function MenuScreen({route}) {
     );
 
     useEffect(() => {
-        console.log(JSON.stringify(selectedItems, null, 2));
-    }, [selectedItems]);
-    useEffect(() => {
         const countWithoutRiceCategory = selectedItems.filter(item => item.category !== "rice").length;
-        console.log(countWithoutRiceCategory);
 
         const foodIdsListWithoutRiceCategory = selectedItems
             .filter(item => item.category !== "rice")
@@ -587,8 +583,10 @@ const styles = StyleSheet.create({
     },
     lunchContainer: {
         flex: 1,
-        borderColor: '#7E1F24',
-        borderBottomColor: '#fff',
+        borderTopColor: '#7E1F24',
+        borderLeftColor: '#7E1F24',
+        borderRightColor: '#7E1F24',
+        borderBottomColor: 'rgba(255,255,255,1)',
         borderWidth: 2,
         paddingVertical: 20,
         borderBottomWidth: 5,
@@ -605,7 +603,9 @@ const styles = StyleSheet.create({
     },
     dinnerContainer: {
         flex: 1,
-        borderColor: '#7E1F24',
+        borderTopColor: '#7E1F24',
+        borderLeftColor: '#7E1F24',
+        borderRightColor: '#7E1F24',
         borderBottomColor: '#fff',
         borderWidth: 2,
         paddingVertical: 20,

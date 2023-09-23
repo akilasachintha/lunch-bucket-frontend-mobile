@@ -27,7 +27,6 @@ export default function ListOrdersScreen() {
     const fetchOrders = async () => {
         setLoading(true);
         const response = await getOrdersService();
-        console.log(response);
         setOrders(response);
         setLoading(false);
     }

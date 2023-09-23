@@ -9,7 +9,6 @@ import {getCelebrationService} from "../../services/celebrationService";
 import {log} from "../../helpers/logs/log";
 
 const InitialScreen = () => {
-    const [devEnv, setDevEnv] = useState(false);
     const [isCelebration, setIsCelebration] = useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
@@ -18,7 +17,6 @@ const InitialScreen = () => {
     const fetchCelebrationData = async () => {
         try {
             const result = await getCelebrationService();
-            console.log("API Response - isCelebration:", result);
             setIsCelebration(result);
         } catch (error) {
             log("error", "controller", "fetchCelebrationData", error.message, "InitialScreen.js");
@@ -51,8 +49,6 @@ const InitialScreen = () => {
 
             let loginStatus = await getDataFromLocalStorage('loginStatus');
 
-            console.log("visited", visited);
-
             if (isFocused) {
                 Animated.timing(slideAnim, {
                     toValue: 1,
@@ -63,8 +59,6 @@ const InitialScreen = () => {
                 if (visited === 'true') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
-
-                        console.log("isCelebration", isCelebration);
                         if (isCelebration) {
                             navigation.navigate('Celebration');
                         } else if (!isCelebration) {
@@ -95,10 +89,6 @@ const InitialScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
-            if (process.env.NODE_ENV === "development") {
-                setDevEnv(true);
-            }
-
             fetchCelebrationData().catch(console.error);
             fetchData().catch(console.error);
             checkIfVisited().catch(console.error);

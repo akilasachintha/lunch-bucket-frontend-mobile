@@ -24,7 +24,6 @@ export async function loginController(email, password) {
         );
 
         if (response.status === 200) {
-            log("info", "controller", "loginController", response.data, "authController.js");
             return response.data;
         }
 
@@ -37,7 +36,6 @@ export async function loginController(email, password) {
 export async function registerController(email, password, contactNo) {
     try {
         const expoPushToken = await getDataFromLocalStorage('expoPushToken');
-        console.log(expoPushToken);
 
         const response = await lunchBucketAPI.post(
             'addCustomer',
@@ -50,7 +48,6 @@ export async function registerController(email, password, contactNo) {
         );
 
         if (response.status === 200) {
-            log("info", "controller", "registerController", response.data, "authController.js");
             return response.data;
         }
 
@@ -104,8 +101,6 @@ export async function validatePushNotificationTokenChange() {
             }
         );
 
-        console.log(expoPushToken);
-
         if (response.status === 200) return response.data;
 
     } catch (error) {
@@ -125,10 +120,7 @@ export async function forgetPasswordController(email, password) {
             }
         );
 
-        console.log(response.data);
-
         if (response.status === 200) {
-            log("info", "controller", "forgetPasswordController", response.data, "authController.js");
             return response.data;
         }
 

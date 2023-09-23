@@ -29,8 +29,6 @@ export async function menuPercentageLunchForTwoIDsController(id1, id2) {
             headers:{"Accept":"application/json, text/plain, /","Content-Type": "multipart/form-data"},
         });
 
-        console.log(response.data);
-
         if (response.status === 200) return response.data;
 
     } catch (error) {
@@ -65,8 +63,6 @@ export async function menuPercentageLunchForThreeIDsController(id1, id2, id3) {
 
     try {
         const response = await axios.get(`http://15.206.195.120:5000/dev/lunch/suitability_for_three/${id1}/${id2}/${id3}`);
-
-        console.log(response.data);
 
         if (response.status === 200) return response.data;
 

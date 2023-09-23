@@ -15,7 +15,6 @@ export async function getUserDetailsController() {
             }
         });
 
-        log("info", "controller", "getUserDetailsController", response.data, "userProfileController.js");
         if (response.status === 200) return response.data;
 
     } catch (error) {
@@ -35,7 +34,6 @@ export async function getUserFullDetailsController() {
             }
         });
 
-        log("info", "controller", "getUserFullDetailsController", response.data, "userProfileController.js");
         if (response.status === 200) return response.data;
 
     } catch (error) {
@@ -55,7 +53,6 @@ export async function getUserPointsController() {
             }
         });
 
-        log("info", "controller", "getUserPointsController", response.data, "userProfileController.js");
         if (response.status === 200) return response.data;
 
     } catch (error) {

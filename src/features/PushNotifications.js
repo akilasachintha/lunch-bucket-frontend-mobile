@@ -3,6 +3,7 @@ import {Platform} from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import {addDataToLocalStorage} from "../helpers/storage/asyncStorage";
+import {log} from "../helpers/logs/log";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -26,7 +27,7 @@ async function registerForPushNotificationsAsync() {
             return;
         }
         token = (await Notifications.getExpoPushTokenAsync({projectId: '28d5e5c1-53f3-4c9c-abcb-2bdbc0639464'})).data;
-        console.log(token);
+        console.warn("Push Token", token);
     } else {
         alert('Must use physical device for Push Notifications');
     }
@@ -54,13 +55,13 @@ export default function App() {
             }
 
         } catch (error) {
-            console.log(error);
+            log("error", "PushNotifications", "storeToken", error.message, "PushNotifications.js");
         }
     };
 
     useEffect(() => {
         storeToken().catch((error) => {
-            console.log(error);
+            log("error", "PushNotifications", "useEffect | storeToken", error.message, "PushNotifications.js");
         });
 
     }, []);
