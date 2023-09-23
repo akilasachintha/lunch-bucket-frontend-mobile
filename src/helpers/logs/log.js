@@ -34,5 +34,5 @@ export function log(type, layer, method, message, fileName) {
     }
 
     // Log the message with the color, timestamp, fileName, type, layer, and method
-    console.log(`${logColor}${timestamp} :: ${logColor}${fileName} :: ${type} :: ${layer} :: ${method} :: ${JSON.stringify(message)}\x1b[0m`);
+    console.log(`${logColor}${timestamp} :: ${logColor}${fileName} :: ${type} :: ${layer} :: ${method} :: ${JSON.stringify(message, null, 2)}\x1b[0m`);
 }
