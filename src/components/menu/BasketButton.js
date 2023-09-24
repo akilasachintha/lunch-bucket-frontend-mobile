@@ -28,7 +28,6 @@ const BasketButton = ({
             return;
         }
 
-        console.log(totalCheckedItemsCount);
         if (totalCheckedItemsCount > 5) {
             showToast('error', 'You can select only 5 dishes.');
             return;
@@ -45,14 +44,11 @@ const BasketButton = ({
             const basketItems = totalCheckedSpecialItems.filter(item => item.checked === true);
 
             try {
-                console.log(mealId);
-                console.log(isVeg);
                 if (isEditMenu && mealId > 0) {
                     await updateBasketFromId(mealId, basketItems);
                     showToast('success', 'Basket updated successfully');
                     navigation.navigate('Basket');
                 } else {
-                    console.log(isVeg);
                     await setMenuBasketService(basketItems, totalAmount, venue, isVeg, true);
                     navigation.navigate('Basket');
                 }

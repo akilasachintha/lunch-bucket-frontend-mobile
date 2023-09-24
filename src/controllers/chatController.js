@@ -1,7 +1,7 @@
-import { getDataFromLocalStorage } from "../helpers/storage/asyncStorage";
-import { ERROR_STATUS } from "../errorLogs/errorStatus";
-import { log } from "../helpers/logs/log";
-import { lunchBucketAPI } from "../apis/lunchBucketAPI";
+import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
+import {ERROR_STATUS} from "../errorLogs/errorStatus";
+import {log} from "../helpers/logs/log";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function getChatsController() {
     try {
@@ -13,8 +13,6 @@ export async function getChatsController() {
         const response = await lunchBucketAPI.get(`getUserChat/${customerId}`, {
             headers: { 'token': token, }
         });
-
-        log("info", "controller", "getChatsController", response.data, "chatController.js");
 
         if (response.status === 200) return response.data;
 
@@ -37,8 +35,6 @@ export async function createNewConversationController(customerId, message) {
             headers: { 'token': token, }
         });
 
-        log("info", "controller", "createNewConversationController", response.data, "chatController.js");
-
         if (response.status === 200) return response.data;
 
     } catch (error) {
@@ -59,7 +55,6 @@ export async function sendMessageToConversation(chatId, message) {
             headers: { 'token': token, }
         });
 
-        log("info", "controller", "sendMessageToConversation", response.data, "chatController.js");
 
         if (response.status === 200) return response.data;
 
@@ -77,8 +72,6 @@ export async function setUserViewController(id) {
         const response = await lunchBucketAPI.get(`setUserView/${id}`, {
             headers: { 'token': token, }
         });
-
-        log("info", "controller", "setUserViewController", response.data, "chatController.js");
 
         if (response.status === 200) return response.data;
 

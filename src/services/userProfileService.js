@@ -9,7 +9,6 @@ import {ERROR_STATUS} from "../errorLogs/errorStatus";
 export async function getUserDetailsService() {
     try {
         const result = await getUserDetailsController();
-        log("info", "service", "getUserDetailsService | result", result, "userProfileService.js");
         if (result === "error") {
             return [];
         } else {
@@ -26,7 +25,6 @@ export async function getUserDetailsService() {
 export async function getUserFullDetailsService() {
     try {
         const result = await getUserFullDetailsController();
-        log("info", "service", "getUserFullDetailsService | result", result, "userProfileService.js");
 
         if (result === "error") {
             return ERROR_STATUS.ERROR;
@@ -44,7 +42,6 @@ export async function getUserFullDetailsService() {
 export async function getUserPointsService() {
     try {
         const result = await getUserPointsController();
-        log("info", "service", "getUserPointsService | result", result, "userProfileService.js");
 
         if (result === "error") {
             return 0;

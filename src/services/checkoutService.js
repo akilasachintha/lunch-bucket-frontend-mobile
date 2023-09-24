@@ -36,7 +36,6 @@ export async function handleCheckoutService() {
         }
 
         if (basketItems && basketItems.meal && basketItems.meal.length > 0) {
-            log("info", "checkoutService", "handleCheckoutService | basketItems.meal", basketItems.meal, "checkoutService.js");
             basketItems.meal.forEach((meal) => {
                 if (meal.isSpecial) {
                     checkoutMenu.orders.push({
@@ -82,7 +81,6 @@ export async function handleCheckoutService() {
         }
 
         const result = await setOrderController(checkoutMenu);
-        log("info", "checkoutService", "handleCheckoutService | result", result, "checkoutService.js")
         const data = await result.data;
 
         if (result === ERROR_STATUS.ERROR) {

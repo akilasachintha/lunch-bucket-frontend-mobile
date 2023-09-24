@@ -23,7 +23,9 @@ export default function BasketItem({
                                        selectedMealId,
                                        setSelectedMealId,
                                        totalAmount,
-                                       isVeg
+                                       isVeg,
+                                       setLoading,
+                                       loading,
                                    }) {
     const isEditMenu = useSelector(state => state.menu.isEditMenu);
     const dispatch = useDispatch();
@@ -95,9 +97,12 @@ export default function BasketItem({
         <View>
             {isModalVisible && (
                 <ConfirmDeleteModal
-                    mealId={selectedMealId}
+                    id={selectedMealId}
                     isModalVisible={isModalVisible}
                     setIsModalVisible={setIsModalVisible}
+                    setLoading={setLoading}
+                    loading={loading}
+                    useBasket={true}
                 />
             )}
             {onClicked && (

@@ -4,3 +4,9 @@ export const SelectedTab = {
     MAIN: 'main',
     PROFILE: 'profile',
 };
+
+export const Environments = {
+    PRODUCTION: 'production',
+    TEST: 'test',
+    DEVELOPMENT: 'development',
+}

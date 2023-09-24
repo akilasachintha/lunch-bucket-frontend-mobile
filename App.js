@@ -6,7 +6,8 @@ import PushNotifications from "./src/features/PushNotifications";
 import {store} from "./src/redux/store";
 import {Provider} from 'react-redux'
 import {StyleSheet, Text, View} from "react-native";
-import {ENV_STRING} from "./src/apis/lunchBucketAPI";
+import {ENV, ENV_STRING} from "./src/apis/lunchBucketAPI";
+import {Environments} from "./src/helpers/enums/enums";
 
 export default function App() {
     return (
@@ -17,7 +18,7 @@ export default function App() {
                     <StackNavigator/>
                 </NavigationContainer>
                 {
-                    (
+                    ENV !== Environments.PRODUCTION && (
                         <View style={styles.environmentTextContainer}>
                             <Text style={styles.environmentText}>{ENV_STRING}</Text>
                         </View>
@@ -36,7 +37,8 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(189,43,43,0.71)',
         padding: 5,
         borderRadius: 5,
-    }, environmentText: {
+    },
+    environmentText: {
         color: 'white',
         fontSize: 7,
     },

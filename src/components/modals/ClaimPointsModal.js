@@ -5,7 +5,15 @@ import {Entypo} from '@expo/vector-icons';
 import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 import {log} from "../../helpers/logs/log";
 
-const ClaimPointsModal = ({points, isPointsApplied, setIsPointsApplied, setPoints, setPointsCopy}) => {
+const ClaimPointsModal = ({
+                              points,
+                              isPointsApplied,
+                              setIsPointsApplied,
+                              setPoints,
+                              setPointsCopy,
+                              totalAmount,
+                              pointsCopy
+                          }) => {
 
     const handlePressCash = async () => {
         try {
@@ -14,9 +22,14 @@ const ClaimPointsModal = ({points, isPointsApplied, setIsPointsApplied, setPoint
 
             basketItems = JSON.parse(basketItems);
             basketItems.isCash = true;
-            setPointsCopy(points);
-            setPoints(0);
-            console.log(basketItems);
+
+            if (points >= totalAmount) {
+                setPoints(points - totalAmount);
+                setPointsCopy(totalAmount);
+            } else {
+                setPointsCopy(points);
+                setPoints(0);
+            }
 
             await addDataToLocalStorage('basket', JSON.stringify(basketItems));
             setIsPointsApplied(false);
@@ -33,7 +46,6 @@ const ClaimPointsModal = ({points, isPointsApplied, setIsPointsApplied, setPoint
 
             basketItems = JSON.parse(basketItems);
             basketItems.isCash = false;
-            console.log(basketItems);
 
             await addDataToLocalStorage('basket', JSON.stringify(basketItems));
             setIsPointsApplied(false);
@@ -59,7 +71,7 @@ const ClaimPointsModal = ({points, isPointsApplied, setIsPointsApplied, setPoint
                             <Text style={styles.cashPointTopTitleText}>{points} Points</Text>
                         </View>
                         {
-                            points && points >= 100 ? (
+                            points && points >= 100 && totalAmount > 0 ? (
                                 <View style={styles.buttonMainContainer}>
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity onPress={handlePressNo}>
@@ -78,7 +90,11 @@ const ClaimPointsModal = ({points, isPointsApplied, setIsPointsApplied, setPoint
                                 </View>
                             ) : (
                                 <View style={styles.insufficientPointsTextContainer}>
-                                    <Text style={styles.insufficientPointsText}>You need at least 100 points</Text>
+                                    <Text style={styles.insufficientPointsText}>
+                                        You need at least 100 points or
+                                    </Text>
+                                    <Text style={styles.insufficientPointsText}>total amount should be greater than
+                                        0</Text>
                                     <Text style={styles.insufficientPointsText}>to cash them</Text>
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity style={styles.crossIcon} onPress={handlePressNo}>
@@ -111,6 +127,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     cashPointTopContainer: {},
     cashPointTopTitleText: {
@@ -181,6 +199,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#630A10',
         fontSize: 14,
+        paddingHorizontal: "5%",
     },
     crossIcon: {
         marginTop: "5%",

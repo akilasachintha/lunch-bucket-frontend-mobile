@@ -102,7 +102,6 @@ export default function Checkout() {
         try {
             setIsLoading(true);
             const userPoints = await getUserPointsService();
-            console.log("userPoints", userPoints);
             if (!userPoints) setPoints(0);
 
             setPoints(userPoints);
@@ -123,7 +122,7 @@ export default function Checkout() {
     }, []);
 
     useEffect(() => {
-        setTotalAmount(basket.totalPrice - pointsCopy);
+        setTotalAmount(basket.totalPrice >= pointsCopy ? basket.totalPrice - pointsCopy : 0);
     }, [pointsCopy]);
 
     return (
@@ -133,7 +132,9 @@ export default function Checkout() {
                                            successResult={successResult}/>}
             {isPointsApplied &&
                 <ClaimPointsModal points={points} isPointsApplied={isPointsApplied} setPoints={setPoints}
-                                  setIsPointsApplied={setIsPointsApplied} setPointsCopy={setPointsCopy}/>}
+                                  pointsCopy={pointsCopy}
+                                  setIsPointsApplied={setIsPointsApplied} setPointsCopy={setPointsCopy}
+                                  totalAmount={totalAmount}/>}
             <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
             <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>

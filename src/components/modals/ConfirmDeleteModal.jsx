@@ -2,8 +2,9 @@ import React, {useState} from 'react';
 import {ActivityIndicator, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {deleteOrderService, getOrdersService} from "../../services/ordersService";
 import {log} from "../../helpers/logs/log";
+import {removeMealFromBasketService} from "../../services/menuService";
 
-const ConfirmDeleteModal = ({isModalVisible, setIsModalVisible, id, setLoading, setOrders}) => {
+const ConfirmDeleteModal = ({isModalVisible, setIsModalVisible, id, setLoading, setOrders, useBasket}) => {
     const [isPressed, setIsPressed] = useState(false);
     const fetchOrders = async () => {
         setLoading(true);
@@ -14,10 +15,17 @@ const ConfirmDeleteModal = ({isModalVisible, setIsModalVisible, id, setLoading, 
 
     const handleDeleteOrder = async (id) => {
         try {
-            setIsPressed(true);
-            await deleteOrderService(id);
-            setIsPressed(false);
-            await fetchOrders();
+            if (!useBasket) {
+                setIsPressed(true);
+                await deleteOrderService(id);
+                setIsPressed(false);
+                await fetchOrders();
+            } else {
+                setLoading(true);
+                await removeMealFromBasketService(id);
+                setLoading(false);
+                setIsModalVisible(false);
+            }
 
         } catch (error) {
             log('error', 'ConfirmDeleteModal', 'handleDeleteOrder', error.message, 'ConfirmDeleteModal.jsx');

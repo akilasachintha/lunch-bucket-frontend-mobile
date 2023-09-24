@@ -66,7 +66,6 @@ export default function SignUp({navigation}) {
 
         try {
             const result = await registerService(values.email, values.password, values.contactNo);
-            console.log(result);
             if (result === 'success') {
                 showToast('success', 'Successfully Registered.');
                 actions.resetForm();
