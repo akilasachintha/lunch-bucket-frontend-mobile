@@ -40,8 +40,6 @@ export default function Login({navigation}) {
         setIsSubmitting(true);
         setIsLoading(true);
 
-        console.log(deviceToken);
-
         try {
             const result = await loginService(values.email, values.password);
 

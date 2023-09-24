@@ -32,7 +32,6 @@ export default function BasketScreen() {
         try {
             setIsLoading(true);
             let basketItems = await getDataFromLocalStorage('basket');
-            log("info", "BasketScreen", "fetchBasketItems | basketItems", JSON.stringify(basketItems), "BasketScreen.js");
 
             if (!basketItems) {
                 setIsLoading(false);
@@ -40,7 +39,6 @@ export default function BasketScreen() {
             }
             basketItems = JSON.parse(basketItems);
 
-            log("info", "BasketScreen", "fetchBasketItems | basketItems", basketItems, "BasketScreen.js");
             setBasket(basketItems);
             setIsLoading(false);
         } catch (error) {
@@ -144,6 +142,8 @@ export default function BasketScreen() {
                     {
                         basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal) => (
                             <BasketItem
+                                setLoading={setIsLoading}
+                                loading={isLoading}
                                 totalAmount={meal.totalPrice}
                                 venue={basket.venue}
                                 setIsModalVisible={setIsModalVisible}

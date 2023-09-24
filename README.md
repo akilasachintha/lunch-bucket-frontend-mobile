@@ -8,16 +8,18 @@ expo doctor
 
 ## Project start 
 ### dev
-npm start
-npm run dev
 
-### qa - has production environment
-npm run qa
+yarn start
+yarn run dev
 
 ### prod-build
-npm run build
+
+yarn run build
 
 npx expo-doctor
 npx expo install --check
 eas credentials
 npx expo prebuild --clean
+
+## Project build
+need to add relevant env file to run the project

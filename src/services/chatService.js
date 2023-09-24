@@ -14,7 +14,6 @@ export async function getChatsService() {
         const result = await getChatsController();
         if (result === "error") return ERROR_STATUS.ERROR;
 
-        log("info", "service", "getChatsService", result.data.chats, "chatService.js");
         return result.data.chats;
 
     } catch (e) {
@@ -30,7 +29,6 @@ export async function createNewConversationService(message) {
         const result = await createNewConversationController(customerId, message);
         if (result === "error") return ERROR_STATUS.ERROR;
 
-        log("info", "service", "createNewConversationService", result.data, "chatService.js");
         return result.data;
 
     } catch (e) {
@@ -43,7 +41,6 @@ export async function sendMessageToConversationService(chatId, message) {
         const result = await sendMessageToConversation(chatId, message);
         if (result === "error") return ERROR_STATUS.ERROR;
 
-        log("info", "service", "sendMessageToConversationService", result.data, "chatService.js");
         return result.data;
     } catch (e) {
         log("error", "service", "sendMessageToConversationService", e.message, "chatService.js");
@@ -55,7 +52,6 @@ export async function setUserViewService(id) {
         const result = await setUserViewController(id);
         if (result === "error") return ERROR_STATUS.ERROR;
 
-        log("info", "service", "setUserViewService", result.data, "chatService.js");
         return result.data;
     } catch (e) {
         log("error", "service", "setUserViewService", e.message, "chatService.js");

@@ -8,8 +8,6 @@ export async function setOrderController(data) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        log("info", "controller", "setOrderController | data", data, "checkoutController.js");
-
         const response = await lunchBucketAPI.post(
             'addOrders',
             data,
