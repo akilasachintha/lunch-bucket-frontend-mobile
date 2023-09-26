@@ -402,9 +402,6 @@ export default function MenuScreen({route}) {
         React.useCallback(() => {
             if (!isEditMenu) {
                 clearValuesAndFetchData()
-                    .then(() => {
-                        showToast('success', 'Successfully loaded menus');
-                    })
                     .catch((error) => {
                         showToast('error', 'Error fetching menus');
                         log('error', 'MenuScreen', 'useEffect 2', error.message, 'MenuScreen.js');

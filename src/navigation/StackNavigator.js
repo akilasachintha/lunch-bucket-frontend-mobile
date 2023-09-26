@@ -26,6 +26,7 @@ export default function StackNavigator() {
                 cardShadowEnabled: false,
                 cardOverlayEnabled: false,
                 gestureEnabled: false,
+                animation: 'slide_from_right',
             }}>
                 <Stack.Screen name="Initial" component={InitialScreen}/>
                 <Stack.Screen name="Welcome" component={WelcomeScreen}/>
