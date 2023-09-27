@@ -230,7 +230,6 @@ export default function MenuScreen({route}) {
                 case true:
                     setSelectedItems(selectedItems.filter(item => item.id !== newItems[index].id));
                     newItems[index].checked = false;
-                    console.log("item unchecked");
                     break;
                 case false:
                     if (isItemAlreadySelected) {
@@ -240,17 +239,17 @@ export default function MenuScreen({route}) {
                         setSelectedItems([...selectedItems, newItems[index]]);
                         newItems[index].checked = true;
                     } else if (type === "Rice" && itemCount > 0) {
-                        showToast('warning', `You can select one rice item only.`);
+                        showToast('error', `You can select one rice item only.`);
                         return;
                     }
                     const hasCheckedLunchRiceItem = lunchRiceItems.some(item => item.checked);
                     const hasCheckedDinnerRiceItem = dinnerRiceItems.some(item => item.checked);
 
                     if (!(hasCheckedLunchRiceItem || hasCheckedDinnerRiceItem) && (totalCheckedLunchItemsCount >= 4 || totalCheckedDinnerItemsCount >= 4)) {
-                        showToast('warning', `Need to select one rice item.`);
+                        showToast('error', `Need to select one rice item.`);
                         return;
                     } else if (totalCheckedLunchItemsCount >= 5 || totalCheckedDinnerItemsCount >= 5) {
-                        showToast('warning', `You can select up to 5 dishes only.`);
+                        showToast('error', `You can select up to 5 dishes only.`);
                         return;
                     } else {
                         newItems[index].checked = true;
