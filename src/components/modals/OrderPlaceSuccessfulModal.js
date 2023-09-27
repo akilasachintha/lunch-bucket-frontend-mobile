@@ -1,5 +1,5 @@
-import React from "react";
-import {Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import React, {useState} from "react";
+import {ActivityIndicator, Modal, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {AntDesign} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {Formik} from "formik";
@@ -13,6 +13,7 @@ export default function OrderPlaceSuccessfulModal({
                                                       basket,
                                                   }) {
     const navigation = useNavigation();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handlePress = () => {
         setIsVisible(false);
@@ -42,13 +43,25 @@ export default function OrderPlaceSuccessfulModal({
                             validationSchema={deliverySchema}
                             onSubmit={async (values) => {
                                 try {
+                                    setIsSubmitting(true);
                                     await handleCheckoutTimeService({
-                                        order_ids: successResult && successResult.time_state ? successResult.time_state.order_ids : [],
+                                        order_ids:
+                                            successResult && successResult.time_state
+                                                ? successResult.time_state.order_ids
+                                                : [],
                                         delivery_time: values.deliveryTime,
                                     });
                                     handlePress();
                                 } catch (error) {
-                                    log("error", "OrderPlaceSuccessfulModal", "onSubmit", error.message, "OrderPlaceSuccessfulModal.js");
+                                    log(
+                                        "error",
+                                        "OrderPlaceSuccessfulModal",
+                                        "onSubmit",
+                                        error.message,
+                                        "OrderPlaceSuccessfulModal.js"
+                                    );
+                                } finally {
+                                    setIsSubmitting(false);
                                 }
                             }}
                         >
@@ -61,17 +74,26 @@ export default function OrderPlaceSuccessfulModal({
                                         <AntDesign name="checkcircle" size={50} color="rgba(56, 207, 98, 1)"/>
                                     </View>
                                     <View style={styles.earnedContainer}>
-                                        <Text style={styles.earnedText}>You Earned
-                                            Points: {successResult && successResult.earned_points}</Text>
-                                        <Text style={styles.earnedText}>Your Total
-                                            Points: {successResult && (successResult.balance_points).toFixed(2)}</Text>
+                                        <Text style={styles.earnedText}>
+                                            You Earned Points: {successResult && successResult.earned_points}
+                                        </Text>
+                                        <Text style={styles.earnedText}>
+                                            Your Total
+                                            Points: {successResult && successResult.balance_points.toFixed(2)}
+                                        </Text>
                                         <View style={styles.space}/>
-                                        <Text style={styles.earnedText}>Your Total
-                                            Payment:
-                                            Rs. {successResult && successResult.time_state && (successResult.time_state.total_payment).toFixed(2)}</Text>
-                                        <Text style={styles.earnedText}>Your Extra
-                                            Payment:
-                                            Rs. {successResult && successResult.time_state && (successResult.time_state.extra_payment).toFixed(2)}</Text>
+                                        <Text style={styles.earnedText}>
+                                            Your Total Payment: Rs.{" "}
+                                            {successResult &&
+                                                successResult.time_state &&
+                                                successResult.time_state.total_payment.toFixed(2)}
+                                        </Text>
+                                        <Text style={styles.earnedText}>
+                                            Your Extra Payment: Rs.{" "}
+                                            {successResult &&
+                                                successResult.time_state &&
+                                                successResult.time_state.extra_payment.toFixed(2)}
+                                        </Text>
                                     </View>
                                     {successResult && successResult.time_state && successResult.time_state.delivery_select_state && (
                                         <View>
@@ -135,9 +157,17 @@ export default function OrderPlaceSuccessfulModal({
                                         </View>
                                     )}
                                     {successResult && successResult.time_state && successResult.time_state.delivery_select_state && (
-                                        <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
-                                            <Text style={styles.submitButtonText}>Done</Text>
-                                        </TouchableOpacity>
+                                        <View>
+                                            {isSubmitting ? (
+                                                <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
+                                                    <ActivityIndicator size="small" color="#fff"/>
+                                                </TouchableOpacity>
+                                            ) : (
+                                                <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
+                                                    <Text style={styles.submitButtonText}>Done</Text>
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
                                     )}
                                 </>
                             )}
@@ -208,7 +238,7 @@ const styles = StyleSheet.create({
         color: "red",
     },
     submitButton: {
-        width: "80%",
+        width: 200,
         alignItems: "center",
         backgroundColor: "rgb(134,36,43)",
         padding: 10,

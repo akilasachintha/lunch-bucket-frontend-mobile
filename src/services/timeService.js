@@ -60,7 +60,7 @@ const fetchRemainingTimes = async (
             // 4 PM to 12 AM
         } else if (
             (currentUTCHours > 17 || (currentUTCHours === 17 && currentUTCMinutes >= 0)) &&
-            (currentUTCHours < 0 || (currentUTCHours === 0 && currentUTCMinutes < 0))
+            (currentUTCHours < 24 || (currentUTCHours === 24 && currentUTCMinutes < 0))
         ) {
             console.log("5 PM to 12 AM");
             timeLimitDateLunch.add(1, "days").set({hours: 11, minutes: 0, seconds: 0});

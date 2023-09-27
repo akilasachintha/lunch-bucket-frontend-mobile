@@ -85,11 +85,13 @@ export async function getLunchSpecialMenuService(lunchMenu) {
 export async function getLunchRiceMenuService(lunchMenu) {
     try {
         const result = lunchMenu;
+        console.log("result", result);
         if (!result) {
             return [];
         } else {
             return await result.rice_menu_lunch.map((item) => ({
                 ...item,
+                type: item.type.charAt(0).toUpperCase() + item.type.slice(1),
                 checked: false,
                 disableCheckbox: true,
                 foodType: 'Rice',
