@@ -6,7 +6,7 @@ import {Formik} from 'formik';
 import * as Yup from 'yup';
 import FormSubmitButton from '../../components/form/FormSubmitButton';
 import FormFields from '../../components/form/FormFields';
-import {registerService} from '../../services/useAuthService';
+import {registerService} from '../../services/authService';
 import {useToast} from '../../helpers/toast/Toast';
 import {log} from '../../helpers/logs/log';
 import {StatusBar} from 'expo-status-bar';

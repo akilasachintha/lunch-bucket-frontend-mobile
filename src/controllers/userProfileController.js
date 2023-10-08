@@ -1,14 +1,14 @@
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import {log} from "../helpers/logs/log";
-import {i2AuthBaseUrl, lunchBucketBaseUrl, projectCode} from "../apis/lunchBucketEnvConfig";
+import {auth2API, lunchBucketAPI, projectCode} from "../apis/lunchBucketAPI";
 
 export async function getUserDetailsController() {
     try {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await i2AuthBaseUrl.get(`getUser`, {
+        const response = await auth2API.get(`getUser`, {
             headers: {
                 'token': token,
                 'project_code': projectCode,
@@ -28,7 +28,7 @@ export async function getUserFullDetailsController() {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await lunchBucketBaseUrl.get(`getCustomer`, {
+        const response = await lunchBucketAPI.get(`getCustomer`, {
             headers: {
                 'token': token,
             }
@@ -47,7 +47,7 @@ export async function getUserPointsController() {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await lunchBucketBaseUrl.get(`getCustomerPoints`, {
+        const response = await lunchBucketAPI.get(`getCustomerPoints`, {
             headers: {
                 'token': token,
             }

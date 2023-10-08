@@ -3,6 +3,20 @@ import React, {useEffect, useMemo, useState} from "react";
 import Menu from "../../components/menu/Menu";
 import {useToast} from "../../helpers/toast/Toast";
 import {getUTCDateTime} from "../../services/timeService";
+import {
+    fetchMenuData,
+    getByMealIdFromBasketService,
+    getDinnerMeetMenuService,
+    getDinnerMenuService,
+    getDinnerRiceMenuService,
+    getDinnerStewMenuService,
+    getDinnerVegetableMenuService,
+    getLunchMeetMenuService,
+    getLunchMenuService,
+    getLunchRiceMenuService,
+    getLunchStewMenuService,
+    getLunchVegetableMenuService
+} from "../../services/menuService";
 import {log} from "../../helpers/logs/log";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
@@ -16,11 +30,9 @@ import {
     fetchMenuPercentageLunchForThreeIDs,
     fetchMenuPercentageLunchForTwoIDs
 } from "../../redux/menuPercentageSlice";
-import {useMenuService} from "../../services/useMenuService";
 
 export default function MenuScreen({route}) {
     const {showToast} = useToast();
-    const {getLunchMenuService, getDinnerMenuService, lunchMenuService} = useMenuService();
     const isEditMenu = useSelector(state => state.menu.isEditMenu);
     const menuPercentageDinnerForTwoIDs = useSelector(state => state.menuPercentage.menuPercentageDinnerForTwoIDs);
     const menuPercentageLunchForTwoIDs = useSelector(state => state.menuPercentage.menuPercentageLunchForTwoIDs);
@@ -55,7 +67,7 @@ export default function MenuScreen({route}) {
     const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
 
     const fetchMealById = async (mealId) => {
-        const result = getByMealIdFromBasketService(mealId);
+        const result = await getByMealIdFromBasketService(mealId);
 
         if (result != null) {
             setMeal(result);
@@ -495,7 +507,6 @@ export default function MenuScreen({route}) {
     }, [route.params]);
 
     useEffect(() => {
-        lunchMenuService();
         handleDisabledMenu().catch(
             (error) => {
                 showToast('error', 'Error fetching menus');

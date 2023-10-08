@@ -1,7 +1,7 @@
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import {log} from "../helpers/logs/log";
-import {lunchBucketBaseUrl} from "../apis/lunchBucketEnvConfig";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function getOrdersController() {
     try {
@@ -11,7 +11,7 @@ export async function getOrdersController() {
         if (!token) return ERROR_STATUS.ERROR;
         if (!customerId) return ERROR_STATUS.ERROR;
 
-        const response = await lunchBucketBaseUrl.get(`getOrderByCustomer/${customerId}`, {
+        const response = await lunchBucketAPI.get(`getOrderByCustomer/${customerId}`, {
             headers: {'token': token,}
         });
 
@@ -29,7 +29,7 @@ export async function deleteOrdersController(id) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await lunchBucketBaseUrl.delete(`deleteOrder/${id}`, {
+        const response = await lunchBucketAPI.delete(`deleteOrder/${id}`, {
             headers: {'token': token,}
         });
 

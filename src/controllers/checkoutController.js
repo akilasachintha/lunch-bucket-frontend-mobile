@@ -1,14 +1,14 @@
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import {log} from "../helpers/logs/log";
-import {lunchBucketBaseUrl} from "../apis/lunchBucketEnvConfig";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function setOrderController(data) {
     try {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await lunchBucketBaseUrl.post(
+        const response = await lunchBucketAPI.post(
             'addOrders',
             data,
             {
@@ -38,7 +38,7 @@ export async function setOderTimeController(data) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await lunchBucketBaseUrl.post(
+        const response = await lunchBucketAPI.post(
             'updateOrderDeliveryTime',
             data,
             {

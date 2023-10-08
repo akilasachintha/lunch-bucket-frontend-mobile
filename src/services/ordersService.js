@@ -13,7 +13,7 @@ export async function getOrdersService() {
             return data;
         }
     } catch (error) {
-        log("error", "service", "getLunchMeetMenuService", error.message, "useMenuService.js");
+        log("error", "service", "getLunchMeetMenuService", error.message, "menuService.js");
         return [];
     }
 }

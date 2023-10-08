@@ -1,5 +1,5 @@
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
-import {lunchBucketBaseUrl} from "../apis/lunchBucketEnvConfig";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {log} from "../helpers/logs/log";
 
@@ -11,7 +11,7 @@ export async function getLunchMenuController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const response = await lunchBucketBaseUrl.get('lunch/getMenus', {
+        const response = await lunchBucketAPI.get('lunch/getMenus', {
             headers: {
                 'token': token,
             }
@@ -33,7 +33,7 @@ export async function getDinnerMenuController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const response = await lunchBucketBaseUrl.get('dinner/getMenus', {
+        const response = await lunchBucketAPI.get('dinner/getMenus', {
             headers: {
                 'token': token,
             }

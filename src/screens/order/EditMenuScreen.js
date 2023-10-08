@@ -15,7 +15,7 @@ import {
     getLunchRiceMenuService,
     getLunchStewMenuService,
     getLunchVegetableMenuService,
-} from "../../services/useMenuService";
+} from "../../services/menuService";
 import {log} from "../../helpers/logs/log";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";

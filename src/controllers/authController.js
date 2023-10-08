@@ -1,7 +1,7 @@
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import {log} from "../helpers/logs/log";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
-import {i2AuthBaseUrl, lunchBucketBaseUrl, projectCode} from "../apis/lunchBucketEnvConfig";
+import {auth2API, lunchBucketAPI, projectCode} from "../apis/lunchBucketAPI";
 
 export async function loginController(email, password) {
     try {
@@ -13,7 +13,7 @@ export async function loginController(email, password) {
         let expoPushToken = await getDataFromLocalStorage('expoPushToken');
         if (!expoPushToken) expoPushToken = "";
 
-        const response = await i2AuthBaseUrl.post(
+        const response = await auth2API.post(
             'userLogin',
             {
                 email: email,
@@ -37,7 +37,7 @@ export async function registerController(email, password, contactNo) {
     try {
         const expoPushToken = await getDataFromLocalStorage('expoPushToken');
 
-        const response = await lunchBucketBaseUrl.post(
+        const response = await lunchBucketAPI.post(
             'addCustomer',
             {
                 email: email,
@@ -64,7 +64,7 @@ export async function validateTokenController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const response = await lunchBucketBaseUrl.get(
+        const response = await lunchBucketAPI.get(
             'lunch/getMenus',
             {
                 headers: {
@@ -88,7 +88,7 @@ export async function validatePushNotificationTokenChange() {
             return ERROR_STATUS.ERROR;
         }
 
-        const response = await lunchBucketBaseUrl.put(
+        const response = await lunchBucketAPI.put(
             'https://fmrlw0xn6h.execute-api.ap-south-1.amazonaws.com/dev/updateDeviceToken',
             {
                 device_token: expoPushToken,
@@ -111,7 +111,7 @@ export async function validatePushNotificationTokenChange() {
 
 export async function forgetPasswordController(email, password) {
     try {
-        const response = await i2AuthBaseUrl.post(
+        const response = await auth2API.post(
             'forgetPassword',
             {
                 email: email,

@@ -7,12 +7,12 @@ import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
 import FormFields from "../../components/form/FormFields";
 import LinkButton from "../../components/linkButton/LinkButton";
-import {useAuthService} from "../../services/useAuthService";
+import {loginService} from "../../services/authService";
 import {useToast} from "../../helpers/toast/Toast";
 import {log} from "../../helpers/logs/log";
 import PushNotificationDeviceChangeModal from "../../components/modals/PushNotificationDeviceChangeModal";
+import {ERROR_STATUS} from "../../errorLogs/errorStatus";
 
-// validation schema
 const validationSchema = Yup.object().shape({
     email: Yup.string()
         .email('Invalid email address')
@@ -35,33 +35,33 @@ export default function Login({navigation}) {
     const [isLoading, setIsLoading] = useState(false);
     const initialValues = {email: '', password: ''};
     const {showToast} = useToast();
-    const {loginService} = useAuthService();
 
     const handleSubmit = async (values, actions) => {
         setIsSubmitting(true);
         setIsLoading(true);
 
         try {
-            const result = loginService(values.email, values.password);
+            const result = await loginService(values.email, values.password);
 
-            // if (!result.device_token && result.state) {
-            //     setDeviceToken(true);
-            // }
-            //
-            // if (result.device_token && result.state) {
-            //     navigation.navigate('Menu');
-            //     showToast('success', 'Login Success');
-            // }
-            //
-            // if (result === ERROR_STATUS.LOGIN_API_ERROR || result === ERROR_STATUS.LOGIN_NOT_REGISTERED) {
-            //     showToast('error', 'Email or Password is incorrect');
-            //     log("error", "Login", "handleSubmit", "Email or Password is incorrect", "Login.js");
-            // }
-            //
-            // if (result === ERROR_STATUS.LOGIN_EMAIL_CONFIRMATION_PENDING) {
-            //     showToast('error', 'Please check your emails and verify your email to Continue.');
-            //     log("error", "Login", "handleSubmit", "Email confirmation pending", "Login.js");
-            // }
+            if (!result.device_token && result.state) {
+                setDeviceToken(true);
+            }
+
+            if (result.device_token && result.state) {
+                navigation.navigate('Menu');
+                showToast('success', 'Login Success');
+            }
+
+            if (result === ERROR_STATUS.LOGIN_API_ERROR || result === ERROR_STATUS.LOGIN_NOT_REGISTERED) {
+                showToast('error', 'Email or Password is incorrect');
+                log("error", "Login", "handleSubmit", "Email or Password is incorrect", "Login.js");
+            }
+
+            if (result === ERROR_STATUS.LOGIN_EMAIL_CONFIRMATION_PENDING) {
+                showToast('error', 'Please check your emails and verify your email to Continue.');
+                log("error", "Login", "handleSubmit", "Email confirmation pending", "Login.js");
+            }
+
         } catch (error) {
             log("error", "Login", "handleSubmit", error.message, "Login.js");
             showToast('error', error.message);

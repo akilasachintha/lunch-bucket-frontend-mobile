@@ -7,7 +7,7 @@ import TextInputField from '../components/inputField/TextInputField';
 import BottomButton from '../components/buttons/BottomButton';
 import {getUserFullDetailsService} from '../services/userProfileService';
 import {log} from '../helpers/logs/log';
-import {logoutService} from '../services/useAuthService';
+import {logoutService} from '../services/authService';
 import DynamicTopBar from '../components/topBar/DynamicTopBar';
 import {SelectedTab} from '../helpers/enums/enums';
 import TopHeader from "../components/topHeader/TopHeader";
@@ -85,7 +85,7 @@ export default function ProfileScreen() {
                 >
                     {({values, handleChange, errors, setFieldTouched, touched}) => (
                         <View style={styles.formikContainer}>
-                            <ScrollView style={styles.scrollViewContainer} showsVerticalScrollIndicator={false}>
+                            <ScrollView style={styles.scrollViewContainer}>
                                 <View style={styles.fieldHeaderContainer}>
                                     <Text style={styles.fieldHeaderContainerText}>{userData?.email}</Text>
                                 </View>
@@ -164,11 +164,11 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollViewContainer: {
-        marginBottom: 0,
+        marginBottom: 20,
     },
     fieldHeaderContainer: {
         marginHorizontal: "8%",
-        marginVertical: "4%",
+        marginVertical: 20,
     },
     fieldHeaderContainerText: {
         fontSize: 20,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     },
     fieldHeaderDetailsContainer: {
         marginHorizontal: "8%",
-        marginVertical: "2%",
+        marginVertical: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -209,14 +209,14 @@ const styles = StyleSheet.create({
     pointsText: {
         color: '#630A10',
         fontWeight: 'bold',
-        marginTop: "5%",
+        marginTop: 10,
         fontSize: 20,
     },
     roundedIcon: {
         width: 10,
         height: 10,
         borderRadius: 15,
-        backgroundColor: '#69ec10',
+        backgroundColor: '#419d02',
     },
     roundedIconThreat: {
         width: 10,

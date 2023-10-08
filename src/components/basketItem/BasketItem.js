@@ -5,7 +5,7 @@ import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/stor
 import {log} from '../../helpers/logs/log';
 import {useNavigation} from '@react-navigation/native';
 import ConfirmDeleteModal from '../modals/ConfirmDeleteModal';
-import {fetchBasket} from '../../services/useMenuService';
+import {fetchBasket} from '../../services/menuService';
 import {useDispatch, useSelector} from "react-redux";
 import {setIsEditMenuTrueReducer} from "../../redux/menuSlice";
 
