@@ -1,7 +1,7 @@
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from "../../helpers/paths/paths";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Formik} from "formik";
 import * as Yup from "yup";
 import FormSubmitButton from "../../components/form/FormSubmitButton";
@@ -12,6 +12,7 @@ import {useToast} from "../../helpers/toast/Toast";
 import {log} from "../../helpers/logs/log";
 import PushNotificationDeviceChangeModal from "../../components/modals/PushNotificationDeviceChangeModal";
 import {ERROR_STATUS} from "../../errorLogs/errorStatus";
+import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -34,6 +35,7 @@ export default function Login({navigation}) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const initialValues = {email: '', password: ''};
+    const [role, setRole] = useState("");
     const {showToast} = useToast();
 
     const handleSubmit = async (values, actions) => {
@@ -47,8 +49,13 @@ export default function Login({navigation}) {
                 setDeviceToken(true);
             }
 
-            if (result.device_token && result.state) {
+            if (result.device_token && result.state && result.type && result.type === "user") {
                 navigation.navigate('Menu');
+                showToast('success', 'Login Success');
+            }
+
+            if (result.type && result.type === "admin") {
+                navigation.navigate('Admin');
                 showToast('success', 'Login Success');
             }
 
@@ -72,17 +79,22 @@ export default function Login({navigation}) {
         }
     };
 
+    const getUserRole = async () => {
+        await getDataFromLocalStorage('role').then((role) => {
+            setRole(role);
+        });
+    }
+
+    useEffect(() => {
+        getUserRole().catch((error) => {
+            log("error", "Login", "useEffect | getUserRole", error.message, "Login.js");
+        });
+    }, []);
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.mainContainer}>
-                {
-                    deviceToken && (
-                        <PushNotificationDeviceChangeModal deviceToken={deviceToken}
-                                                           setDeviceToken={setDeviceToken}
-                                                           isDeviceTokenChanged={isDeviceTokenChanged}
-                                                           setIsDeviceTokenChanged={setIsDeviceTokenChanged}/>
-                    )
-                }
+
                 <View style={styles.headerContainer}>
                     <Image
                         style={styles.headerImage}
@@ -139,6 +151,14 @@ export default function Login({navigation}) {
                     </View>
                 </View>
             </View>
+            {
+                role && role === "user" && deviceToken && (
+                    <PushNotificationDeviceChangeModal deviceToken={deviceToken}
+                                                       setDeviceToken={setDeviceToken}
+                                                       isDeviceTokenChanged={isDeviceTokenChanged}
+                                                       setIsDeviceTokenChanged={setIsDeviceTokenChanged}/>
+                )
+            }
         </SafeAreaView>
     );
 }
