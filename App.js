@@ -6,8 +6,9 @@ import PushNotifications from "./src/features/PushNotifications";
 import {store} from "./src/redux/store";
 import {Provider} from 'react-redux'
 import {StyleSheet, Text, View} from "react-native";
-import {ENV, ENV_STRING} from "./src/apis/lunchBucketAPI";
+import {ENV, ENV_STRING} from "./src/apis/lunchBucketEnvConfig";
 import {Environments} from "./src/helpers/enums/enums";
+import {AuthProvider} from "./src/context/AuthContext";
 
 export default function App() {
     return (
@@ -15,7 +16,9 @@ export default function App() {
             <ToastProvider>
                 <PushNotifications/>
                 <NavigationContainer>
-                    <StackNavigator/>
+                    <AuthProvider>
+                        <StackNavigator/>
+                    </AuthProvider>
                 </NavigationContainer>
                 {
                     ENV !== Environments.PRODUCTION && (

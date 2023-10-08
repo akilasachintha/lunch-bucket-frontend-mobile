@@ -19,7 +19,7 @@ export async function menuPercentageDinnerForTwoIDsService(id1, id2) {
             return result.data;
         }
     } catch (error) {
-        log("error", "service", "menuPercentageDinnerForTwoIDsService", error.message, "menuService.js");
+        log("error", "service", "menuPercentageDinnerForTwoIDsService", error.message, "useMenuService.js");
         return ERROR_STATUS.ERROR;
     }
 }
@@ -36,7 +36,7 @@ export async function menuPercentageLunchForTwoIDsService(id1, id2) {
             return result.data;
         }
     } catch (error) {
-        log("error", "service", "menuPercentageLunchForTwoIDsService", error.message, "menuService.js");
+        log("error", "service", "menuPercentageLunchForTwoIDsService", error.message, "useMenuService.js");
         return ERROR_STATUS.ERROR;
     }
 }
@@ -54,7 +54,7 @@ export async function menuPercentageDinnerForThreeIDsService(id1, id2, id3) {
             return result.data;
         }
     } catch (error) {
-        log("error", "service", "menuPercentageDinnerForTwoIDsService", error.message, "menuService.js");
+        log("error", "service", "menuPercentageDinnerForTwoIDsService", error.message, "useMenuService.js");
         return ERROR_STATUS.ERROR;
     }
 }
@@ -72,7 +72,7 @@ export async function menuPercentageLunchForThreeIDsService(id1, id2, id3) {
             return result.data;
         }
     } catch (error) {
-        log("error", "service", "menuPercentageLunchForTwoIDsService", error.message, "menuService.js");
+        log("error", "service", "menuPercentageLunchForTwoIDsService", error.message, "useMenuService.js");
         return ERROR_STATUS.ERROR;
     }
 }

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {setMenuBasketService, updateBasketFromId} from '../../services/menuService';
+import {setMenuBasketService, updateBasketFromId} from '../../services/useMenuService';
 import {useToast} from '../../helpers/toast/Toast';
 import {useSelector} from "react-redux";
 

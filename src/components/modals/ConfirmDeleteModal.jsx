@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {ActivityIndicator, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {deleteOrderService, getOrdersService} from "../../services/ordersService";
 import {log} from "../../helpers/logs/log";
-import {removeMealFromBasketService} from "../../services/menuService";
+import {removeMealFromBasketService} from "../../services/useMenuService";
 
 const ConfirmDeleteModal = ({isModalVisible, setIsModalVisible, id, setLoading, setOrders, useBasket}) => {
     const [isPressed, setIsPressed] = useState(false);

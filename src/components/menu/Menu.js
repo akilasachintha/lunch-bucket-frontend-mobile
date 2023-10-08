@@ -152,12 +152,12 @@ const Menu = ({
                                     !isEditMenu && (
                                         <View style={styles.descriptionContainer}>
                                             <View style={styles.vegSwitchContainer}>
+                                                <Text style={styles.vegText}>I am {!isVeg && "not "}a Vegetarian</Text>
                                                 <Switch onValueChange={toggleSwitch} value={isVeg}
                                                         style={styles.vegTextSwitch}
                                                         trackColor={{false: '#767577', true: '#2C984A'}}
                                                         thumbColor={isVeg ? '#f4f3f4' : '#f4f3f4'}
                                                 />
-                                                <Text style={styles.vegText}>I am {!isVeg && "not "}a Vegetarian</Text>
                                             </View>
                                         </View>
                                     )

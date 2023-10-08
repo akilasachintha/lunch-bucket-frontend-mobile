@@ -6,7 +6,6 @@ import PATHS from "../../helpers/paths/paths";
 import WelcomeSlide from "../../components/welcomeSlide/WelcomeSlide";
 import {addDataToLocalStorage} from '../../helpers/storage/asyncStorage';
 import {useFocusEffect} from '@react-navigation/native';
-import {getCelebrationService} from "../../services/celebrationService";
 
 const slides = [
     {
@@ -26,12 +25,7 @@ const slides = [
         buttonText: "Get Started",
         onPress: async (navigation) => {
             await addDataToLocalStorage('@visited', 'true');
-            const result = await getCelebrationService();
-            if (result) {
-                navigation.replace('Celebration');
-            } else {
-                navigation.replace('Login');
-            }
+            navigation.replace('Login');
         },
     },
 ];

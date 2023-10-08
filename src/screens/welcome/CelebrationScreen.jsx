@@ -1,60 +1,10 @@
-import React, {useCallback, useState} from "react";
+import React, {useState} from "react";
 import {ActivityIndicator, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import PATHS from "../../helpers/paths/paths";
 import {StatusBar} from "expo-status-bar";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
-import {getCelebrationService, setCelebrationService} from "../../services/celebrationService";
-import {useToast} from "../../helpers/toast/Toast";
 
 export default function CelebrationScreen() {
-    const navigation = useNavigation();
-    const {showToast} = useToast();
     const [isLoading, setIsLoading] = useState(false);
-
-    const fetchCelebration = useCallback(async () => {
-        try {
-            const result = await getCelebrationService();
-            if (!result) {
-                let loginStatus = await getDataFromLocalStorage('loginStatus');
-
-                if (loginStatus === 'true') {
-                    navigation.replace('Menu');
-                } else {
-                    navigation.navigate('SignUp');
-                }
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }, []);
-
-    const handlePressLetsStart = async () => {
-        try {
-            setIsLoading(true);
-            const result = await setCelebrationService();
-
-            if (result) {
-                showToast('success', 'Celebration Email sent successfully');
-            } else {
-                showToast('error', 'Error in celebration');
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    useFocusEffect(
-        useCallback(() => {
-            fetchCelebration();
-
-            const intervalId = setInterval(fetchCelebration, 1000);
-
-            return () => {
-                clearInterval(intervalId);
-            };
-        }, [fetchCelebration])
-    );
 
     return (
         <View style={styles.container}>

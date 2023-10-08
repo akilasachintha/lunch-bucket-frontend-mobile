@@ -1,40 +1,27 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/native';
 import PATHS from '../../helpers/paths/paths';
 import {StatusBar} from 'expo-status-bar';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
-import {lunchBucketAPI} from "../../apis/lunchBucketAPI";
-import {getCelebrationService} from "../../services/celebrationService";
-import {log} from "../../helpers/logs/log";
+import {lunchBucketBaseUrl} from "../../apis/lunchBucketEnvConfig";
 
 const InitialScreen = () => {
-    const [isCelebration, setIsCelebration] = useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
-
-    const fetchCelebrationData = async () => {
-        try {
-            const result = await getCelebrationService();
-            setIsCelebration(result);
-        } catch (error) {
-            log("error", "controller", "fetchCelebrationData", error.message, "InitialScreen.js");
-            setIsCelebration(false);
-        }
-    }
 
     async function fetchData() {
         const token = await getDataFromLocalStorage('token');
 
         if (token) {
-            await lunchBucketAPI.get('dinner/invokeSuitabilities', {
+            await lunchBucketBaseUrl.get('dinner/invokeSuitabilities', {
                 headers: {
                     'token': token,
                 }
             });
 
-            await lunchBucketAPI.get('lunch/invokeSuitabilities', {
+            await lunchBucketBaseUrl.get('lunch/invokeSuitabilities', {
                 headers: {
                     'token': token,
                 }
@@ -52,29 +39,25 @@ const InitialScreen = () => {
             if (isFocused) {
                 Animated.timing(slideAnim, {
                     toValue: 1,
-                    duration: 6000,
+                    duration: 5000,
                     useNativeDriver: false,
                 }).start();
 
                 if (visited === 'true') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
-                        if (isCelebration) {
-                            navigation.navigate('Celebration');
-                        } else if (!isCelebration) {
                             if (loginStatus === 'true') {
                                 navigation.navigate('Menu');
                             } else {
                                 navigation.navigate('Login');
                             }
-                        }
-                    }, 7000);
+                    }, 6000);
                 } else if(visited === 'false') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
 
                         navigation.navigate('Welcome');
-                    }, 7000);
+                    }, 6000);
                 }
             }
         } catch (error) {
@@ -83,16 +66,11 @@ const InitialScreen = () => {
         }
     };
 
-    useEffect(() => {
-        fetchCelebrationData().catch(console.error);
-    }, [isCelebration]);
-
     useFocusEffect(
         useCallback(() => {
-            fetchCelebrationData().catch(console.error);
             fetchData().catch(console.error);
             checkIfVisited().catch(console.error);
-        }, [isFocused, isCelebration])
+        }, [isFocused])
     );
 
     return (

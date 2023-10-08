@@ -14,7 +14,7 @@
       "image": "./assets/splash1.png",
       "waitForLoadingScreen": true,
       "loadingScreenImage": "./assets/splash1.png",
-      "resizeMode": "cover",
+      "resizeMode": "contain",
       "backgroundColor": "#FCF0C8",
       "loadingScreenBackgroundColor": "#FCF0C8"
     },
