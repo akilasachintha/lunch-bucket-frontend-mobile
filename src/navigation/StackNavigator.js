@@ -16,6 +16,7 @@ import ListOrdersScreen from "../screens/order/ListOrdersScreen";
 import AuthGuard from "../helpers/authGuard/AuthGuard";
 import ForgetPassword from "../screens/auth/ForgetPassword";
 import CelebrationScreen from "../screens/welcome/CelebrationScreen";
+import AdminScreen from "../screens/admin/AdminScreen";
 
 const Stack = createNativeStackNavigator();
 export default function StackNavigator() {
@@ -30,6 +31,7 @@ export default function StackNavigator() {
             }}>
                 <Stack.Screen name="Initial" component={InitialScreen}/>
                 <Stack.Screen name="Welcome" component={WelcomeScreen}/>
+                <Stack.Screen name="Admin" component={AdminScreen}/>
                 <Stack.Screen name="Celebration" component={CelebrationScreen}/>
                 <Stack.Screen name="Login" component={Login}/>
                 <Stack.Screen name="SignUp" component={SignUp}/>
@@ -44,6 +46,7 @@ export default function StackNavigator() {
                 <Stack.Screen name="Profile" component={ProfileScreen}/>
                 <Stack.Screen name="Promotion" component={PromotionsScreen}/>
                 <Stack.Screen name="PromotionDetails" component={PromotionDetails}/>
+
             </Stack.Navigator>
         </AuthGuard>
     );

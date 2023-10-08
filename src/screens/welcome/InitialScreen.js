@@ -1,31 +1,19 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import {Animated, Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/native';
 import PATHS from '../../helpers/paths/paths';
 import {StatusBar} from 'expo-status-bar';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
 import {lunchBucketAPI} from "../../apis/lunchBucketAPI";
-import {getCelebrationService} from "../../services/celebrationService";
-import {log} from "../../helpers/logs/log";
 
 const InitialScreen = () => {
-    const [isCelebration, setIsCelebration] = useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
 
-    const fetchCelebrationData = async () => {
-        try {
-            const result = await getCelebrationService();
-            setIsCelebration(result);
-        } catch (error) {
-            log("error", "controller", "fetchCelebrationData", error.message, "InitialScreen.js");
-            setIsCelebration(false);
-        }
-    }
-
     async function fetchData() {
         const token = await getDataFromLocalStorage('token');
+
 
         if (token) {
             await lunchBucketAPI.get('dinner/invokeSuitabilities', {
@@ -46,8 +34,12 @@ const InitialScreen = () => {
         try {
             let visited = await getDataFromLocalStorage('@visited');
             if (!visited) visited = 'false';
+            console.log(visited);
 
             let loginStatus = await getDataFromLocalStorage('loginStatus');
+            console.log(loginStatus);
+
+            const role = await getDataFromLocalStorage('role');
 
             if (isFocused) {
                 Animated.timing(slideAnim, {
@@ -59,14 +51,14 @@ const InitialScreen = () => {
                 if (visited === 'true') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
-                        if (isCelebration) {
-                            navigation.navigate('Celebration');
-                        } else if (!isCelebration) {
-                            if (loginStatus === 'true') {
-                                navigation.navigate('Menu');
-                            } else {
-                                navigation.navigate('Login');
-                            }
+                        console.log(loginStatus);
+                        console.log(role);
+                        if (loginStatus.toString() === 'true' && role && role.toString() === "user") {
+                            navigation.navigate('Menu');
+                        } else if (loginStatus.toString() === 'true' && role && role.toString() === "admin") {
+                            navigation.navigate('Admin');
+                        } else if (loginStatus.toString() === 'false') {
+                            navigation.navigate('Login');
                         }
                     }, 7000);
                 } else if(visited === 'false') {
@@ -83,17 +75,19 @@ const InitialScreen = () => {
         }
     };
 
-    useEffect(() => {
-        fetchCelebrationData().catch(console.error);
-    }, [isCelebration]);
-
     useFocusEffect(
         useCallback(() => {
-            fetchCelebrationData().catch(console.error);
             fetchData().catch(console.error);
             checkIfVisited().catch(console.error);
-        }, [isFocused, isCelebration])
+        }, [isFocused])
     );
+
+    useEffect(() => {
+        checkIfVisited().catch(console.error);
+        fetchData().catch(console.error);
+    }, []);
+
+
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
