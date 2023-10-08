@@ -23,6 +23,8 @@ export async function loginController(email, password) {
             }
         );
 
+        console.log(response.data);
+
         if (response.status === 200) {
             return response.data;
         }

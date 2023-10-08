@@ -29,8 +29,10 @@ export async function loginService(email, password) {
 
         } else {
             await addDataToLocalStorage('token', data.token);
-            await addDataToLocalStorage('customerId', data.id);
+            await addDataToLocalStorage('customerId', data.id ? data.id : "");
             await addDataToLocalStorage('loginStatus', "true");
+            await addDataToLocalStorage('expoPushToken', data.device_token ? data.device_token : "");
+            await addDataToLocalStorage('role', data.type ? data.type : "");
 
             log("success", "service", "loginService", "Login Success", "authService.js");
             return data;
