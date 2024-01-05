@@ -15,6 +15,12 @@ const PATHS = {
     food: require('../../../assets/images/food.png'),
     forget: require('../../../assets/images/forget.png'),
     celebration: require('../../../assets/images/celebration.png'),
+    ordering: require('../../../assets/images/settings/ordering.jpg'),
+    payment: require('../../../assets/images/settings/payment.png'),
+    delivery: require('../../../assets/images/settings/delivery.jpg'),
+    feedback: require('../../../assets/images/settings/feedback.jpg'),
+    promotions: require('../../../assets/images/settings/promotions.png'),
+    contact: require('../../../assets/images/settings/contact.jpg'),
 }
 
 export default PATHS;

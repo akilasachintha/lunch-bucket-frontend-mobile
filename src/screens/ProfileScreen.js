@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import TextInputField from '../components/inputField/TextInputField';
-import BottomButton from '../components/buttons/BottomButton';
 import {getUserFullDetailsService} from '../services/userProfileService';
 import {log} from '../helpers/logs/log';
 import {logoutService} from '../services/authService';
@@ -142,8 +141,20 @@ export default function ProfileScreen() {
                                         <Text style={styles.pointsText}>{userData?.points?.toFixed(2)}</Text>
                                     </View>
                                 </View>
+
                             </ScrollView>
-                            <BottomButton onPress={handleLogout} buttonText="Logout"/>
+                            <View style={styles.bottomButtons}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                                    <View style={styles.settingsButton}>
+                                        <Text style={styles.settingsText}>Privacy and Settings</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={handleLogout}>
+                                    <View style={styles.logoutButton}>
+                                        <Text style={styles.settingsText}>Logout</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     )}
                 </Formik>
@@ -223,5 +234,32 @@ const styles = StyleSheet.create({
         height: 10,
         borderRadius: 15,
         backgroundColor: '#9d0221',
-    }
+    },
+    bottomButtons: {
+        marginBottom: "10%",
+    },
+    settingsButton: {
+        backgroundColor: 'rgb(178,8,8)',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        paddingVertical: "3%",
+        marginHorizontal: "8%",
+        borderRadius: 10,
+        alignItems: 'center',
+        marginVertical: "2%",
+    },
+    logoutButton: {
+        backgroundColor: '#fad764',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        paddingVertical: "3%",
+        marginHorizontal: "8%",
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    settingsText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 20,
+    },
 });

@@ -17,6 +17,13 @@ import AuthGuard from "../helpers/authGuard/AuthGuard";
 import ForgetPassword from "../screens/auth/ForgetPassword";
 import CelebrationScreen from "../screens/welcome/CelebrationScreen";
 import AdminScreen from "../screens/admin/AdminScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import OrderingDetailsScreen from "../screens/settings/OrderingDetailsScreen";
+import PaymentDetailsScreen from "../screens/settings/PaymentDetailsScreen";
+import DeliveryDetailsScreen from "../screens/settings/DeliveryDetailsScreen";
+import FeedbackDetailsScreen from "../screens/settings/FeedbackDetailsScreen";
+import PromotionsDetailsScreen from "../screens/settings/PromotionsDetailsScreen";
+import ContactDetailsScreen from "../screens/settings/ContactDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 export default function StackNavigator() {
@@ -44,9 +51,15 @@ export default function StackNavigator() {
                 <Stack.Screen name="LeaveSuggestion" component={LeaveSuggestion}/>
                 <Stack.Screen name="ContactOwner" component={ContactOwner}/>
                 <Stack.Screen name="Profile" component={ProfileScreen}/>
+                <Stack.Screen name="Settings" component={SettingsScreen}/>
                 <Stack.Screen name="Promotion" component={PromotionsScreen}/>
                 <Stack.Screen name="PromotionDetails" component={PromotionDetails}/>
-
+                <Stack.Screen name="OrderingDetails" component={OrderingDetailsScreen}/>
+                <Stack.Screen name="PaymentDetails" component={PaymentDetailsScreen}/>
+                <Stack.Screen name="DeliveryDetails" component={DeliveryDetailsScreen}/>
+                <Stack.Screen name="FeedbackDetails" component={FeedbackDetailsScreen}/>
+                <Stack.Screen name="PromotionsDetails" component={PromotionsDetailsScreen}/>
+                <Stack.Screen name="ContactDetails" component={ContactDetailsScreen}/>
             </Stack.Navigator>
         </AuthGuard>
     );

@@ -1,8 +1,7 @@
 import TopHeader from "../../components/topHeader/TopHeader";
-import {RefreshControl} from 'react-native';
-
 import {
     ActivityIndicator,
+    RefreshControl,
     SafeAreaView,
     ScrollView,
     StyleSheet,
@@ -10,7 +9,7 @@ import {
     TextInput,
     TouchableOpacity,
     View
-} from "react-native";
+} from 'react-native';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 import {Formik} from 'formik';
 import * as Yup from 'yup';
@@ -90,7 +89,10 @@ export default function ContactOwner() {
         if (isSubmitting) return;
 
         setIsSubmitting(true);
-        const newMessage = {message: values.message, sender: "user"};
+        const messageToSend = values.message;  // Capture the message to send
+        resetForm();  // Reset the form immediately
+
+        const newMessage = {message: messageToSend, sender: "user"};
         const chatIndex = chatList.findIndex((chat) => chat.expanded === true);
 
         if (chatIndex !== -1) {
@@ -101,16 +103,13 @@ export default function ContactOwner() {
             setChatList(updatedChatList);
 
             const {id} = expandedChat;
-            await sendMessageToConversationService(id, values.message);
+            await sendMessageToConversationService(id, messageToSend);
         } else {
-            await createNewConversationService(values.message);
-            fetchLatestChatData().catch(
-                (error) => log("error", "screen", "ContactOwner | handleOnSubmit", error.message, "ContactOwner.js"),
-            );
+            await createNewConversationService(messageToSend);
+            await fetchLatestChatData();
         }
 
         scrollViewRef.current.scrollToEnd({animated: true});
-        resetForm();
         setIsSubmitting(false);
     };
 
