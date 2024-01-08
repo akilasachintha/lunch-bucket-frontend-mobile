@@ -20,8 +20,22 @@ export default function OrderPlaceSuccessfulModal({
         navigation.navigate("OrdersList");
     };
 
+    const getValidationSchema = () => {
+        if (successResult && successResult.time_state && successResult.time_state.delivery_select_state) {
+            return Yup.object().shape({
+                deliveryTime: Yup.string().required("Please select a delivery time"),
+                delivery_place: Yup.string().required("Please select a delivery place"),
+            });
+        } else {
+            return Yup.object().shape({
+                delivery_place: Yup.string().required("Please select a delivery place"),
+            });
+        }
+    };
+
     const deliverySchema = Yup.object().shape({
         deliveryTime: Yup.string().required("Please select a delivery time"),
+        delivery_place: Yup.string().required("Please select a delivery place"),
     });
 
     return (
@@ -40,17 +54,22 @@ export default function OrderPlaceSuccessfulModal({
                     <View style={styles.modal}>
                         <Formik
                             initialValues={{deliveryTime: ""}}
-                            validationSchema={deliverySchema}
+                            validationSchema={getValidationSchema()}
                             onSubmit={async (values) => {
                                 try {
                                     setIsSubmitting(true);
-                                    await handleCheckoutTimeService({
-                                        order_ids:
-                                            successResult && successResult.time_state
-                                                ? successResult.time_state.order_ids
-                                                : [],
-                                        delivery_time: values.deliveryTime,
-                                    });
+
+                                    const payload = {
+                                        order_ids: successResult?.time_state?.order_ids || [],
+                                        delivery_place: values.delivery_place,
+                                    };
+
+                                    if (successResult?.time_state?.delivery_select_state) {
+                                        payload.delivery_time = values.deliveryTime;
+                                    }
+
+                                    await handleCheckoutTimeService(payload);
+
                                     handlePress();
                                 } catch (error) {
                                     log(
@@ -156,7 +175,41 @@ export default function OrderPlaceSuccessfulModal({
                                             ) : null}
                                         </View>
                                     )}
-                                    {successResult && successResult.time_state && successResult.time_state.delivery_select_state && (
+
+                                    <View>
+                                        <Text style={styles.deliveryTimeText}>Select your Delivery Location.</Text>
+                                        <View style={styles.radioButtonsContainer}>
+                                            <View>
+                                                <TouchableOpacity
+                                                    style={styles.radioButton}
+                                                    onPress={() => handleChange("delivery_place")("Front Gate")}
+                                                >
+                                                    {values.delivery_place === "Front Gate" ? (
+                                                        <Radio selected={true}/>
+                                                    ) : (
+                                                        <Radio selected={false}/>
+                                                    )}
+                                                    <Text style={styles.radioText}>Front Gate</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                    style={styles.radioButton}
+                                                    onPress={() => handleChange("delivery_place")("Back Gate")}
+                                                >
+                                                    {values.delivery_place === "Back Gate" ? (
+                                                        <Radio selected={true}/>
+                                                    ) : (
+                                                        <Radio selected={false}/>
+                                                    )}
+                                                    <Text style={styles.radioText}>Back Gate</Text>
+                                                </TouchableOpacity>
+                                            </View>
+
+                                        </View>
+                                        {touched.deliveryTime && errors.deliveryTime ? (
+                                            <Text style={styles.errorText}>{errors.deliveryTime}</Text>
+                                        ) : null}
+                                    </View>
+
                                         <View>
                                             {isSubmitting ? (
                                                 <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
@@ -168,7 +221,7 @@ export default function OrderPlaceSuccessfulModal({
                                                 </TouchableOpacity>
                                             )}
                                         </View>
-                                    )}
+
                                 </>
                             )}
                         </Formik>

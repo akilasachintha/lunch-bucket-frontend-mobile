@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Entypo, MaterialIcons} from '@expo/vector-icons';
 import ConfirmDeleteModal from "../modals/ConfirmDeleteModal";
+import toTitleCase from "../../helpers/strings/stringFormatter";
 
 export default function OrderItem({
                                       mealName,
@@ -18,11 +19,12 @@ export default function OrderItem({
                                       deliveryTime,
                                       setLoading,
                                       setOrders,
+                                      deliveryPlace,
                                       id
                                   }) {
     const [onClicked, setOnClicked] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedId, setSelectedId] = useState(null);
+    const [, setSelectedId] = useState(null);
 
     const bucketItemContainerStyle = {
         ...styles.bucketItemContainer,
@@ -94,6 +96,7 @@ export default function OrderItem({
                         ) : (
                             <Text style={styles.orderRejectedText}> Rejected </Text>
                         )}
+                        <Text style={styles.deliveryPlaceText}>{toTitleCase(deliveryPlace)} </Text>
                     </View>
                 </TouchableOpacity>
             )}
@@ -292,6 +295,13 @@ const styles = StyleSheet.create({
         paddingLeft: "2%",
         borderRadius: 5,
         backgroundColor: "rgba(166,234,160,0.52)",
+        fontSize: 10,
+    },
+    deliveryPlaceText: {
+        padding: "1%",
+        paddingLeft: "2%",
+        borderRadius: 5,
+        backgroundColor: "rgba(255,255,255,0.52)",
         fontSize: 10,
     },
     orderRejectedText: {

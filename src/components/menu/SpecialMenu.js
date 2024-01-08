@@ -1,6 +1,7 @@
 import React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import {AntDesign, MaterialIcons} from "@expo/vector-icons";
+import toTitleCase from "../../helpers/strings/stringFormatter";
 
 const SpecialMenu = ({specialMenu, setSpecialMenu, totalCheckedItemsCount, disableTime, setTotalSpecialPrice}) => {
 
@@ -37,7 +38,7 @@ const SpecialMenu = ({specialMenu, setSpecialMenu, totalCheckedItemsCount, disab
                         <View style={styles.specialItemLeftContainer}>
                             <View style={styles.specialMenuItem}>
                                 <View style={styles.mainSpecialItemTextContainer}>
-                                    <Text style={styles.specialMenuText}>{item.category_name}</Text>
+                                    <Text style={styles.specialMenuText}>{toTitleCase(item.category_name)}</Text>
                                 </View>
                                 {item && item.category && item.category.length > 0 && item.category.map((subItem, subIndex) => (
                                     <View key={subIndex} style={styles.specialMenuCategoryContainer}>
@@ -47,11 +48,11 @@ const SpecialMenu = ({specialMenu, setSpecialMenu, totalCheckedItemsCount, disab
                                                     <View
                                                         style={styles.specialMenuSubItemTextContainer}>
                                                         <Text
-                                                            style={styles.subItemText}>{subItem.type}</Text>
+                                                            style={styles.subItemText}>{subItem ? toTitleCase(subItem.type) : ''}</Text>
                                                         <Text
-                                                            style={styles.subItemPriceText}>Rs. {subItem.price}.00</Text>
+                                                            style={styles.subItemPriceText}>Rs. {subItem ? subItem.price : ''}.00</Text>
                                                     </View>
-                                                    {!subItem.checked && !disableTime && (
+                                                    {subItem && !subItem.checked && !disableTime && (
                                                         <View
                                                             style={styles.listItemRightContainer}>
                                                             <MaterialIcons
@@ -62,7 +63,7 @@ const SpecialMenu = ({specialMenu, setSpecialMenu, totalCheckedItemsCount, disab
                                                             />
                                                         </View>
                                                     )}
-                                                    {subItem.checked && !disableTime && (
+                                                    {subItem && subItem.checked && !disableTime && (
                                                         <View
                                                             style={styles.listItemRightContainer}>
                                                             <AntDesign
@@ -77,24 +78,25 @@ const SpecialMenu = ({specialMenu, setSpecialMenu, totalCheckedItemsCount, disab
                                             </View>
                                             <View style={styles.specialSubMenuContainer}>
                                                 <View style={styles.specialSubMenuLeftContainer}>
-                                                    {subItem && subItem.items && subItem.items.length && subItem.items.length > 0 && subItem.items.map((subSubItem, subSubIndex) => (
+                                                    {subItem && Array.isArray(subItem.items) && subItem.items && subItem.items.length && subItem.items.length > 0 ? subItem.items.map((subSubItem, subSubIndex) => (
                                                         <View key={subSubIndex}
                                                               style={styles.subSubItemsContainer}>
                                                             <Text
                                                                 style={styles.subSubItemsTextContainer}
                                                                 key={subSubIndex}>
-                                                                {subSubItem}
+                                                                {toTitleCase(subSubItem)}
                                                             </Text>
                                                         </View>
-                                                    ))}
+                                                    )) : null}
                                                 </View>
                                                 <View
                                                     style={styles.specialSubMenuRightContainer}>
-                                                    {subItem && subItem.url && (
-                                                        <Image source={{uri: subItem && subItem.url}}
+                                                    {subItem && subItem.url ? (
+                                                        <Image
+                                                            source={{uri: subItem && subItem.url.toString() ? subItem.url.toString() : ''}}
                                                                style={styles.specialSubMenuImage}
                                                         />
-                                                    )}
+                                                    ) : null}
                                                 </View>
                                             </View>
                                         </View>

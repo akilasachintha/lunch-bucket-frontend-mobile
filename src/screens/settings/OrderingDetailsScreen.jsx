@@ -1,7 +1,7 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import DynamicTopBar from '../../components/topBar/DynamicTopBar';
-import { SelectedTab } from '../../helpers/enums/enums';
+import {SelectedTab} from '../../helpers/enums/enums';
 import TopHeader from '../../components/topHeader/TopHeader';
 
 export default function OrderingDetailsScreen() {
@@ -9,7 +9,9 @@ export default function OrderingDetailsScreen() {
         <SafeAreaView style={styles.safeAreaContainer}>
             <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
             <TopHeader headerText="Order Details" backButtonPath="Settings"/>
-            <ScrollView style={styles.scrollViewStyle}>
+            <ScrollView style={styles.scrollViewStyle}
+                        showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.contentContainer}>
                     <Text style={styles.header}>📋 How to Order</Text>
                     <Text style={styles.step}>🔍 1. Browse through our daily menu.</Text>

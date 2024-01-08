@@ -92,6 +92,7 @@ export default function ListOrdersScreen() {
                                    orderType={order.order_type}
                                    meal={order.meal}
                                    deliveryTime={order.delivery_time}
+                                   deliveryPlace={order.delivery_place}
                                    setLoading={setLoading}
                                    setOrders={setOrders}
                         />
