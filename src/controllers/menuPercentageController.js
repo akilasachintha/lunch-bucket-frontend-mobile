@@ -7,7 +7,7 @@ export async function menuPercentageDinnerForTwoIDsController(id1, id2) {
     if (!id1 || !id2) return ERROR_STATUS.ERROR;
 
     try {
-        const response = await axios.get(`http://15.206.195.120:5000/dev/dinner/suitability_for_two/${id1}/${id2}`,
+        const response = await axios.get(`https://lunchbucket.xyz/dev/dinner/suitability_for_two/${id1}/${id2}`,
             {
                 headers: {"Accept": "application/json, text/plain, /", "Content-Type": "multipart/form-data"}
             });
@@ -25,7 +25,7 @@ export async function menuPercentageLunchForTwoIDsController(id1, id2) {
     if (!id1 || !id2) return ERROR_STATUS.ERROR;
 
     try {
-        const response = await axios.get(`http://15.206.195.120:5000/dev/lunch/suitability_for_two/${id1.toString()}/${id2.toString()}`, {
+        const response = await axios.get(`https://lunchbucket.xyz/dev/lunch/suitability_for_two/${id1.toString()}/${id2.toString()}`, {
             headers: {"Accept": "application/json, text/plain, /", "Content-Type": "multipart/form-data"},
         });
 
@@ -47,7 +47,7 @@ export async function menuPercentageDinnerForThreeIDsController(id1, id2, id3) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        const response = await axios.get(`http://15.206.195.120:5000/dev/lunch/suitability_for_three/${id1}/${id2}/${id3}`);
+        const response = await axios.get(`https://lunchbucket.xyz/dev/lunch/suitability_for_three/${id1}/${id2}/${id3}`);
 
         if (response.status === 200) return response.data;
 
@@ -62,7 +62,7 @@ export async function menuPercentageLunchForThreeIDsController(id1, id2, id3) {
     if (!id1 || !id2 || !id3) return ERROR_STATUS.ERROR;
 
     try {
-        const response = await axios.get(`http://15.206.195.120:5000/dev/lunch/suitability_for_three/${id1}/${id2}/${id3}`);
+        const response = await axios.get(`https://lunchbucket.xyz/dev/lunch/suitability_for_three/${id1}/${id2}/${id3}`);
 
         if (response.status === 200) return response.data;
 
