@@ -6,7 +6,6 @@ import PATHS from "../../helpers/paths/paths";
 import WelcomeSlide from "../../components/welcomeSlide/WelcomeSlide";
 import {addDataToLocalStorage} from '../../helpers/storage/asyncStorage';
 import {useFocusEffect} from '@react-navigation/native';
-import {getCelebrationService} from "../../services/celebrationService";
 
 const slides = [
     {
@@ -26,12 +25,7 @@ const slides = [
         buttonText: "Get Started",
         onPress: async (navigation) => {
             await addDataToLocalStorage('@visited', 'true');
-            const result = await getCelebrationService();
-            if (result) {
-                navigation.replace('Celebration');
-            } else {
-                navigation.replace('Login');
-            }
+            navigation.replace('Login');
         },
     },
 ];
@@ -42,7 +36,7 @@ const WelcomeScreen = ({ navigation }) => {
     useFocusEffect(
         React.useCallback(() => {
             setRefreshed(prevState => !prevState);
-        }, [])
+        }, [setRefreshed])
     );
 
     return (
@@ -53,7 +47,7 @@ const WelcomeScreen = ({ navigation }) => {
             dotStyle={styles.dotStyle}
             activeDotStyle={styles.activeDotStyle}
         >
-            {slides.map((slide, index) => (
+            {slides && slides.map((slide, index) => (
                 <WelcomeSlide
                     key={index}
                     imagePath={slide.imagePath}

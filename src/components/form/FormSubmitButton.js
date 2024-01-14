@@ -36,7 +36,10 @@ const styles = StyleSheet.create({
         paddingTop: '2%',
     },
     signInText: {
+        flexDirection: 'row',
         textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
         paddingVertical: '3%',
         fontWeight: 'bold',
         fontSize: 14,
@@ -45,6 +48,7 @@ const styles = StyleSheet.create({
         color: '#630A10',
     },
     signInTextError: {
+        textAlign: 'center',
         paddingVertical: '3%',
         fontWeight: 'bold',
         fontSize: 14,

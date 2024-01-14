@@ -1,33 +1,22 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
-import {fetchRemainingTimes} from '../../services/timeService';
-import {log} from '../../helpers/logs/log';
+import useFetchRemainingTimes from '../../services/timeService';
 
-export default function Timer({ title, disableTime }) {
-    const [remainingTimeLunchColor, setRemainingTimeLunchColor] = useState('');
-    const [remainingTimeLunch, setRemainingTimeLunch] = useState('00:00:00');
-    const [remainingTimeDinnerColor, setRemainingTimeDinnerColor] = useState('');
-    const [remainingTimeDinner, setRemainingTimeDinner] = useState('00:00:00');
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        fetchRemainingTimes(
-            setRemainingTimeLunch,
-            setRemainingTimeDinner,
-            setRemainingTimeLunchColor,
-            setRemainingTimeDinnerColor
-        )
-            .then(() => {
-                setIsLoading(false);
-            })
-            .catch((error) =>
-                log('error', 'Timer.jsx', 'useEffect', error.message, 'Timer.jsx')
-            );
-    }, []);
+export default function Timer({title, disableTime}) {
+    const {
+        remainingTimeLunch,
+        remainingTimeDinner,
+        remainingTimeLunchColor,
+        remainingTimeDinnerColor,
+        isLoading
+    } = useFetchRemainingTimes();
 
     const timerContainerStyle = [
         styles.timerLeftText,
-        {color: title === 'Lunch' ? remainingTimeLunchColor : remainingTimeDinnerColor},
+        {
+            color: title === 'Lunch' ? remainingTimeLunchColor || "#000000"
+                : remainingTimeDinnerColor || "#000000"
+        },
     ];
 
     const renderTimerText = () => {
@@ -41,10 +30,8 @@ export default function Timer({ title, disableTime }) {
 
     if (isLoading) {
         return (
-            <View>
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="small" color="#630A10" />
-                </View>
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color="#630A10"/>
             </View>
         );
     }

@@ -41,8 +41,6 @@ export async function getDinnerAdminNotificationsController() {
             }
         });
 
-        console.log(response.data);
-
         if (response.status === 200) return response.data;
 
     } catch (error) {
@@ -55,8 +53,6 @@ export async function getLunchReportController() {
     try {
         const response = await EXPERT_API.get('getReport/Lunch');
 
-        console.log(response.data);
-
         if (response.status === 200) return response.data;
 
     } catch (error) {
@@ -68,8 +64,6 @@ export async function getLunchReportController() {
 export async function getDinnerReportController() {
     try {
         const response = await EXPERT_API.get('getReport/Dinner');
-
-        console.log(response.data);
 
         if (response.status === 200) return response.data;
 

@@ -2,7 +2,7 @@ import {SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-nati
 import React, {useEffect, useMemo, useState} from "react";
 import Menu from "../../components/menu/Menu";
 import {useToast} from "../../helpers/toast/Toast";
-import {getUTCDateTime} from "../../services/timeService";
+
 import {
     fetchMenuData,
     getByMealIdFromBasketService,
@@ -30,6 +30,7 @@ import {
     fetchMenuPercentageLunchForThreeIDs,
     fetchMenuPercentageLunchForTwoIDs
 } from "../../redux/menuPercentageSlice";
+import useFetchRemainingTimes from "../../services/timeService";
 
 export default function MenuScreen({route}) {
     const {showToast} = useToast();
@@ -65,6 +66,8 @@ export default function MenuScreen({route}) {
     const [dinnerVegetableItems, setDinnerVegetableItems] = useState([]);
     const [dinnerStewItems, setDinnerStewItems] = useState([]);
     const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
+
+    const {getUTCDateTime} = useFetchRemainingTimes();
 
     const fetchMealById = async (mealId) => {
         const result = await getByMealIdFromBasketService(mealId);
@@ -452,7 +455,6 @@ export default function MenuScreen({route}) {
 
         if (countWithoutRiceCategory === 3) {
             if (isLunch) {
-                console.log("count 3 lunch");
                 dispatch(fetchMenuPercentageLunchForThreeIDs({
                     id1: foodIdsListWithoutRiceCategory[0],
                     id2: foodIdsListWithoutRiceCategory[1],

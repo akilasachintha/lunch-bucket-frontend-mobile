@@ -27,7 +27,7 @@ export default function CelebrationScreen() {
         } catch (error) {
             console.error(error);
         }
-    }, []);
+    }, [navigation]);
 
     const handlePressLetsStart = async () => {
         try {

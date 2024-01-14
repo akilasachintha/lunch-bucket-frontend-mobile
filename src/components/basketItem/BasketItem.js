@@ -27,7 +27,7 @@ export default function BasketItem({
                                        setLoading,
                                        loading,
                                    }) {
-    const isEditMenu = useSelector(state => state.menu.isEditMenu);
+    useSelector(state => state.menu.isEditMenu);
     const dispatch = useDispatch();
 
     const [count, setCount] = useState(itemCount);

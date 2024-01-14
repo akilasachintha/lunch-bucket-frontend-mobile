@@ -4,6 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import {setMenuBasketService, updateBasketFromId} from '../../services/menuService';
 import {useToast} from '../../helpers/toast/Toast';
 import {useSelector} from "react-redux";
+import useFetchRemainingTimes from "../../services/timeService";
 
 const BasketButton = ({
                           totalCheckedItemsCount,
@@ -22,6 +23,8 @@ const BasketButton = ({
     const isEditMenu = useSelector(state => state.menu.isEditMenu);
 
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+    const {getUTCDateTime} = useFetchRemainingTimes();
 
     const handleBasketPress = async () => {
         if (isButtonDisabled) {
@@ -49,7 +52,7 @@ const BasketButton = ({
                     showToast('success', 'Basket updated successfully');
                     navigation.navigate('Basket');
                 } else {
-                    await setMenuBasketService(basketItems, totalAmount, venue, isVeg, true);
+                    await setMenuBasketService(basketItems, totalAmount, venue, isVeg, true, getUTCDateTime);
                     navigation.navigate('Basket');
                 }
             } catch (error) {
@@ -68,7 +71,7 @@ const BasketButton = ({
                     showToast('success', 'Basket updated successfully');
                     navigation.navigate('Basket');
                 } else if (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5) {
-                    await setMenuBasketService(basketItems, totalAmount, venue, isVeg, false);
+                    await setMenuBasketService(basketItems, totalAmount, venue, isVeg, false, getUTCDateTime);
                     navigation.navigate('Basket');
                 } else {
                     showToast('error', 'Please select 5 items to proceed.');

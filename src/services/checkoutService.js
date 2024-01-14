@@ -1,5 +1,8 @@
 import {log} from "../helpers/logs/log";
-import {getDataFromLocalStorage, removeDataFromLocalStorage} from "../helpers/storage/asyncStorage";
+import {
+    addDataToLocalStorage,
+    getDataFromLocalStorage
+} from "../helpers/storage/asyncStorage";
 import {setOderTimeController, setOrderController} from "../controllers/checkoutController";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 
@@ -58,7 +61,7 @@ export async function handleCheckoutService() {
                         meal: meal.venue,
                         customer_id: customerId,
                         comment: "",
-                        price: meal.totalPrice,
+                        price: meal.unitPrice,
                         potion: false,
                     });
                 } else {
@@ -90,7 +93,7 @@ export async function handleCheckoutService() {
             log("error", "checkoutService", "handleCheckoutService", data.data, "checkoutService.js");
             return ERROR_STATUS.ERROR;
         } else {
-            await removeDataFromLocalStorage("basket");
+            await addDataToLocalStorage("basket", "{}");
             return data;
         }
     } catch (error) {

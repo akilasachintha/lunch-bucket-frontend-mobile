@@ -4,40 +4,18 @@ import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/nat
 import PATHS from '../../helpers/paths/paths';
 import {StatusBar} from 'expo-status-bar';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
-import {lunchBucketAPI} from "../../apis/lunchBucketAPI";
 
 const InitialScreen = () => {
     const slideAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
 
-    async function fetchData() {
-        const token = await getDataFromLocalStorage('token');
-
-
-        if (token) {
-            await lunchBucketAPI.get('dinner/invokeSuitabilities', {
-                headers: {
-                    'token': token,
-                }
-            });
-
-            await lunchBucketAPI.get('lunch/invokeSuitabilities', {
-                headers: {
-                    'token': token,
-                }
-            });
-        }
-    }
-
     const checkIfVisited = async () => {
         try {
             let visited = await getDataFromLocalStorage('@visited');
             if (!visited) visited = 'false';
-            console.log(visited);
 
             let loginStatus = await getDataFromLocalStorage('loginStatus');
-            console.log(loginStatus);
 
             const role = await getDataFromLocalStorage('role');
 
@@ -51,8 +29,6 @@ const InitialScreen = () => {
                 if (visited === 'true') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
-                        console.log(loginStatus);
-                        console.log(role);
                         if (loginStatus.toString() === 'true' && role && role.toString() === "user") {
                             navigation.navigate('Menu');
                         } else if (loginStatus.toString() === 'true' && role && role.toString() === "admin") {
@@ -61,7 +37,7 @@ const InitialScreen = () => {
                             navigation.navigate('Login');
                         }
                     }, 7000);
-                } else if(visited === 'false') {
+                } else if (visited === 'false') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
 
@@ -77,16 +53,13 @@ const InitialScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
-            fetchData().catch(console.error);
             checkIfVisited().catch(console.error);
-        }, [isFocused])
+        }, [])
     );
 
     useEffect(() => {
         checkIfVisited().catch(console.error);
-        fetchData().catch(console.error);
     }, []);
-
 
 
     return (

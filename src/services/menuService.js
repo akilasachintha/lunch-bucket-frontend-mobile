@@ -1,7 +1,6 @@
 import {getDinnerMenuController, getLunchMenuController,} from "../controllers/menuController";
 import {addDataToLocalStorage, getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS, SUCCESS_STATUS} from "../errorLogs/errorStatus";
-import {getUTCDateTime} from "./timeService";
 import {log} from "../helpers/logs/log";
 import moment from "moment/moment";
 
@@ -85,7 +84,6 @@ export async function getLunchSpecialMenuService(lunchMenu) {
 export async function getLunchRiceMenuService(lunchMenu) {
     try {
         const result = lunchMenu;
-        console.log("result", result);
         if (!result) {
             return [];
         } else {
@@ -247,7 +245,7 @@ export async function getDinnerStewMenuService(dinnerMenu) {
     }
 }
 
-export async function setMenuBasketService(totalCheckedItems, totalAmount, venue, isVeg, isSpecial) {
+export async function setMenuBasketService(totalCheckedItems, totalAmount, venue, isVeg, isSpecial, getUTCDateTime) {
     try {
         const response = await getUTCDateTime();
         const {utc_time, utc_date} = response;
@@ -365,6 +363,7 @@ export async function updateBasketFromId(mealId, updatedMeal) {
 
             if (mealIndex !== -1) {
                 existingBasket.meal[mealIndex].items = [...updatedMeal];
+                existingBasket.meal[mealIndex].unitPrice = updatedMeal.reduce((acc, item) => acc + item.price, 0);
 
                 const jsonValue = JSON.stringify(existingBasket);
                 await addDataToLocalStorage('basket', jsonValue);
@@ -374,7 +373,6 @@ export async function updateBasketFromId(mealId, updatedMeal) {
             }
         }
 
-        // If the meal is not found in the basket, return an error status
         return ERROR_STATUS.ERROR;
 
     } catch (error) {
@@ -444,7 +442,6 @@ export async function fetchBasket(mealId, setCount, setBasket) {
 
         setBasket(basketItems);
         setBasket(basketItems);
-        console.log("basketItems", basketItems);
     } catch (error) {
         log("Error :: BasketScreen :: fetchBasket :: ", error.message, "BasketItem.js");
     }

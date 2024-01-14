@@ -6,15 +6,18 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import BorderButton from "../../components/borderButton/BorderButton";
 import BottomButton from "../../components/buttons/BottomButton";
-import {getDataFromLocalStorage, removeDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
+import {
+    addDataToLocalStorage,
+    getDataFromLocalStorage
+} from "../../helpers/storage/asyncStorage";
 import {log} from "../../helpers/logs/log";
 import {useToast} from "../../helpers/toast/Toast";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import moment from "moment/moment";
-import {getUTCDateTime} from "../../services/timeService";
 import {useDispatch} from "react-redux";
 import {setIsEditMenuFalseReducer} from "../../redux/menuSlice";
+import useFetchRemainingTimes from "../../services/timeService";
 
 export default function BasketScreen() {
     const {showToast} = useToast();
@@ -24,6 +27,8 @@ export default function BasketScreen() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedMealId, setSelectedMealId] = useState(null);
+
+    const {getUTCDateTime} = useFetchRemainingTimes();
 
     const navigation = useNavigation();
     const plusIcon = <Fontisto name="plus-a" size={18} color="#7E1F24"/>;
@@ -78,13 +83,13 @@ export default function BasketScreen() {
 
         const hasLunchItems = basket.meal.some(meal => meal.venue === "Lunch");
         const hasDinnerItems = basket.meal.some(meal => meal.venue === "Dinner");
-        const isLunch = basket.venue === "Lunch";
+        const isLunch = basket.venue === "Dinner";
 
-        // 10 AM to 4 PM
+        // 11 AM to 4 PM
         if (isLunch && hasLunchItems && (currentUTCHours > 11 || (currentUTCHours === 11 && currentUTCMinutes >= 0)) &&
             (currentUTCHours < 17 || (currentUTCHours === 17 && currentUTCMinutes < 0))) {
             showToast("error", "Lunch orders are closed now. Please order for dinner.");
-            await removeDataFromLocalStorage("basket");
+            await addDataToLocalStorage("basket", "{}");
             await fetchBasket();
             return;
         }
@@ -93,16 +98,16 @@ export default function BasketScreen() {
         if (isLunch && hasDinnerItems && (currentUTCHours > 17 || (currentUTCHours === 17 && currentUTCMinutes >= 0)) &&
             (currentUTCHours < 24 || (currentUTCHours === 0 && currentUTCMinutes < 0))) {
             showToast("error", "Dinner orders are closed now. Please order for lunch.");
-            await removeDataFromLocalStorage("basket");
+            await addDataToLocalStorage("basket", "{}");
             await fetchBasket();
             return;
         }
 
-        // 12 AM to 10 AM
+        // 12 AM to 11 AM
         if (isLunch && hasDinnerItems && (currentUTCHours > 0 || (currentUTCHours === 0 && currentUTCMinutes >= 0)) &&
             (currentUTCHours < 11 || (currentUTCHours === 11 && currentUTCMinutes < 0))) {
             showToast("error", "Dinner orders are closed now. Please order for lunch.");
-            await removeDataFromLocalStorage("basket");
+            await addDataToLocalStorage("basket", "{}");
             await fetchBasket();
             return;
         }
@@ -138,7 +143,9 @@ export default function BasketScreen() {
             <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
             <TopHeader headerText="Your Bucket" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
-                <ScrollView>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                >
                     {
                         basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal) => (
                             <BasketItem
