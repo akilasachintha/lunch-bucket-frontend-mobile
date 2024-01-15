@@ -56,13 +56,11 @@ const BasketButton = ({
                     navigation.navigate('Basket');
                 }
             } catch (error) {
-                // Handle error here
                 console.error('Error updating basket:', error);
             }
         }
 
         if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5)) {
-            // Handle ordinary meals
             const basketItems = totalCheckedItems.filter(item => item.checked === true);
 
             try {
@@ -108,7 +106,9 @@ const BasketButton = ({
             </TouchableOpacity>
             {(totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && (
                 <View style={styles.priceContainerRight}>
-                    <Text style={styles.priceContainerRightText}>Rs {totalAmount + totalSpecialPrice}</Text>
+                    <Text style={styles.priceContainerRightText}>Rs {
+                        (totalCheckedItemsCount > 0 ? totalAmount : 0) +
+                        (totalCheckedSpecialItemsCount > 0 ? totalSpecialPrice : 0)}</Text>
                 </View>
             )}
         </View>

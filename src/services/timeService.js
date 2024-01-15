@@ -35,34 +35,35 @@ const useFetchRemainingTimes = () => {
             const isoDateTime = `${utc_date.trim()}T${utc_time.trim()}`;
             let currentTime = moment.utc(isoDateTime);
 
-            let lunchTimeStart = moment.utc().set({hour: 11, minute: 30, second: 0}); // 4:00 PM IST
-            let dinnerTimeStart = moment.utc().set({hour: 5, minute: 30, second: 0}); // 11:00 AM IST
-
-            if (currentTime.isAfter(lunchTimeStart)) {
-                lunchTimeStart.add(1, 'days');
-            }
-            if (currentTime.isAfter(dinnerTimeStart)) {
-                dinnerTimeStart.add(1, 'days');
-            }
+            let lunchTimeStart = moment.utc().set({hour: 5, minute: 30, second: 0}); // 5:30 AM UTC
+            let dinnerTimeStart = moment.utc().set({hour: 17, minute: 30, second: 0}); // 5:30 PM UTC
 
             const updateRemainingTime = () => {
                 currentTime = moment.utc();
-                let remainingTime;
-                let isLunchNext = currentTime.isBefore(lunchTimeStart);
 
-                if (isLunchNext) {
-                    remainingTime = lunchTimeStart.diff(currentTime);
+                let newLunchTime = lunchTimeStart.clone();
+                let newDinnerTime = dinnerTimeStart.clone();
+
+                if (currentTime.isAfter(newLunchTime)) {
+                    newLunchTime.add(1, 'days');
+                }
+                if (currentTime.isAfter(newDinnerTime)) {
+                    newDinnerTime.add(1, 'days');
+                }
+
+                let remainingTimeLunch = newLunchTime.diff(currentTime);
+                let remainingTimeDinner = newDinnerTime.diff(currentTime);
+
+                setRemainingTimeLunch(formatTimeDifference(remainingTimeLunch));
+                setRemainingTimeDinner(formatTimeDifference(remainingTimeDinner));
+
+                if (remainingTimeLunch < remainingTimeDinner) {
                     setRemainingTimeLunchColor("rgb(245,33,33)");
                     setRemainingTimeDinnerColor("rgb(10,152,0)");
                 } else {
-                    remainingTime = dinnerTimeStart.diff(currentTime);
                     setRemainingTimeLunchColor("rgb(10,152,0)");
                     setRemainingTimeDinnerColor("rgb(245,33,33)");
                 }
-
-                let formattedTime = formatTimeDifference(remainingTime);
-                setRemainingTimeLunch(formattedTime);
-                setRemainingTimeDinner(formattedTime);
             }
 
             intervalId = setInterval(updateRemainingTime, 1000);
@@ -87,6 +88,6 @@ const useFetchRemainingTimes = () => {
     }
 
     return {remainingTimeLunch, remainingTimeDinner, remainingTimeLunchColor, remainingTimeDinnerColor, getUTCDateTime};
-};
+}
 
 export default useFetchRemainingTimes;

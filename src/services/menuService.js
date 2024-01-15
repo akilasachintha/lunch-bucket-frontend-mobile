@@ -441,7 +441,6 @@ export async function fetchBasket(mealId, setCount, setBasket) {
         }
 
         setBasket(basketItems);
-        setBasket(basketItems);
     } catch (error) {
         log("Error :: BasketScreen :: fetchBasket :: ", error.message, "BasketItem.js");
     }
