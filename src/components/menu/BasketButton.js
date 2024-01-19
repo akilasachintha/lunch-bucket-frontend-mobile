@@ -19,16 +19,16 @@ const BasketButton = ({
                       }) => {
     const navigation = useNavigation();
     const {showToast} = useToast();
-
     const isEditMenu = useSelector(state => state.menu.isEditMenu);
-
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const {getUTCDateTime} = useFetchRemainingTimes();
 
     const handleBasketPress = async () => {
-        if (isButtonDisabled) {
-            return;
+        if (isButtonDisabled) return;
+
+        if (isEditMenu) {
+            totalCheckedSpecialItemsCount = 0;
         }
 
         if (totalCheckedItemsCount > 5) {
@@ -36,10 +36,9 @@ const BasketButton = ({
             return;
         }
 
-        setIsButtonDisabled(true);
-
         if (totalCheckedSpecialItemsCount === 0 && totalCheckedItemsCount === 0) {
             navigation.navigate('Basket');
+            return;
         }
 
         if (totalCheckedSpecialItemsCount > 0 && totalCheckedItemsCount <= 0) {
@@ -61,6 +60,7 @@ const BasketButton = ({
         }
 
         if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5)) {
+            console.log("Old");
             const basketItems = totalCheckedItems.filter(item => item.checked === true);
 
             try {
@@ -81,12 +81,13 @@ const BasketButton = ({
         }
 
         if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount < 5)) {
+            console.log("New");
             showToast('error', 'Please select 5 items to proceed.');
         }
 
         setTimeout(() => {
             setIsButtonDisabled(false);
-        }, 2000);
+        }, 1000);
     };
 
     return (

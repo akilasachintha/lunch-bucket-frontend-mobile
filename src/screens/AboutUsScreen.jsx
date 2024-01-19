@@ -5,11 +5,11 @@ import TopHeader from "../components/topHeader/TopHeader";
 import {SelectedTab} from "../helpers/enums/enums";
 import PATHS from "../helpers/paths/paths";
 
-export default function InstructionScreen() {
+export default function AboutUsScreen() {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
-            <TopHeader headerText="Instructions" backButtonPath="Menu"/>
+            <TopHeader headerText="About Us" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}

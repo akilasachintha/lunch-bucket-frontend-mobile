@@ -62,13 +62,9 @@ export default function OrderPlaceSuccessfulModal({
                                         delivery_place: values.delivery_place,
                                     };
 
-                                    console.log(payload);
-
                                     if (successResult?.time_state?.delivery_select_state) {
                                         payload.delivery_time = values.deliveryTime;
                                     }
-
-                                    console.log(payload);
 
                                     await handleCheckoutTimeService(payload);
 

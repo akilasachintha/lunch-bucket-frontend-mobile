@@ -24,7 +24,7 @@ import DeliveryDetailsScreen from "../screens/settings/DeliveryDetailsScreen";
 import FeedbackDetailsScreen from "../screens/settings/FeedbackDetailsScreen";
 import PromotionsDetailsScreen from "../screens/settings/PromotionsDetailsScreen";
 import ContactDetailsScreen from "../screens/settings/ContactDetailsScreen";
-import InstructionScreen from "../screens/InstructionScreen";
+import AboutUsScreen from "../screens/AboutUsScreen";
 
 const Stack = createNativeStackNavigator();
 export default function StackNavigator() {
@@ -61,7 +61,7 @@ export default function StackNavigator() {
                 <Stack.Screen name="FeedbackDetails" component={FeedbackDetailsScreen}/>
                 <Stack.Screen name="PromotionsDetails" component={PromotionsDetailsScreen}/>
                 <Stack.Screen name="ContactDetails" component={ContactDetailsScreen}/>
-                <Stack.Screen name="Instruction" component={InstructionScreen}/>
+                <Stack.Screen name="Instruction" component={AboutUsScreen}/>
             </Stack.Navigator>
         </AuthGuard>
     );

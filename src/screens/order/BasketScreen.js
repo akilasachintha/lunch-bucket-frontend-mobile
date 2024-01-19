@@ -34,14 +34,12 @@ export default function BasketScreen() {
         try {
             setIsLoading(true);
             let basketItems = await getDataFromLocalStorage('basket');
-            console.log("basketItems", basketItems);
 
             if (!basketItems) {
                 setIsLoading(false);
                 return;
             }
             basketItems = JSON.parse(basketItems);
-            console.log("basketItems", basketItems);
 
             setBasket(basketItems);
             setIsLoading(false);

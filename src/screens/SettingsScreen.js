@@ -24,7 +24,7 @@ export default function SettingsScreen({navigation}) {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
-            <TopHeader headerText="Instructions" backButtonPath="Profile"/>
+            <TopHeader headerText="Instructions" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView
                     contentContainerStyle={{flexGrow: 1}}

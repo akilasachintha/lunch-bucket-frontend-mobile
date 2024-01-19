@@ -17,8 +17,6 @@ export async function getLunchAdminNotificationsController() {
             }
         });
 
-        console.log(response.data);
-
         if (response.status === 200) return response.data;
 
     } catch (error) {

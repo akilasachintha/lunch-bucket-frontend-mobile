@@ -114,7 +114,6 @@ export default function ContactOwner() {
     };
 
     const handleToggleExpand = (chatIndex) => {
-        console.log("chatIndex", chatIndex);
         setChatList((prevChatList) => {
             const updatedChatList = [...prevChatList];
             updatedChatList[chatIndex].expanded = !updatedChatList[chatIndex].expanded;

@@ -38,8 +38,6 @@ export async function setOderTimeController(data) {
         const token = await getDataFromLocalStorage('token');
         if (!token) return ERROR_STATUS.ERROR;
 
-        console.log("data", data);
-
         const response = await lunchBucketAPI.post(
             'updateOrderDeliveryTime',
             data,
