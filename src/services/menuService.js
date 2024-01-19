@@ -364,6 +364,7 @@ export async function updateBasketFromId(mealId, updatedMeal) {
             if (mealIndex !== -1) {
                 existingBasket.meal[mealIndex].items = [...updatedMeal];
                 existingBasket.meal[mealIndex].unitPrice = updatedMeal.reduce((acc, item) => acc + item.price, 0);
+                existingBasket.meal[mealIndex].totalPrice = existingBasket.meal[mealIndex].unitPrice * existingBasket.meal[mealIndex].count;
 
                 const jsonValue = JSON.stringify(existingBasket);
                 await addDataToLocalStorage('basket', jsonValue);

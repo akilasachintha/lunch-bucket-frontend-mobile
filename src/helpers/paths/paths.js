@@ -21,6 +21,9 @@ const PATHS = {
     feedback: require('../../../assets/images/settings/feedback.jpg'),
     promotions: require('../../../assets/images/settings/promotions.png'),
     contact: require('../../../assets/images/settings/contact.jpg'),
+    background: require('../../../assets/images/background.png'),
+    motivation: require('../../../assets/images/motivation.png'),
+    green: require('../../../assets/images/green.png'),
 }
 
 export default PATHS;

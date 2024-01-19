@@ -73,6 +73,8 @@ export async function setUserViewController(id) {
             headers: { 'token': token, }
         });
 
+        console.log("res", response);
+
         if (response.status === 200) return response.data;
 
     } catch (error) {

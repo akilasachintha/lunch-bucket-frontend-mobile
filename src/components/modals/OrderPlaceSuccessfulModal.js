@@ -32,12 +32,10 @@ export default function OrderPlaceSuccessfulModal({
             });
         }
     };
-
-    const deliverySchema = Yup.object().shape({
+    Yup.object().shape({
         deliveryTime: Yup.string().required("Please select a delivery time"),
         delivery_place: Yup.string().required("Please select a delivery place"),
     });
-
     return (
         <View style={styles.container}>
             <Modal visible={isVisible} transparent>
@@ -53,7 +51,7 @@ export default function OrderPlaceSuccessfulModal({
                 >
                     <View style={styles.modal}>
                         <Formik
-                            initialValues={{deliveryTime: ""}}
+                            initialValues={{deliveryTime: "", delivery_place: ""}}
                             validationSchema={getValidationSchema()}
                             onSubmit={async (values) => {
                                 try {
@@ -64,9 +62,13 @@ export default function OrderPlaceSuccessfulModal({
                                         delivery_place: values.delivery_place,
                                     };
 
+                                    console.log(payload);
+
                                     if (successResult?.time_state?.delivery_select_state) {
                                         payload.delivery_time = values.deliveryTime;
                                     }
+
+                                    console.log(payload);
 
                                     await handleCheckoutTimeService(payload);
 
@@ -122,39 +124,39 @@ export default function OrderPlaceSuccessfulModal({
                                                     <View>
                                                         <TouchableOpacity
                                                             style={styles.radioButton}
-                                                            onPress={() => handleChange("deliveryTime")("7:00 PM")}
+                                                            onPress={() => handleChange("deliveryTime")("7:30 PM")}
                                                         >
-                                                            {values.deliveryTime === "7:00 PM" ? (
+                                                            {values.deliveryTime === "7:30 PM" ? (
                                                                 <Radio selected={true}/>
                                                             ) : (
                                                                 <Radio selected={false}/>
                                                             )}
-                                                            <Text style={styles.radioText}>7:00 PM</Text>
+                                                            <Text style={styles.radioText}>7:30 PM</Text>
                                                         </TouchableOpacity>
                                                         <TouchableOpacity
                                                             style={styles.radioButton}
-                                                            onPress={() => handleChange("deliveryTime")("8:00 PM")}
+                                                            onPress={() => handleChange("deliveryTime")("8:30 PM")}
                                                         >
-                                                            {values.deliveryTime === "8:00 PM" ? (
+                                                            {values.deliveryTime === "8:30 PM" ? (
                                                                 <Radio selected={true}/>
                                                             ) : (
                                                                 <Radio selected={false}/>
                                                             )}
-                                                            <Text style={styles.radioText}>8:00 PM</Text>
+                                                            <Text style={styles.radioText}>8:30 PM</Text>
                                                         </TouchableOpacity>
                                                     </View>
                                                 ) : (
                                                     <View>
                                                         <TouchableOpacity
                                                             style={styles.radioButton}
-                                                            onPress={() => handleChange("deliveryTime")("11:30 AM")}
+                                                            onPress={() => handleChange("deliveryTime")("11:00 AM")}
                                                         >
-                                                            {values.deliveryTime === "11:30 AM" ? (
+                                                            {values.deliveryTime === "11:00 AM" ? (
                                                                 <Radio selected={true}/>
                                                             ) : (
                                                                 <Radio selected={false}/>
                                                             )}
-                                                            <Text style={styles.radioText}>11:30 AM</Text>
+                                                            <Text style={styles.radioText}>11:00 AM</Text>
                                                         </TouchableOpacity>
                                                         <TouchableOpacity
                                                             style={styles.radioButton}

@@ -13,10 +13,10 @@ export default function ContactDetailsScreen() {
                 <ScrollView style={styles.scrollViewStyle}>
                     <View style={styles.contentContainer}>
                         <Text style={styles.header}>📧 Email</Text>
-                        <Text style={styles.info}>lunchbucket@gmail.com</Text>
+                        <Text style={styles.info}>lunchbucketofficial@gmail.com</Text>
 
                         <Text style={styles.header}>📞 Phone Number</Text>
-                        <Text style={styles.info}>04333439204</Text>
+                        <Text style={styles.info}>0777169791</Text>
 
                         <Text style={styles.header}>⏰ Service Hours</Text>
                         <Text style={styles.info}>24/7 Customer Support</Text>

@@ -16,6 +16,8 @@ import PATHS from "../../helpers/paths/paths";
 import {log} from "../../helpers/logs/log";
 import SpecialMenu from "./SpecialMenu";
 import {useSelector} from "react-redux";
+import {FontAwesome5} from '@expo/vector-icons';
+import {useNavigation} from "@react-navigation/native";
 
 const Menu = ({
                   specialMenu,
@@ -38,6 +40,7 @@ const Menu = ({
               }) => {
 
     const isEditMenu = useSelector(state => state.menu.isEditMenu);
+    const navigation = useNavigation();
 
     const [showSpecialMenu, setShowSpecialMenu] = useState(false);
     const [totalSpecialPrice, setTotalSpecialPrice] = useState(0);
@@ -175,6 +178,14 @@ const Menu = ({
                     )}
                 </View>
             </ScrollView>
+            <TouchableOpacity
+                style={styles.fab}
+                onPress={() => {
+                    navigation.navigate('Settings');
+                }}
+            >
+                <FontAwesome5 name="question" size={24} color="white"/>
+            </TouchableOpacity>
             <BasketButton
                 totalCheckedSpecialItems={totalCheckedSpecialItems}
                 totalCheckedSpecialItemsCount={totalCheckedSpecialItemsCount}
@@ -269,5 +280,18 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    fab: {
+        position: 'absolute',
+        zIndex: 10,
+        width: 60,
+        height: 60,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 30,
+        bottom: 35,
+        backgroundColor: '#630A10',
+        borderRadius: 60,
+        elevation: 8,
     },
 });

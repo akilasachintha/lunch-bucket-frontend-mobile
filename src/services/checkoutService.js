@@ -61,7 +61,7 @@ export async function handleCheckoutService() {
                         meal: meal.venue,
                         customer_id: customerId,
                         comment: "",
-                        price: meal.unitPrice,
+                        price: meal.totalPrice,
                         potion: false,
                     });
                 } else {

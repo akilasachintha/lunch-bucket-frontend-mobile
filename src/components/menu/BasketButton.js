@@ -100,7 +100,7 @@ const BasketButton = ({
                 ) : (
                     <Text style={styles.priceContainerLeftText}>
                         Update
-                        Basket {totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0 ? `(${totalCheckedItemsCount + totalCheckedSpecialItemsCount})` : ''}
+                        Basket {totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0 ? `(${totalCheckedItemsCount + (isEditMenu ? 0 : totalCheckedSpecialItemsCount)})` : ''}
                     </Text>
                 )}
             </TouchableOpacity>
@@ -108,7 +108,7 @@ const BasketButton = ({
                 <View style={styles.priceContainerRight}>
                     <Text style={styles.priceContainerRightText}>Rs {
                         (totalCheckedItemsCount > 0 ? totalAmount : 0) +
-                        (totalCheckedSpecialItemsCount > 0 ? totalSpecialPrice : 0)}</Text>
+                        (totalCheckedSpecialItemsCount > 0 ? (isEditMenu ? 0 : totalSpecialPrice) : 0)}</Text>
                 </View>
             )}
         </View>

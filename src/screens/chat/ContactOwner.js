@@ -114,10 +114,11 @@ export default function ContactOwner() {
     };
 
     const handleToggleExpand = (chatIndex) => {
+        console.log("chatIndex", chatIndex);
         setChatList((prevChatList) => {
             const updatedChatList = [...prevChatList];
             updatedChatList[chatIndex].expanded = !updatedChatList[chatIndex].expanded;
-            if(updatedChatList[chatIndex].expanded && updatedChatList[chatIndex].view_admin_state){
+            if (updatedChatList[chatIndex].expanded && updatedChatList[chatIndex].view_user_state) {
                 updatedChatList[chatIndex].view_user_state = false;
                 fetchUserView(updatedChatList[chatIndex].id)
                 .catch(

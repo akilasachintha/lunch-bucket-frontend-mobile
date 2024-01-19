@@ -6,10 +6,7 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import TopHeader from "../../components/topHeader/TopHeader";
 import BorderButton from "../../components/borderButton/BorderButton";
 import BottomButton from "../../components/buttons/BottomButton";
-import {
-    addDataToLocalStorage,
-    getDataFromLocalStorage
-} from "../../helpers/storage/asyncStorage";
+import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 import {log} from "../../helpers/logs/log";
 import {useToast} from "../../helpers/toast/Toast";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
@@ -37,12 +34,14 @@ export default function BasketScreen() {
         try {
             setIsLoading(true);
             let basketItems = await getDataFromLocalStorage('basket');
+            console.log("basketItems", basketItems);
 
             if (!basketItems) {
                 setIsLoading(false);
                 return;
             }
             basketItems = JSON.parse(basketItems);
+            console.log("basketItems", basketItems);
 
             setBasket(basketItems);
             setIsLoading(false);
@@ -57,6 +56,12 @@ export default function BasketScreen() {
             log("error", "BasketScreen", "useEffect | fetchBasket", error.message, "BasketScreen.js")
         );
     }, [isModalVisible]);
+
+    useEffect(() => {
+        fetchBasket().catch((error) =>
+            log("error", "BasketScreen", "useEffect | fetchBasket", error.message, "BasketScreen.js")
+        );
+    }, []);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -85,7 +90,7 @@ export default function BasketScreen() {
         const hasDinnerItems = basket.meal.some(meal => meal.venue === "Dinner");
         const isLunch = basket.venue === "Dinner";
 
-        // 11 AM to 4 PM
+        // 11 AM to 5 PM
         if (isLunch && hasLunchItems && (currentUTCHours > 11 || (currentUTCHours === 11 && currentUTCMinutes >= 0)) &&
             (currentUTCHours < 17 || (currentUTCHours === 17 && currentUTCMinutes < 0))) {
             showToast("error", "Lunch orders are closed now. Please order for dinner.");
@@ -94,7 +99,7 @@ export default function BasketScreen() {
             return;
         }
 
-        // 4 PM to 12 AM
+        // 5 PM to 12 AM
         if (isLunch && hasDinnerItems && (currentUTCHours > 17 || (currentUTCHours === 17 && currentUTCMinutes >= 0)) &&
             (currentUTCHours < 24 || (currentUTCHours === 0 && currentUTCMinutes < 0))) {
             showToast("error", "Dinner orders are closed now. Please order for lunch.");

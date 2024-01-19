@@ -359,7 +359,7 @@ export default function MenuScreen({route}) {
 
     const lunchTotalPrice = useMemo(() => {
         return calculateTotalPrice(getTotalCheckedItems(lunchItemList));
-    }, [lunchRiceItems, lunchVegetableItems, lunchStewItems, lunchMeatItems]);
+    }, [lunchRiceItems, lunchVegetableItems, lunchStewItems, lunchMeatItems, ]);
 
     const dinnerTotalPrice = useMemo(() => {
         return calculateTotalPrice(getTotalCheckedItems(dinnerItemList));

@@ -144,11 +144,6 @@ export default function ProfileScreen() {
 
                             </ScrollView>
                             <View style={styles.bottomButtons}>
-                                <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-                                    <View style={styles.settingsButton}>
-                                        <Text style={styles.settingsText}>Privacy and Settings</Text>
-                                    </View>
-                                </TouchableOpacity>
                                 <TouchableOpacity onPress={handleLogout}>
                                     <View style={styles.logoutButton}>
                                         <Text style={styles.settingsText}>Logout</Text>
@@ -258,7 +253,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     settingsText: {
-        color: '#fff',
+        color: '#630A10',
         fontWeight: 'bold',
         fontSize: 20,
     },

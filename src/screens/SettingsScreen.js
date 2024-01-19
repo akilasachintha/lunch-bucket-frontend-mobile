@@ -24,7 +24,7 @@ export default function SettingsScreen({navigation}) {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
-            <TopHeader headerText="Privacy and Settings" backButtonPath="Profile"/>
+            <TopHeader headerText="Instructions" backButtonPath="Profile"/>
             <View style={styles.bodyContainer}>
                 <ScrollView
                     contentContainerStyle={{flexGrow: 1}}
@@ -50,6 +50,13 @@ export default function SettingsScreen({navigation}) {
                             </ImageBackground>
                         </TouchableOpacity>
                     ))}
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('Instruction')}
+                        style={styles.button}>
+                        <Text style={styles.buttonText}>
+                            About Us
+                        </Text>
+                    </TouchableOpacity>
                 </ScrollView>
             </View>
         </SafeAreaView>
@@ -96,5 +103,17 @@ const styles = StyleSheet.create({
     },
     textDisabled: {
         color: '#a0a0a0',
+    },
+    button: {
+        alignItems: 'center',
+        backgroundColor: '#8a1b1b',
+        padding: 10,
+        borderRadius: 10,
+        margin: 10,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
 });

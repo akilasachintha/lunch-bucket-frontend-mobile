@@ -22,16 +22,7 @@ export default function PaymentDetailsScreen() {
 
                         <Text style={styles.header}>🔍 Price Confirmation</Text>
                         <Text style={styles.info}>The relevant price for your order can be viewed under the 'Order
-                            History'
-                            section before delivery.</Text>
-
-                        <Text style={styles.header}>🔐 Secure Transactions</Text>
-                        <Text style={styles.info}>All transactions are encrypted and secured to protect your financial
-                            data.</Text>
-
-                        <Text style={styles.header}>🧾 Billing Details</Text>
-                        <Text style={styles.info}>Billing details are provided immediately after the payment is
-                            processed.</Text>
+                            History' section before delivery.</Text>
                     </View>
                 </ScrollView>
             </View>
