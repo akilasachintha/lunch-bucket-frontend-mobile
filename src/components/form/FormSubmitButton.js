@@ -49,6 +49,8 @@ const styles = StyleSheet.create({
     },
     signInTextError: {
         textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
         paddingVertical: '3%',
         fontWeight: 'bold',
         fontSize: 14,

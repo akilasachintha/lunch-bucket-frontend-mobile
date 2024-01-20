@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Image, Keyboard, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from '../../helpers/paths/paths';
 import {Formik} from 'formik';
@@ -10,6 +10,7 @@ import {registerService} from '../../services/authService';
 import {useToast} from '../../helpers/toast/Toast';
 import {log} from '../../helpers/logs/log';
 import {StatusBar} from 'expo-status-bar';
+import * as Network from "expo-network";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -48,6 +49,23 @@ export default function SignUp({navigation}) {
     const [isLoading, setIsLoading] = useState(false);
     const [, setToastMessage] = useState(null);
     const {showToast} = useToast();
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => setKeyboardVisible(true)
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => setKeyboardVisible(false)
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
 
     const initialValues = {
         email: '',
@@ -58,6 +76,13 @@ export default function SignUp({navigation}) {
 
     const handleSubmit = async (values, actions) => {
         if (isSubmitting) {
+            return;
+        }
+
+        const networkState = await Network.getNetworkStateAsync();
+        if (!networkState.isConnected) {
+            showToast('error', 'Please check your internet connection');
+            log("error", "SignUp", "handleSubmit", "Please check your internet connection", "Login.js");
             return;
         }
 
@@ -96,12 +121,17 @@ export default function SignUp({navigation}) {
         <SafeAreaView style={styles.container}>
             <StatusBar style=""/>
             <View style={styles.mainContainer}>
-                <View style={styles.headerContainer}>
-                    <Image style={styles.headerImage} source={PATHS.signUp}/>
-                </View>
+                {
+                    !isKeyboardVisible && (
+                        <View style={styles.headerContainer}>
+                            <Image style={styles.headerImage} source={PATHS.signUp}/>
+                        </View>
+                    )
+                }
                 <View style={styles.bottomContainer}>
                     <View>
-                        <Text style={styles.welcomeBackText}>{STRINGS.welcomeBack}</Text>
+                        <Text
+                            style={[styles.welcomeBackText, isKeyboardVisible && {marginTop: "30%"}]}>{STRINGS.welcomeBack}</Text>
                     </View>
                     <View>
                         <Formik initialValues={initialValues} validationSchema={validationSchema}
@@ -175,13 +205,15 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
         backgroundColor: '#fff',
+        justifyContent: 'center',
     },
     welcomeBackText: {
         color: '#7E1F24',
         fontSize: 24,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginVertical: '10%',
+        marginTop: '5%',
+        marginBottom: '5%',
     },
     dontHaveAccountText: {
         color: '#630A10',

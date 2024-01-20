@@ -1,4 +1,4 @@
-import {Image, Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Image, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from "../../helpers/paths/paths";
 import React, {useEffect, useState} from "react";
@@ -15,6 +15,7 @@ import {ERROR_STATUS} from "../../errorLogs/errorStatus";
 import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import * as Network from 'expo-network';
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -39,6 +40,23 @@ export default function Login({navigation}) {
     const initialValues = {email: '', password: ''};
     const [role, setRole] = useState("");
     const {showToast} = useToast();
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => setKeyboardVisible(true)
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => setKeyboardVisible(false)
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
 
     const handleSubmit = async (values, actions) => {
         setIsSubmitting(true);
@@ -47,6 +65,13 @@ export default function Login({navigation}) {
         console.log("values", values);
 
         try {
+            const networkState = await Network.getNetworkStateAsync();
+            if (!networkState.isConnected) {
+                showToast('error', 'Please check your internet connection');
+                log("error", "Login", "handleSubmit", "Please check your internet connection", "Login.js");
+                return;
+            }
+
             const result = await loginService(values.email, values.password);
             console.log("result", result);
 
@@ -170,14 +195,21 @@ export default function Login({navigation}) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.mainContainer}>
+            <View
+                style={styles.mainContainer}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
 
-                <View style={styles.headerContainer}>
-                    <Image
-                        style={styles.headerImage}
-                        source={PATHS.signIn}
-                    />
-                </View>
+                {
+                    !isKeyboardVisible && (
+                        <View style={styles.headerContainer}>
+                            <Image
+                                style={styles.headerImage}
+                                source={PATHS.signIn}
+                            />
+                        </View>
+                    )
+                }
                 <View style={styles.bottomContainer}>
                     <View>
                         <Text style={styles.welcomeBackText}>{STRINGS.welcomeBack}</Text>
@@ -264,6 +296,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
         backgroundColor: '#fff',
+        justifyContent: 'center',
     },
     welcomeBackText: {
         color: '#7E1F24',

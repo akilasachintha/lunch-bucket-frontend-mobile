@@ -1,6 +1,8 @@
 import TopHeader from "../../components/topHeader/TopHeader";
 import {
     ActivityIndicator,
+    KeyboardAvoidingView,
+    Platform,
     RefreshControl,
     SafeAreaView,
     ScrollView,
@@ -204,7 +206,9 @@ export default function ContactOwner() {
                                 ))}
                             </ScrollView>
                         </View>
-                        <View style={styles.chatBox}>
+                        <KeyboardAvoidingView
+                            behavior={Platform.OS === "ios" ? "padding" : "height"}
+                            style={styles.chatBox}>
                             <TextInput
                                 editable
                                 multiline
@@ -221,7 +225,7 @@ export default function ContactOwner() {
                             >
                                 {sendIcon}
                             </TouchableOpacity>
-                        </View>
+                        </KeyboardAvoidingView>
                     </View>
                 )}
             </Formik>

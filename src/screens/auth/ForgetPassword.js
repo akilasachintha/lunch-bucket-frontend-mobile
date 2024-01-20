@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Image, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from '../../helpers/paths/paths';
 import {Formik} from 'formik';
@@ -44,6 +44,23 @@ export default function ForgetPassword({ navigation }) {
     const [isLoading, setIsLoading] = useState(false);
     const [, setToastMessage] = useState(null);
     const { showToast } = useToast();
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => setKeyboardVisible(true)
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => setKeyboardVisible(false)
+        );
+
+        return () => {
+            keyboardDidHideListener.remove();
+            keyboardDidShowListener.remove();
+        };
+    }, []);
 
     const initialValues = {
         email: '',
@@ -82,10 +99,16 @@ export default function ForgetPassword({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="" />
-            <View style={styles.mainContainer}>
-                <View style={styles.headerContainer}>
-                    <Image style={styles.headerImage} source={PATHS.forget} />
-                </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.mainContainer}>
+                {
+                    !isKeyboardVisible && (
+                        <View style={styles.headerContainer}>
+                            <Image style={styles.headerImage} source={PATHS.forget}/>
+                        </View>
+                    )
+                }
                 <View style={styles.bottomContainer}>
                     <View>
                         <Text style={styles.welcomeBackText}>Forget Password</Text>
@@ -125,7 +148,7 @@ export default function ForgetPassword({ navigation }) {
                         />
                     </View>
                 </View>
-            </View>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
@@ -154,6 +177,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
         backgroundColor: '#fff',
+        justifyContent: 'center',
     },
     welcomeBackText: {
         color: '#7E1F24',
