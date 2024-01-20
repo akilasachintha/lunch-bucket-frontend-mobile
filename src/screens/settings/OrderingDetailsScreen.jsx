@@ -13,20 +13,33 @@ export default function OrderingDetailsScreen() {
                         showsVerticalScrollIndicator={false}
             >
                 <View style={styles.contentContainer}>
-                    <Text style={styles.header}>📋 How to Order</Text>
-                    <Text style={styles.step}>🔍 1. Browse through our daily menu.</Text>
-                    <Text style={styles.step}>🍽️ 2. Select food for a meal or choose a special meal.</Text>
-                    <Text style={styles.step}>💳 3. Proceed to checkout.</Text>
-                    <Text style={styles.step}>🍲 4. Order any number of meals in one transaction.</Text>
-                    <Text style={styles.info}>🕔 Lunch orders: 5 pm to 11 am (subject to availability).</Text>
-                    <Text style={styles.info}>🌙 Dinner orders: 11 am to 5 pm (subject to availability).</Text>
+                    <Text style={styles.headerBottom}>📋 Ordering Timing</Text>
+                    <Text style={styles.subInfo}>⏰ Please lunch orders between 5 PM and 11 AM, subject to
+                        availability.</Text>
+                    <Text style={styles.subInfo}>🍽️ Dinner orders are accepted from 11 AM to 5 PM, based on
+                        availability.</Text>
 
-                    <Text style={styles.headerBottom}>🔎 Order History</Text>
-                    <Text style={styles.info}>Check your 'Order History' for:</Text>
-                    <Text style={styles.subInfo}>- ⏰ Delivery time and location</Text>
-                    <Text style={styles.subInfo}>- 💰 Price details</Text>
-                    <Text style={styles.subInfo}>- 🆔 Packet code</Text>
-                    <Text style={styles.subInfo}>- 📍 Specific delivery place</Text>
+                    <Text style={styles.headerBottom}>📋 Meal Section</Text>
+                    <Text style={styles.subInfo}>🔍 Explore our daily menu.</Text>
+                    <Text style={styles.subInfo}>🍽️ Choose either a regular meal or opt for a special.</Text>
+                    <Text style={styles.subInfo}>💳 For main meal, select four food items and include one rice
+                        item.</Text>
+
+                    <Text style={styles.headerBottom}>🔎 Adding to Basket</Text>
+                    <Text style={styles.subInfo}>- ⏰ Add your chosen meal items to the basket.</Text>
+                    <Text style={styles.subInfo}>- 💰 Update the basket to order multiple meals in one go.</Text>
+                    <Text style={styles.subInfo}>- 🆔 Proceed order.</Text>
+
+                    <Text style={styles.headerBottom}>💰 Point Redemption</Text>
+                    <Text style={styles.subInfo}>- ⏰ Cash in points for money if you have more than 100
+                        points.</Text>
+
+                    <Text style={styles.headerBottom}>💰 Order Details</Text>
+                    <Text style={styles.subInfo}>- ⏰ Check 'Your Orders'. for</Text>
+                    <Text style={styles.info}>📦 Meal Type</Text>
+                    <Text style={styles.info}>📦 Payable Amount</Text>
+                    <Text style={styles.info}>📦 Delivery Time and Location</Text>
+                    <Text style={styles.info}>📦 Packet code</Text>
 
                     <Text style={styles.importantInfo}>📦 Each packet has a unique order code; verify this code when collecting your order.</Text>
                     <Text style={styles.importantInfo}>👤 Keep your unique user code handy when collecting your order.</Text>

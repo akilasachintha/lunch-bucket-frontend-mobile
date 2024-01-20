@@ -10,8 +10,8 @@ const tileData = [
     {title: 'Payment', source: PATHS.payment, navigateTo: 'PaymentDetails'},
     {title: 'Delivery', source: PATHS.delivery, navigateTo: 'DeliveryDetails'},
     {title: 'Contact Us', source: PATHS.contact, navigateTo: 'ContactDetails'},
-    {title: 'Feedback', source: PATHS.feedback, navigateTo: 'FeedbackDetails', disabled: true},
-    {title: 'Promotions', source: PATHS.promotion, navigateTo: 'PromotionsDetails', disabled: true},
+    // {title: 'Feedback', source: PATHS.feedback, navigateTo: 'FeedbackDetails', disabled: true},
+    // {title: 'Promotions', source: PATHS.promotion, navigateTo: 'PromotionsDetails', disabled: true},
 ];
 
 export default function SettingsScreen({navigation}) {

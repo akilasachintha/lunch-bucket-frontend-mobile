@@ -52,16 +52,19 @@ export default function Login({navigation}) {
             if (result.device_token && result.state && result.type && result.type === "user") {
                 navigation.navigate('Menu');
                 showToast('success', 'Login Success');
+                return;
             }
 
             if (result.type && result.type === "admin") {
                 navigation.navigate('Admin');
                 showToast('success', 'Login Success');
+                return;
             }
 
             if (result === ERROR_STATUS.LOGIN_API_ERROR || result === ERROR_STATUS.LOGIN_NOT_REGISTERED) {
                 showToast('error', 'Email or Password is incorrect');
                 log("error", "Login", "handleSubmit", "Email or Password is incorrect", "Login.js");
+                return;
             }
 
             if (result === ERROR_STATUS.LOGIN_EMAIL_CONFIRMATION_PENDING) {

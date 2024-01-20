@@ -45,7 +45,7 @@ export default function OrderPlaceSuccessfulModal({
                         successResult &&
                         successResult.time_state &&
                         !successResult.time_state.delivery_select_state
-                            ? handlePress
+                            ? () => setIsVisible(true)
                             : () => setIsVisible(true)
                     }
                 >
@@ -60,6 +60,7 @@ export default function OrderPlaceSuccessfulModal({
                                     const payload = {
                                         order_ids: successResult?.time_state?.order_ids || [],
                                         delivery_place: values.delivery_place,
+                                        delivery_time: "",
                                     };
 
                                     if (successResult?.time_state?.delivery_select_state) {
