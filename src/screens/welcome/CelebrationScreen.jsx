@@ -46,7 +46,7 @@ export default function CelebrationScreen() {
 
     useFocusEffect(
         useCallback(() => {
-            fetchCelebration();
+            fetchCelebration().catch((e) => console.log(e));
 
             const intervalId = setInterval(fetchCelebration, 1000);
 

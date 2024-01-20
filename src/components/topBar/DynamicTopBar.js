@@ -28,7 +28,7 @@ const iconsData = [
 ];
 
 function TabIcon({name, tabName, screenName, selectedTab, onPress}) {
-    const isEditMenu = useSelector(state => state.menu.isEditMenu);
+    useSelector(state => state.menu.isEditMenu);
     const dispatch = useDispatch();
 
     const navigation = useNavigation();

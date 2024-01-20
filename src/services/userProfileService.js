@@ -1,26 +1,6 @@
-import {
-    getUserDetailsController,
-    getUserFullDetailsController,
-    getUserPointsController
-} from "../controllers/userProfileController";
+import {getUserFullDetailsController, getUserPointsController} from "../controllers/userProfileController";
 import {log} from "../helpers/logs/log";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
-
-export async function getUserDetailsService() {
-    try {
-        const result = await getUserDetailsController();
-        if (result === "error") {
-            return [];
-        } else {
-            const data = await result.data;
-            log("success", "service", "getUserDetailsService | data", data, "userProfileService.js");
-            return data;
-        }
-    } catch (error) {
-        log("error", "service", "getUserDetailsService", error.message, "userProfileService.js");
-        return [];
-    }
-}
 
 export async function getUserFullDetailsService() {
     try {

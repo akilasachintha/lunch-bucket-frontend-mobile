@@ -1,27 +1,7 @@
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 import {log} from "../helpers/logs/log";
-import {auth2API, lunchBucketAPI, projectCode} from "../apis/lunchBucketAPI";
-
-export async function getUserDetailsController() {
-    try {
-        const token = await getDataFromLocalStorage('token');
-        if (!token) return ERROR_STATUS.ERROR;
-
-        const response = await auth2API.get(`getUser`, {
-            headers: {
-                'token': token,
-                'project_code': projectCode,
-            }
-        });
-
-        if (response.status === 200) return response.data;
-
-    } catch (error) {
-        log("error", "controller", "getUserDetailsController", error.message, "userProfileController.js");
-        return ERROR_STATUS.ERROR;
-    }
-}
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export async function getUserFullDetailsController() {
     try {

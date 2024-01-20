@@ -11,8 +11,7 @@ const ClaimPointsModal = ({
                               setIsPointsApplied,
                               setPoints,
                               setPointsCopy,
-                              totalAmount,
-                              pointsCopy
+                              totalAmount
                           }) => {
 
     const handlePressCash = async () => {
@@ -50,6 +49,14 @@ const ClaimPointsModal = ({
             await addDataToLocalStorage('basket', JSON.stringify(basketItems));
             setIsPointsApplied(false);
 
+        } catch (error) {
+            log("error", "ClaimPointsModal", "handlePressCash", error.message, "ClaimPointsModal.js");
+        }
+    }
+
+    const handlePressCancel = async () => {
+        try {
+            setIsPointsApplied(false);
         } catch (error) {
             log("error", "ClaimPointsModal", "handlePressCash", error.message, "ClaimPointsModal.js");
         }
@@ -97,7 +104,7 @@ const ClaimPointsModal = ({
                                         0</Text>
                                     <Text style={styles.insufficientPointsText}>to cash them</Text>
                                     <View style={styles.buttonContainer}>
-                                        <TouchableOpacity style={styles.crossIcon} onPress={handlePressNo}>
+                                        <TouchableOpacity style={styles.crossIcon} onPress={handlePressCancel}>
                                             <Entypo name="cross" size={30} color="#630A10"/>
                                         </TouchableOpacity>
                                     </View>

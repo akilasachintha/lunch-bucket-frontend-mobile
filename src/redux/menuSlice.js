@@ -22,5 +22,5 @@ export const menuSlice = createSlice({
 });
 
 
-export const {setIsEditMenuTrueReducer, setIsEditMenuFalseReducer, setSelectedDinnerMenuReducer} = menuSlice.actions;
+export const {setIsEditMenuTrueReducer, setIsEditMenuFalseReducer} = menuSlice.actions;
 export default menuSlice.reducer;

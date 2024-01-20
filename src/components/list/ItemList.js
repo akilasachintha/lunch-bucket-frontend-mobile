@@ -2,17 +2,9 @@ import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {AntDesign, MaterialIcons} from '@expo/vector-icons';
 import PercentageBar from "../precentageBar/PrecentageBar";
+import toTitleCase from "../../helpers/strings/stringFormatter";
 
 const ListItem = ({itemName, url, checked, handleItemPress, percentage, disabled}) => {
-    function toTitleCase(str) {
-        return str.replace(
-            /\w\S*/g,
-            function(txt) {
-                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-            }
-        );
-    }
-
     return (
         <View>
             <TouchableOpacity

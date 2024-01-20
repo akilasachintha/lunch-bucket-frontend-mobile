@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {log} from "../logs/log";
 
 const addDataToLocalStorage = async (key, value) => {
     try {

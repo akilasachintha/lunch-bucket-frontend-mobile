@@ -65,7 +65,7 @@ export default function BasketItem({
             let basketItems = await getDataFromLocalStorage('basket');
             basketItems = JSON.parse(basketItems);
 
-            if (basketItems?.meal?.length > 0) {
+            if (basketItems && basketItems.meal && basketItems?.meal?.length > 0) {
                 basketItems.meal = basketItems.meal.map((item) => {
                     if (item.id === mealId) {
                         return {
