@@ -17,6 +17,8 @@ export async function loginService(email, password) {
         const result = await loginController(email, password);
         const data = await result.data;
 
+        console.log("result", result);
+
         if (result === ERROR_STATUS.ERROR) {
             log("error", "service", "loginService | result", result, "authService.js");
             return ERROR_STATUS.LOGIN_API_ERROR;
@@ -26,13 +28,11 @@ export async function loginService(email, password) {
         } else if (data && data.state === false && data.response === "email confirmation pending") {
             log("info", "service", "loginService | state", data.state, "authService.js");
             return ERROR_STATUS.LOGIN_EMAIL_CONFIRMATION_PENDING;
-
         } else {
-            await addDataToLocalStorage('token', data.token);
+            await addDataToLocalStorage('token', data && data.token);
             await addDataToLocalStorage('customerId', data.id ? data.id : "");
             await addDataToLocalStorage('loginStatus', "true");
-            await addDataToLocalStorage('expoPushToken', data.device_token ? data && data.device_token && data.device_token.toString() : "");
-            await addDataToLocalStorage('role', data.type ? data.type : "");
+            await addDataToLocalStorage('role', data && data.type ? data.type : "");
 
             log("success", "service", "loginService", "Login Success", "authService.js");
             return data;

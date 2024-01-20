@@ -1,8 +1,9 @@
 import React from 'react';
-import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from "@react-navigation/native";
 import {useToast} from "../../helpers/toast/Toast";
 import {validatePushNotificationTokenChange} from "../../controllers/authController";
+import {log} from "../../helpers/logs/log";
 
 const PushNotificationDeviceChangeModal = ({
                                                deviceToken,
@@ -12,6 +13,7 @@ const PushNotificationDeviceChangeModal = ({
 
     const navigation = useNavigation();
     const {showToast} = useToast();
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const handleCancel = () => {
         setIsDeviceTokenChanged(false);
@@ -22,12 +24,21 @@ const PushNotificationDeviceChangeModal = ({
 
     const handleChange = async () => {
         try {
-            await validatePushNotificationTokenChange();
-            navigation.navigate('Menu');
-            showToast('success', 'Login Success');
+            setIsLoading(true);
+            const result = await validatePushNotificationTokenChange();
+            console.log("result", result);
+
+            if (result && result.state) {
+                setIsDeviceTokenChanged(true);
+                setDeviceToken(false);
+                navigation.navigate('Menu');
+                showToast('success', 'Login Success');
+            }
 
         } catch (e) {
             log("error", "PushNotificationDeviceChangeModal", "handleChange", e.message, "PushNotificationDeviceChangeModal.js");
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -55,9 +66,15 @@ const PushNotificationDeviceChangeModal = ({
                         </View>
                         <View style={styles.buttonConfirmContainer}>
                             <TouchableOpacity onPress={handleChange}>
-                                <View style={styles.getStartedButtonConfirmTextContainer}>
-                                    <Text style={styles.buttonConfirmText}>Change</Text>
-                                </View>
+                                {!isLoading ? (
+                                    <View style={styles.getStartedButtonConfirmTextContainer}>
+                                        <Text style={styles.buttonConfirmText}>Change</Text>
+                                    </View>
+                                ) : (
+                                    <View style={styles.getStartedButtonConfirmTextContainer}>
+                                        <ActivityIndicator size={25} color="#fff"/>
+                                    </View>
+                                )}
                             </TouchableOpacity>
                         </View>
                     </View>

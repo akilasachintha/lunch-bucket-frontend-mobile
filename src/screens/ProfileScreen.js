@@ -84,7 +84,9 @@ export default function ProfileScreen() {
                 >
                     {({values, handleChange, errors, setFieldTouched, touched}) => (
                         <View style={styles.formikContainer}>
-                            <ScrollView style={styles.scrollViewContainer}>
+                            <ScrollView style={styles.scrollViewContainer}
+                                        showsVerticalScrollIndicator={false}
+                            >
                                 <View style={styles.fieldHeaderContainer}>
                                     <Text style={styles.fieldHeaderContainerText}>{userData?.email}</Text>
                                 </View>

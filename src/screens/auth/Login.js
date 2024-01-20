@@ -1,4 +1,4 @@
-import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Image, Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from "../../helpers/paths/paths";
 import React, {useEffect, useState} from "react";
@@ -12,7 +12,9 @@ import {useToast} from "../../helpers/toast/Toast";
 import {log} from "../../helpers/logs/log";
 import PushNotificationDeviceChangeModal from "../../components/modals/PushNotificationDeviceChangeModal";
 import {ERROR_STATUS} from "../../errorLogs/errorStatus";
-import {getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
+import {addDataToLocalStorage, getDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -42,20 +44,31 @@ export default function Login({navigation}) {
         setIsSubmitting(true);
         setIsLoading(true);
 
+        console.log("values", values);
+
         try {
             const result = await loginService(values.email, values.password);
+            console.log("result", result);
 
-            if (!result.device_token && result.state) {
+            if (result && !result.device_token && result.state) {
                 setDeviceToken(true);
             }
 
-            if (result.device_token && result.state && result.type && result.type === "user") {
+            if (result && result.type && result.type === "admin") {
+                setRole("admin");
+            }
+
+            if (result && result.type && result.type === "user") {
+                setRole("user");
+            }
+
+            if (result && result.device_token && result.state && result.type && result.type === "user") {
                 navigation.navigate('Menu');
                 showToast('success', 'Login Success');
                 return;
             }
 
-            if (result.type && result.type === "admin") {
+            if (result && result.type && result.type === "admin") {
                 navigation.navigate('Admin');
                 showToast('success', 'Login Success');
                 return;
@@ -82,17 +95,78 @@ export default function Login({navigation}) {
         }
     };
 
-    const getUserRole = async () => {
-        await getDataFromLocalStorage('role').then((role) => {
-            setRole(role);
-        });
-    }
 
     useEffect(() => {
+        const getUserRole = async () => {
+            const role = await getDataFromLocalStorage('role');
+            if (role) {
+                setRole(role);
+            }
+        }
+
         getUserRole().catch((error) => {
             log("error", "Login", "useEffect | getUserRole", error.message, "Login.js");
         });
     }, []);
+
+    async function registerForPushNotificationsAsync() {
+        let token;
+        if (Device.isDevice) {
+            const {status: existingStatus} = await Notifications.getPermissionsAsync();
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+                const {status} = await Notifications.requestPermissionsAsync();
+                finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+                alert('Failed to get push token for push notification!');
+                return;
+            }
+            token = (await Notifications.getExpoPushTokenAsync({projectId: '28d5e5c1-53f3-4c9c-abcb-2bdbc0639464'})).data;
+            console.warn("Push Token", token);
+        } else {
+            alert('Must use physical device for Push Notifications');
+        }
+
+        if (Platform.OS === 'android') {
+            await Notifications.setNotificationChannelAsync('default', {
+                name: 'default',
+                importance: Notifications.AndroidImportance.MAX,
+                vibrationPattern: [0, 250, 250, 250],
+                lightColor: '#FF231F7C',
+            });
+        }
+        return token;
+    }
+
+    const storeToken = async () => {
+        try {
+            const response = await registerForPushNotificationsAsync();
+            console.log("response", response);
+
+            if (response) {
+                console.log("response", response);
+                await addDataToLocalStorage('expoPushToken', response.toString());
+            } else {
+                await addDataToLocalStorage('expoPushToken', "");
+            }
+
+        } catch (error) {
+            log("error", "PushNotifications", "storeToken", error.message, "PushNotifications.js");
+        }
+    };
+
+    useEffect(() => {
+        storeToken().catch((error) => {
+            log("error", "PushNotifications", "useEffect | storeToken", error.message, "PushNotifications.js");
+        });
+
+    }, []);
+
+    useEffect(() => {
+        console.log("deviceToken", deviceToken);
+        console.log("role", role);
+    }, [deviceToken, role]);
 
     return (
         <SafeAreaView style={styles.container}>

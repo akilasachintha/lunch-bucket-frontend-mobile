@@ -11,13 +11,15 @@ export async function loginController(email, password) {
         let expoPushToken = await getDataFromLocalStorage('expoPushToken');
         if (!expoPushToken) expoPushToken = "";
 
+        console.log("expoPushToken", expoPushToken);
+
         const response = await auth2API.post(
             'userLogin',
             {
                 email: email,
                 password: password,
                 project_code: projectCode,
-                device_token: expoPushToken ? expoPushToken : "ExponentPushToken[P8MlylNLoj2c7rxsSgj_Z1]",
+                device_token: expoPushToken ? expoPushToken : "",
             }
         );
 
@@ -82,24 +84,30 @@ export async function validatePushNotificationTokenChange() {
     try {
         const token = await getDataFromLocalStorage('token');
         const expoPushToken = await getDataFromLocalStorage('expoPushToken');
+
+        console.log("token", token);
+        console.log("expoPushToken", expoPushToken);
         if (!token || !expoPushToken) {
             return ERROR_STATUS.ERROR;
         }
 
-        const response = await lunchBucketAPI.put(
-            'https://fmrlw0xn6h.execute-api.ap-south-1.amazonaws.com/dev/updateDeviceToken',
+        const response = await auth2API.put('updateDeviceToken',
             {
-                device_token: expoPushToken,
+                device_token: expoPushToken ? expoPushToken : "",
             },
             {
                 headers: {
-                    'project_code': '64a7aec4932166ca272cd176AVT60UVT4300',
+                    'project_code': projectCode,
                     'token': token,
                 }
             }
         );
 
+        console.log("response", response.data);
+
         if (response.status === 200) return response.data;
+
+        return ERROR_STATUS.ERROR;
 
     } catch (error) {
         log("error", "controller", "validatePushNotificationTokenChange", error.message, "authController.js");
