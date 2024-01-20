@@ -316,8 +316,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 5,
         borderColor: '#fff',
-        borderBottomColor: 'rgba(197, 194, 194, 0.5)',
-        borderWidth: 2,
     },
     listItemContainerText: {
         fontSize: 18,

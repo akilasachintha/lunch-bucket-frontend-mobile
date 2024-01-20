@@ -41,6 +41,8 @@ const styles = StyleSheet.create({
     },
     checkoutItemNameContainer: {
         flex: 1,
+        justifyContent: "center",
+        alignItems: 'center'
     },
     checkoutItemNameText: {
         fontSize: 18,
@@ -49,21 +51,15 @@ const styles = StyleSheet.create({
         borderRadius: 40,
         justifyContent: 'center',
         alignItems: 'center',
-        width: 40,
-        height: 40,
-        flex: 1,
         marginHorizontal: 10,
     },
     priceText: {
         fontSize: 18,
     },
     countText: {
-        backgroundColor: 'rgba(255, 255, 255, 0.6)',
-        borderRadius: 40,
         fontSize: 18,
-        width: 40,
-        height: 40,
-        borderWidth: 2,
+        justifyContent: "center",
+        alignItems: 'center',
         borderColor: '#fff',
         textAlign: 'center',
         textAlignVertical: 'center',

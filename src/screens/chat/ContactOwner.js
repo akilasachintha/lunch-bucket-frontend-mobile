@@ -33,6 +33,7 @@ export default function ContactOwner() {
     const [refreshing, setRefreshing] = useState(false);
     const scrollViewRef = useRef();
     const sendIcon = <MaterialCommunityIcons name="send" size={40} color="#630A10"/>;
+    const textInputRef = useRef();
 
     const validationSchema = Yup.object().shape({
         message: Yup.string().required('Message is required'),
@@ -130,6 +131,11 @@ export default function ContactOwner() {
         });
     };
 
+    useEffect(() => {
+        // Focus the TextInput when the component mounts
+        textInputRef.current.focus();
+    }, []);
+
     if (isLoading) {
         return (
             <SafeAreaView style={styles.safeAreaContainer}>
@@ -206,17 +212,13 @@ export default function ContactOwner() {
                                 ))}
                             </ScrollView>
                         </View>
-                        <KeyboardAvoidingView
-                            behavior={Platform.OS === "ios" ? "padding" : "height"}
+                        <View
                             style={styles.chatBox}>
                             <TextInput
-                                editable
-                                multiline
-                                numberOfLines={4}
+                                ref={textInputRef}
                                 placeholder={'Type your message here'}
                                 style={styles.chatBoxTextInput}
                                 onChangeText={formikProps.handleChange('message')}
-                                onBlur={formikProps.handleBlur('message')}
                                 value={formikProps.values.message}
                             />
                             <TouchableOpacity
@@ -225,7 +227,7 @@ export default function ContactOwner() {
                             >
                                 {sendIcon}
                             </TouchableOpacity>
-                        </KeyboardAvoidingView>
+                        </View>
                     </View>
                 )}
             </Formik>

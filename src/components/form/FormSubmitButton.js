@@ -12,16 +12,16 @@ const FormSubmitButton = ({handleSubmit, buttonText, isValid, isLoading}) => {
             <TouchableOpacity onPress={handleSubmit} disabled={!isValid}>
                 {
                     !isLoading && (
-                        <Text style={inputStyles}>
-                            {buttonText}
-                        </Text>
+                            <Text style={inputStyles}>
+                                {buttonText}
+                            </Text>
                     )
                 }
                 {
                     isLoading && (
-                        <Text style={inputStyles}>
-                            <ActivityIndicator size={25} color="#630A10"/>
-                        </Text>
+                        <View style={styles.signInTextError}>
+                            <ActivityIndicator style={{ width: "100%",justifyContent: 'center', alignItems: 'center'}} size={25} color="#630A10"/>
+                        </View>
                     )
                 }
             </TouchableOpacity>
@@ -36,26 +36,23 @@ const styles = StyleSheet.create({
         paddingTop: '2%',
     },
     signInText: {
+        width: "100%",
         flexDirection: 'row',
         textAlign: 'center',
+        fontWeight: "bold",
         justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: '3%',
-        fontWeight: 'bold',
-        fontSize: 14,
         backgroundColor: '#FFE662',
         borderRadius: 30,
         color: '#630A10',
     },
     signInTextError: {
-        textAlign: 'center',
+        width: "100%",
         justifyContent: 'center',
         alignItems: 'center',
         paddingVertical: '3%',
-        fontWeight: 'bold',
-        fontSize: 14,
         backgroundColor: '#fae579',
         borderRadius: 30,
-        color: '#623539',
     },
 });

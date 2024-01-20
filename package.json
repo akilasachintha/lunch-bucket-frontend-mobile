@@ -7,6 +7,7 @@
     "dev": "cross-env NODE_ENV=development expo start -c",
     "test": "cross-env NODE_ENV=test&& expo start -c",
     "build:dev:apk": "cross-env NODE_ENV=development eas build --platform android --profile development --local",
+    "build:dev:ios": "cross-env NODE_ENV=development eas build --platform ios --profile development --local",
     "build:prod:aab": "cross-env NODE_ENV=production eas build --platform android --profile production --local",
     "build:prod:apk": "cross-env NODE_ENV=production eas build --platform android --profile productionApk --local",
     "android": "expo run:android",

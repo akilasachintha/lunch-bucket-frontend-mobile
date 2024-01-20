@@ -1,4 +1,4 @@
-import {Image, Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Image, Keyboard, Platform, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import STRINGS from '../../helpers/strings/strings';
 import PATHS from "../../helpers/paths/paths";
 import React, {useEffect, useState} from "react";
