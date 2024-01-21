@@ -80,6 +80,9 @@ export default function AboutUsScreen() {
                             <View style={{paddingVertical: 30, height: 40}}/>
                         </ImageBackground>
                         <Text style={styles.titleText}>We Developed Lunch Bucket</Text>
+                        <Image source={
+                            PATHS.i211
+                        } style={{width: '100%', height: 200, borderRadius: 20, objectFit: "contain"}}/>
                         <Text style={styles.bodyText}>
                             Meet the ingenious minds of i211 Solutions, who brought Lunch Bucket to
                             life – a team committed to innovation, teamwork, and social well-being.

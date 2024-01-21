@@ -10,7 +10,9 @@ export default function PaymentDetailsScreen() {
             <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
             <TopHeader headerText="Payment Details" backButtonPath="Settings"/>
             <View style={styles.bodyContainer}>
-                <ScrollView style={styles.scrollViewStyle}>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={styles.scrollViewStyle}>
                     <View style={styles.contentContainer}>
                         <Text style={styles.header}>💳 Payment Methods</Text>
                         <Text style={styles.info}>- Cash on Delivery: Payments are to be made in cash upon receiving

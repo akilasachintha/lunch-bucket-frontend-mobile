@@ -4,34 +4,31 @@ import DynamicTopBar from '../../components/topBar/DynamicTopBar';
 import {SelectedTab} from '../../helpers/enums/enums';
 import TopHeader from '../../components/topHeader/TopHeader';
 
-export default function ContactDetailsScreen() {
+export default function RegisterDetailsScreen() {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
-            <TopHeader headerText="Contact Details" backButtonPath="Settings"/>
+            <TopHeader headerText="Registration Details" backButtonPath="Settings"/>
             <View style={styles.bodyContainer}>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={styles.scrollViewStyle}>
                     <View style={styles.contentContainer}>
 
-                        <Text style={styles.header}>Chat with the Owner</Text>
+                        {/* Registration Section */}
+                        <Text style={styles.header}>Registration</Text>
                         <Text style={styles.info}>
-                            Feel free to communicate directly with our owner for any inquiries.
-                            If your query is about a recent order, kindly mention the order code.
-                            We welcome your opinions and suggestions about our meals and services.
+                            Click on 'Sign-Up' to create your account.
+                            User needs to verify the email for successfully creating the account.
+                            If you already have an account, click on 'Login' to access the application.
+                            If you forgot your password, you can easily reset it using your email address.
                         </Text>
 
-                        <Text style={styles.header}>Call our Hotline</Text>
+                        {/* Customer Code Section */}
+                        <Text style={styles.header}>Customer Code</Text>
                         <Text style={styles.info}>
-                            For immediate assistance, please call our hotline at 0777 169 791.
-                            We are here to help you with any urgent matters.
-                        </Text>
-
-                        <Text style={styles.header}>Email Us</Text>
-                        <Text style={styles.info}>
-                            For more detailed queries, feel free to email us at lunchbucketofficial@gmail.com.
-                            We strive to respond to all emails within 24 hours.
+                            Once you successfully log in, you can see a customer code in your profile section.
+                            This customer code will be used in future orders.
                         </Text>
 
                     </View>

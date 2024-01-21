@@ -25,6 +25,9 @@ import FeedbackDetailsScreen from "../screens/settings/FeedbackDetailsScreen";
 import PromotionsDetailsScreen from "../screens/settings/PromotionsDetailsScreen";
 import ContactDetailsScreen from "../screens/settings/ContactDetailsScreen";
 import AboutUsScreen from "../screens/AboutUsScreen";
+import RegisterDetailsScreen from "../screens/settings/RegisterDetailsScreen";
+import TricksDetailsScreen from "../screens/settings/TricksDetailsScreen";
+import NotificationDetailsScreen from "../screens/settings/NotificationDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 export default function StackNavigator() {
@@ -61,6 +64,9 @@ export default function StackNavigator() {
                 <Stack.Screen name="FeedbackDetails" component={FeedbackDetailsScreen}/>
                 <Stack.Screen name="PromotionsDetails" component={PromotionsDetailsScreen}/>
                 <Stack.Screen name="ContactDetails" component={ContactDetailsScreen}/>
+                <Stack.Screen name="RegisterDetails" component={RegisterDetailsScreen}/>
+                <Stack.Screen name="TricksDetails" component={TricksDetailsScreen}/>
+                <Stack.Screen name="NotificationDetails" component={NotificationDetailsScreen}/>
                 <Stack.Screen name="Instruction" component={AboutUsScreen}/>
             </Stack.Navigator>
         </AuthGuard>

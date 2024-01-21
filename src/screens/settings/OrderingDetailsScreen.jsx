@@ -8,43 +8,61 @@ export default function OrderingDetailsScreen() {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
-            <TopHeader headerText="Order Details" backButtonPath="Settings"/>
-            <ScrollView style={styles.scrollViewStyle}
-                        showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.contentContainer}>
-                    <Text style={styles.headerBottom}>📋 Ordering Timing</Text>
-                    <Text style={styles.subInfo}>⏰ Please lunch orders between 5 PM and 11 AM, subject to
-                        availability.</Text>
-                    <Text style={styles.subInfo}>🍽️ Dinner orders are accepted from 11 AM to 5 PM, based on
-                        availability.</Text>
+            <TopHeader headerText="Ordering Details" backButtonPath="Settings"/>
+            <View style={styles.bodyContainer}>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={styles.scrollViewStyle}>
+                    <View style={styles.contentContainer}>
 
-                    <Text style={styles.headerBottom}>📋 Meal Section</Text>
-                    <Text style={styles.subInfo}>🔍 Explore our daily menu.</Text>
-                    <Text style={styles.subInfo}>🍽️ Choose either a regular meal or opt for a special.</Text>
-                    <Text style={styles.subInfo}>💳 For main meal, select four food items and include one rice
-                        item.</Text>
+                        {/* Ordering Timing Section */}
+                        <Text style={styles.header}>Ordering Timing</Text>
+                        <Text style={styles.info}>
+                            Place lunch orders between 5 pm and 11 am, subject to availability.
+                            Dinner orders are accepted from 11 am to 5 pm, based on availability.
+                        </Text>
 
-                    <Text style={styles.headerBottom}>🔎 Adding to Basket</Text>
-                    <Text style={styles.subInfo}>- ⏰ Add your chosen meal items to the basket.</Text>
-                    <Text style={styles.subInfo}>- 💰 Update the basket to order multiple meals in one go.</Text>
-                    <Text style={styles.subInfo}>- 🆔 Proceed order.</Text>
+                        {/* Meal Selection Section */}
+                        <Text style={styles.header}>Meal Selection</Text>
+                        <Text style={styles.info}>
+                            Explore our daily menu.
+                            Choose either a regular meal or opt for a special.
+                            For a main meal, select four food items and include one rice dish.
+                        </Text>
 
-                    <Text style={styles.headerBottom}>💰 Point Redemption</Text>
-                    <Text style={styles.subInfo}>- ⏰ Cash in points for money if you have more than 100
-                        points.</Text>
+                        {/* Adding to Basket Section */}
+                        <Text style={styles.header}>Adding to Basket</Text>
+                        <Text style={styles.info}>
+                            Add your chosen meal items to the basket.
+                            Update the basket to order multiple meals in one go.
+                            Proceed to order.
+                        </Text>
 
-                    <Text style={styles.headerBottom}>💰 Order Details</Text>
-                    <Text style={styles.subInfo}>- ⏰ Check 'Your Orders'. for</Text>
-                    <Text style={styles.info}>📦 Meal Type</Text>
-                    <Text style={styles.info}>📦 Payable Amount</Text>
-                    <Text style={styles.info}>📦 Delivery Time and Location</Text>
-                    <Text style={styles.info}>📦 Packet code</Text>
+                        {/* Points Redemption Section */}
+                        <Text style={styles.header}>Points Redemption</Text>
+                        <Text style={styles.info}>
+                            Cash your points for money if it is more than 100 points.
+                        </Text>
 
-                    <Text style={styles.importantInfo}>📦 Each packet has a unique order code; verify this code when collecting your order.</Text>
-                    <Text style={styles.importantInfo}>👤 Keep your unique user code handy when collecting your order.</Text>
-                </View>
-            </ScrollView>
+                        {/* Payment Section */}
+                        <Text style={styles.header}>Payment</Text>
+                        <Text style={styles.info}>
+                            Cash on Delivery: Payments are to be made in cash upon receiving your order.
+                            Online Payment option will be available soon.
+                            Price Confirmation: The relevant price for your order can be viewed under the 'Your Orders'
+                            section before delivery.
+                            Include payable amount, delivery time and location, packet code.
+                        </Text>
+
+                        {/* Order Details Section */}
+                        <Text style={styles.header}>Order Details</Text>
+                        <Text style={styles.info}>
+                            Check 'Your Orders' for: Meal type, payable amount, delivery time and location, packet code.
+                        </Text>
+
+                    </View>
+                </ScrollView>
+            </View>
         </SafeAreaView>
     );
 }
@@ -52,51 +70,34 @@ export default function OrderingDetailsScreen() {
 const styles = StyleSheet.create({
     safeAreaContainer: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#F3F4F6',
+    },
+    bodyContainer: {
+        flex: 10,
+        paddingHorizontal: 20,
     },
     scrollViewStyle: {
-        marginHorizontal: 20,
+        flex: 1,
     },
     contentContainer: {
-        marginVertical: 20,
+        flex: 1,
+        paddingTop: 20,
+        paddingBottom: 30,
     },
     header: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 15,
-        color: '#333',
-    },
-    headerBottom: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginTop: 20,
-        marginBottom: 15,
-        color: '#333',
-    },
-    step: {
-        fontSize: 16,
+        fontSize: 22,
+        fontWeight: '600',
         marginBottom: 10,
-        lineHeight: 24,
-        color: '#555',
+        color: '#1A202C',
+        borderBottomWidth: 1,
+        borderBottomColor: '#CBD5E0',
+        paddingBottom: 5,
     },
     info: {
-        fontSize: 14,
-        marginTop: 5,
-        color: '#666',
-    },
-    subInfo: {
-        fontSize: 14,
-        marginLeft: 20,
-        marginBottom: 5,
-    },
-    importantInfo: {
-        fontSize: 14,
-        fontWeight: 'bold',
+        fontSize: 16,
         marginTop: 10,
-        marginBottom: 10,
-        color: '#444',
-        backgroundColor: '#eef',
-        padding: 10,
-        borderRadius: 5,
+        color: '#4A5568',
+        lineHeight: 24,
+        marginBottom: 20,
     },
 });

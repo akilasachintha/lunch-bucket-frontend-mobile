@@ -8,20 +8,39 @@ export default function DeliveryDetailsScreen() {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
-            <TopHeader headerText="Lunchbucket Details" backButtonPath="Settings"/>
+            <TopHeader headerText="Delivery Details" backButtonPath="Settings"/>
             <View style={styles.bodyContainer}>
-                <ScrollView style={styles.scrollViewStyle}>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={styles.scrollViewStyle}>
                     <View style={styles.contentContainer}>
-                        <Text style={styles.header}>🍴 Lunch Delivery Schedule</Text>
-                        <Text style={styles.info}>5pm - 7am: Place order, receive at 11am or 12pm</Text>
-                        <Text style={styles.info}>7am - 9am: Place order, receive at 12:30pm</Text>
-                        <Text style={styles.info}>9am - 10am: Place order, receive at 1:30pm</Text>
-                        <Text style={styles.info}>10am - 11am: Place order, receive at 2pm</Text>
 
-                        <Text style={styles.header}>🌙 Dinner Delivery Schedule</Text>
-                        <Text style={styles.info}>11am - 3pm: Place order, receive at 7pm</Text>
-                        <Text style={styles.info}>3pm - 4pm: Place order, receive at 8pm</Text>
-                        <Text style={styles.info}>4pm - 5pm: Place order, receive at 8:30pm</Text>
+                        {/* Delivery Locations Section */}
+                        <Text style={styles.header}>Delivery Locations</Text>
+                        <Text style={styles.info}>
+                            We currently offer delivery services to two locations: the University Back Gate and the
+                            Front Gate.
+                            Your order will be delivered to the specified location and at the selected time.
+                            Each packet has a unique order code; please verify it during order collection.
+                            Remember, every user has a unique user code; keep it handy when collecting your order.
+                        </Text>
+
+                        {/* Lunch Delivery Schedule Section */}
+                        <Text style={styles.header}>Lunch Delivery Schedule</Text>
+                        <Text style={styles.info}>
+                            5pm - 7am: Place your order, Receive at 11am or 12:30pm.{'\n'}
+                            7am - 9am: Place your order, Receive at 12:30pm.{'\n'}
+                            9am - 11am: Place your order, Receive at 2pm (Extra 10% will be charged).
+                        </Text>
+
+                        {/* Dinner Delivery Schedule Section */}
+                        <Text style={styles.header}>Dinner Delivery Schedule</Text>
+                        <Text style={styles.info}>
+                            11am - 3pm: Place your order, Receive at 7:30pm or 8:30pm.{'\n'}
+                            3pm - 4pm: Place your order, Receive at 8:30pm.{'\n'}
+                            4pm - 5pm: Place your order, Receive at 8:30pm (Extra 10% will be charged).
+                        </Text>
+
                     </View>
                 </ScrollView>
             </View>
@@ -32,27 +51,34 @@ export default function DeliveryDetailsScreen() {
 const styles = StyleSheet.create({
     safeAreaContainer: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#F3F4F6',
     },
     bodyContainer: {
-        flex: 10
+        flex: 10,
+        paddingHorizontal: 20,
     },
     scrollViewStyle: {
-        marginHorizontal: 20,
+        flex: 1,
     },
     contentContainer: {
-        marginVertical: 20,
+        flex: 1,
+        paddingTop: 20,
+        paddingBottom: 30,
     },
     header: {
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 22,
+        fontWeight: '600',
         marginBottom: 10,
-        color: '#333',
+        color: '#1A202C',
+        borderBottomWidth: 1,
+        borderBottomColor: '#CBD5E0',
+        paddingBottom: 5,
     },
     info: {
-        fontSize: 14,
-        marginTop: 5,
-        color: '#666',
-        marginBottom: 10,
+        fontSize: 16,
+        marginTop: 10,
+        color: '#4A5568',
+        lineHeight: 24,
+        marginBottom: 20,
     },
 });

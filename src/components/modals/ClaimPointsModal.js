@@ -98,11 +98,8 @@ const ClaimPointsModal = ({
                             ) : (
                                 <View style={styles.insufficientPointsTextContainer}>
                                     <Text style={styles.insufficientPointsText}>
-                                        You need at least 100 points or
+                                        You need at least 100 points to cash them.
                                     </Text>
-                                    <Text style={styles.insufficientPointsText}>total amount should be greater than
-                                        0</Text>
-                                    <Text style={styles.insufficientPointsText}>to cash them</Text>
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity style={styles.crossIcon} onPress={handlePressCancel}>
                                             <Entypo name="cross" size={30} color="#630A10"/>

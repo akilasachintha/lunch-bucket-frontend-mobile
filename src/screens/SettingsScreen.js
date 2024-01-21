@@ -7,9 +7,12 @@ import PATHS from "../helpers/paths/paths";
 
 const tileData = [
     {title: 'Ordering', source: PATHS.ordering, navigateTo: 'OrderingDetails'},
-    {title: 'Payment', source: PATHS.payment, navigateTo: 'PaymentDetails'},
+    // {title: 'Payment', source: PATHS.payment, navigateTo: 'PaymentDetails'},
     {title: 'Delivery', source: PATHS.delivery, navigateTo: 'DeliveryDetails'},
     {title: 'Contact Us', source: PATHS.contact, navigateTo: 'ContactDetails'},
+    {title: 'Registering', source: PATHS.payment, navigateTo: 'RegisterDetails'},
+    {title: 'Tricks', source: PATHS.tricks, navigateTo: 'TricksDetails'},
+    {title: 'Notifications', source: PATHS.notifications, navigateTo: 'NotificationDetails'},
     // {title: 'Feedback', source: PATHS.feedback, navigateTo: 'FeedbackDetails', disabled: true},
     // {title: 'Promotions', source: PATHS.promotion, navigateTo: 'PromotionsDetails', disabled: true},
 ];
