@@ -7,7 +7,7 @@
         "EXPO_PUBLIC_AUTH2_API": "https://fw2svr60sl.execute-api.ap-south-1.amazonaws.com/beta",
         "EXPO_PUBLIC_ENV": "development"
       },
-      "autoIncrement": true,
+      "autoIncrement": false,
       "android": {
         "buildType": "apk"
       }
@@ -19,7 +19,7 @@
         "EXPO_PUBLIC_AUTH2_API": "https://a2og6gjwae.execute-api.ap-south-1.amazonaws.com/prod/",
         "EXPO_PUBLIC_ENV": "production"
       },
-      "autoIncrement": true,
+      "autoIncrement": false,
       "android": {
         "distribution": "store"
       }
@@ -31,7 +31,7 @@
         "EXPO_PUBLIC_AUTH2_API": "https://a2og6gjwae.execute-api.ap-south-1.amazonaws.com/prod/",
         "EXPO_PUBLIC_ENV": "production"
       },
-      "autoIncrement": true,
+      "autoIncrement": false,
       "android": {
         "buildType": "apk"
       }
