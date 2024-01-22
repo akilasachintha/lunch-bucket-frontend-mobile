@@ -16,18 +16,18 @@ export default function RegisterDetailsScreen() {
                     <View style={styles.contentContainer}>
 
                         {/* Registration Section */}
-                        <Text style={styles.header}>Registration</Text>
+                        <Text style={styles.header}>✏️ Registration</Text>
                         <Text style={styles.info}>
-                            Click on 'Sign-Up' to create your account.
-                            User needs to verify the email for successfully creating the account.
-                            If you already have an account, click on 'Login' to access the application.
+                            Click on 'Sign-Up' to create your account. {'\n'}
+                            User needs to verify the email for successfully creating the account. {'\n'}
+                            If you already have an account, click on 'Login' to access the application. {'\n'}
                             If you forgot your password, you can easily reset it using your email address.
                         </Text>
 
                         {/* Customer Code Section */}
-                        <Text style={styles.header}>Customer Code</Text>
+                        <Text style={styles.header}>🆔 Customer Code</Text>
                         <Text style={styles.info}>
-                            Once you successfully log in, you can see a customer code in your profile section.
+                            Once you successfully log in, you can see a customer code in your profile section. {'\n'}
                             This customer code will be used in future orders.
                         </Text>
 

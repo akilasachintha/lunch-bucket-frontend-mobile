@@ -16,27 +16,30 @@ export default function TricksDetailsScreen() {
                     <View style={styles.contentContainer}>
 
                         {/* Maximize Your Points Section */}
-                        <Text style={styles.header}>Maximize Your Points</Text>
+                        <Text style={styles.header}>🚀 Maximize Your Points</Text>
                         <Text style={styles.info}>
-                            Earn points with every order placed.
-                            Points double for Lunch: Place a lunch order before 7 am and receive double the points.
-                            This is a great way to kickstart your day with extra rewards!
-                            Midday Reward: If you're planning for dinner, consider placing your order before 3 pm to
-                            enjoy the double points benefit.
-                            It's our way of saying thank you for planning ahead.
-                            Stay Updated: Regularly check our app or website for special promotions and bonus point
-                            opportunities.
-                            We often roll out exclusive offers that can help you earn more.
-                            Avoid placing an order and deleting it before collection, as it results in double point
-                            reduction.
+                            Earn points with every order placed.{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>Points double for Lunch:</Text> Place a lunch order
+                            before 7 am and receive double the points.{'\n'}
+                            This is a great way to kickstart your day with extra rewards!{'\n\n'}
+                            <Text style={{fontWeight: 'bold'}}>Midday Reward:</Text> If you're planning for dinner,
+                            consider placing your order before 3 pm to enjoy the double points benefit.{'\n'}
+                            It's our way of saying thank you for planning ahead.{'\n\n'}
+                            <Text style={{fontWeight: 'bold'}}>Stay Updated:</Text> Regularly check our app or website
+                            for special promotions and bonus point opportunities.{'\n\n'}
+                            We often roll out exclusive offers that can help you earn more.{'\n\n'}
+                            <Text style={{fontWeight: 'bold'}}>
+                                Avoid placing an order and deleting it before collection, as it results in double point
+                                reduction.
+                            </Text>
                         </Text>
 
                         {/* Threat User Section */}
-                        <Text style={styles.header}>Threat User</Text>
+                        <Text style={styles.header}>⚠️ Threat User</Text>
                         <Text style={styles.info}>
                             If a user consistently misses collecting their orders, they will be marked as a 'threat
-                            user' and may face account restrictions.
-                            Threat status will be shown in the user's profile.
+                            user' and may face <Text style={{fontStyle: "italic"}}>account restrictions</Text>.{'\n\n'}
+                            Threat status will be shown in the user's profile.{'\n\n'}
                             Threat status will be taken into account in confirming or rejecting orders of the particular
                             user.
                         </Text>

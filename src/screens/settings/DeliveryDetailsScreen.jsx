@@ -16,29 +16,48 @@ export default function DeliveryDetailsScreen() {
                     <View style={styles.contentContainer}>
 
                         {/* Delivery Locations Section */}
-                        <Text style={styles.header}>Delivery Locations</Text>
-                        <Text style={styles.info}>
-                            We currently offer delivery services to two locations: the University Back Gate and the
-                            Front Gate.
+                        <Text style={styles.header}>📍 Delivery Locations</Text>
+                        <Text style={styles.infoSub}>
+                            We currently offer delivery services to two locations:
+                        </Text>
+                        <Text style={styles.infoSub}>
+                            <Text style={{fontWeight: 'bold'}}>- The Back Gate</Text>
+                        </Text>
+                        <Text style={styles.infoSub}>
+                            <Text style={{fontWeight: 'bold'}}>- The Front Gate.</Text>
+                        </Text>
+                        <Text style={styles.infoSub}>
                             Your order will be delivered to the specified location and at the selected time.
-                            Each packet has a unique order code; please verify it during order collection.
+                        </Text>
+                        <Text style={styles.infoSub}>
+                            Each packet has a <Text style={{fontWeight: 'bold'}}>unique order code</Text>; please verify
+                            it during order collection.
+                        </Text>
+                        <Text style={{...styles.info, fontWeight: 'bold'}}>
                             Remember, every user has a unique user code; keep it handy when collecting your order.
                         </Text>
 
                         {/* Lunch Delivery Schedule Section */}
-                        <Text style={styles.header}>Lunch Delivery Schedule</Text>
+                        <Text style={styles.header}>☀️ Lunch Delivery Schedule</Text>
                         <Text style={styles.info}>
-                            5pm - 7am: Place your order, Receive at 11am or 12:30pm.{'\n'}
-                            7am - 9am: Place your order, Receive at 12:30pm.{'\n'}
-                            9am - 11am: Place your order, Receive at 2pm (Extra 10% will be charged).
+                            <Text style={{fontWeight: 'bold'}}>5pm - 7am:</Text> Place your order, Receive at 11am or
+                            12:30pm.{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>7am - 9am:</Text> Place your order, Receive at
+                            12:30pm.{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>9am - 11am:</Text> Place your order, Receive at 2pm{' '}
+                            <Text style={{fontStyle: 'italic'}}>(Extra 10% will be charged).</Text>
                         </Text>
 
                         {/* Dinner Delivery Schedule Section */}
-                        <Text style={styles.header}>Dinner Delivery Schedule</Text>
+                        <Text style={styles.header}>🌙 Dinner Delivery Schedule</Text>
                         <Text style={styles.info}>
-                            11am - 3pm: Place your order, Receive at 7:30pm or 8:30pm.{'\n'}
-                            3pm - 4pm: Place your order, Receive at 8:30pm.{'\n'}
-                            4pm - 5pm: Place your order, Receive at 8:30pm (Extra 10% will be charged).
+                            <Text style={{fontWeight: 'bold'}}>11am - 3pm:</Text> Place your order, Receive at 7:30pm or
+                            8:30pm.{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>3pm - 4pm:</Text> Place your order, Receive at
+                            8:30pm.{'\n'}
+                            <Text style={{fontWeight: 'bold'}}>4pm - 5pm:</Text> Place your order, Receive at
+                            8:30pm{' '}
+                            <Text style={{fontStyle: 'italic'}}>(Extra 10% will be charged).</Text>
                         </Text>
 
                     </View>
@@ -80,5 +99,11 @@ const styles = StyleSheet.create({
         color: '#4A5568',
         lineHeight: 24,
         marginBottom: 20,
+    },
+    infoSub: {
+        fontSize: 16,
+        marginTop: 5,
+        color: '#4A5568',
+        lineHeight: 24,
     },
 });

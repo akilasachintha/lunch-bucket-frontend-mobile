@@ -62,8 +62,6 @@ export default function Login({navigation}) {
         setIsSubmitting(true);
         setIsLoading(true);
 
-        console.log("values", values);
-
         try {
             const networkState = await Network.getNetworkStateAsync();
             if (!networkState.isConnected) {
@@ -73,7 +71,6 @@ export default function Login({navigation}) {
             }
 
             const result = await loginService(values.email, values.password);
-            console.log("result", result);
 
             if (result && !result.device_token && result.state) {
                 setDeviceToken(true);
@@ -89,13 +86,13 @@ export default function Login({navigation}) {
 
             if (result && result.device_token && result.state && result.type && result.type === "user") {
                 navigation.navigate('Menu');
-                showToast('success', 'Login Success');
+                showToast('success', 'You have Successfully Logged In');
                 return;
             }
 
             if (result && result.type && result.type === "admin") {
                 navigation.navigate('Admin');
-                showToast('success', 'Login Success');
+                showToast('success', 'You have Successfully Logged In');
                 return;
             }
 

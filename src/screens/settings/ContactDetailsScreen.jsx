@@ -15,23 +15,25 @@ export default function ContactDetailsScreen() {
                     style={styles.scrollViewStyle}>
                     <View style={styles.contentContainer}>
 
-                        <Text style={styles.header}>Chat with the Owner</Text>
+                        <Text style={styles.header}>💬 Chat with the Owner</Text>
                         <Text style={styles.info}>
-                            Feel free to communicate directly with our owner for any inquiries.
-                            If your query is about a recent order, kindly mention the order code.
+                            Feel free to communicate directly with our owner for any inquiries.{'\n'}
+                            If your query is about a recent order, kindly mention the order code.{'\n'}
                             We welcome your opinions and suggestions about our meals and services.
                         </Text>
 
-                        <Text style={styles.header}>Call our Hotline</Text>
+                        <Text style={styles.header}>☎️ Call our Hotline</Text>
                         <Text style={styles.info}>
-                            For immediate assistance, please call our hotline at 0777 169 791.
-                            We are here to help you with any urgent matters.
+                            For immediate assistance, please call our hotline at{' '}
+                            <Text style={{fontWeight: 'bold'}}>0777 169 791</Text>. We are here to help you with any
+                            urgent matters.
                         </Text>
 
-                        <Text style={styles.header}>Email Us</Text>
+                        <Text style={styles.header}>✉️ Email Us</Text>
                         <Text style={styles.info}>
-                            For more detailed queries, feel free to email us at lunchbucketofficial@gmail.com.
-                            We strive to respond to all emails within 24 hours.
+                            For more detailed queries, feel free to email us at{' '}
+                            <Text style={{fontWeight: 'bold'}}>lunchbucketofficial@gmail.com</Text>. We strive to
+                            respond to all emails within 24 hours.
                         </Text>
 
                     </View>

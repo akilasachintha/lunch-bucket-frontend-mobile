@@ -19,7 +19,7 @@ const PushNotificationDeviceChangeModal = ({
         setIsDeviceTokenChanged(false);
         setDeviceToken(false);
         navigation.navigate('Menu');
-        showToast('success', 'Login Success');
+        showToast('success', 'You have Successfully Logged In');
     }
 
     const handleChange = async () => {
@@ -32,7 +32,7 @@ const PushNotificationDeviceChangeModal = ({
                 setIsDeviceTokenChanged(true);
                 setDeviceToken(false);
                 navigation.navigate('Menu');
-                showToast('success', 'Login Success');
+                showToast('success', 'You have Successfully Logged In');
             }
 
         } catch (e) {

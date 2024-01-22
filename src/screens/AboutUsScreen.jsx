@@ -15,7 +15,7 @@ export default function AboutUsScreen() {
                     showsVerticalScrollIndicator={false}
                     style={styles.scrollViewStyle}>
                     <View style={styles.contentContainer}>
-                        <Image source={PATHS.background} style={{width: '100%', height: 200, borderRadius: 20}}/>
+                        <Image source={PATHS.background} style={{width: '100%', height: 200}}/>
                         <Text style={styles.titleText}>Team Lunchbucket</Text>
                         <Text style={styles.bodyText}>
                             🚀 Empowered Team: Meet our dynamic team at Lunch Bucket, a powerhouse of potential and
@@ -38,8 +38,8 @@ export default function AboutUsScreen() {
                             Welcome to Lunch Bucket – where innovation meets well-being.
                         </Text>
                         <ImageBackground source={PATHS.motivation}
-                                         style={{width: '100%', height: 200, borderRadius: 20, marginBottom: 50}}>
-                            <Text style={styles.titleText}>Our Mission</Text>
+                                         style={{width: '100%', height: 200, marginBottom: 50, marginTop: 40}}>
+                            <Text style={styles.subTitleText}>Our Mission</Text>
                             <Text style={styles.bodyText}>
                                 'Health is Wealth, So Eat Good Food.'
                                 Our mission is to redefine well-being by providing not just meals but experiences that
@@ -52,9 +52,9 @@ export default function AboutUsScreen() {
                         </ImageBackground>
                         <ImageBackground source={PATHS.green}
                                          resizeMode="contain"
-                                         imageStyle={{width: '100%', height: "90%", borderRadius: 20}}
+                                         imageStyle={{width: '100%', height: "90%"}}
                         >
-                            <Text style={styles.titleText}>Our Vision</Text>
+                            <Text style={styles.subTitleText}>Our Vision</Text>
                             <Text style={styles.bodyText}>
                                 Innovation Ignited: We embrace creativity and forward-thinking in every aspect.
                                 Passion for Well-Being: We're dedicated to providing nutritious, delicious meals that
@@ -79,10 +79,16 @@ export default function AboutUsScreen() {
                             </Text>
                             <View style={{paddingVertical: 30, height: 40}}/>
                         </ImageBackground>
-                        <Text style={styles.titleText}>We Developed Lunch Bucket</Text>
+                        <Text style={[styles.titleText, [{marginVertical: 20}]]}>We Developed Lunch Bucket</Text>
                         <Image source={
                             PATHS.i211
-                        } style={{width: '100%', height: 200, borderRadius: 20, objectFit: "contain"}}/>
+                        } style={{
+                            width: '100%',
+                            height: 200,
+                            borderRadius: 1,
+                            objectFit: "contain",
+                            marginBottom: 14
+                        }}/>
                         <Text style={styles.bodyText}>
                             Meet the ingenious minds of i211 Solutions, who brought Lunch Bucket to
                             life – a team committed to innovation, teamwork, and social well-being.
@@ -141,6 +147,13 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     titleText: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: 20,
+        marginVertical: 10,
+    },
+    subTitleText: {
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',

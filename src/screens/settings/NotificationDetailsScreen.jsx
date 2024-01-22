@@ -8,31 +8,34 @@ export default function NotificationDetailsScreen() {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
-            <TopHeader headerText="Notification Details" backButtonPath="Settings"/>
+            <TopHeader headerText="Notification Details"
+                       backButtonPath="Settings"/>
             <View style={styles.bodyContainer}>
-                <ScrollView style={styles.scrollViewStyle}>
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={styles.scrollViewStyle}>
                     <View style={styles.contentContainer}>
 
                         {/* Delivery Update Section */}
-                        <Text style={styles.header}>Delivery Update</Text>
+                        <Text style={styles.header}>🚚 Delivery Update</Text>
                         <Text style={styles.info}>
                             Stay informed about your meal's journey.
                             Receive a notification when your packet arrives at the designated delivery location.
                         </Text>
 
                         {/* Order Confirmation Alert Section */}
-                        <Text style={styles.header}>Order Confirmation Alert</Text>
+                        <Text style={styles.header}>🔔 Order Confirmation Alert</Text>
                         <Text style={styles.info}>
                             Upon confirmation by the admin, you will receive a notification containing your relevant
-                            order ID.
+                            order ID.{'\n\n'}
                             In any unfortunate event that the admin cannot proceed with your order, or your threat
                             status is high,
-                            you will be promptly notified of the order rejection.
+                            you will be promptly notified of the order rejection.{'\n\n'}
                             Your early notification is our priority.
                         </Text>
 
                         {/* Special Meal Alerts Section */}
-                        <Text style={styles.header}>Special Meal Alerts</Text>
+                        <Text style={styles.header}>👨‍🍳 Special Meal Alerts</Text>
                         <Text style={styles.info}>
                             Don't miss out on our new offerings!
                             Whenever we introduce a new special meal, you'll be the first to know with our try-out
@@ -40,7 +43,7 @@ export default function NotificationDetailsScreen() {
                         </Text>
 
                         {/* Normal Meal Alerts Section */}
-                        <Text style={styles.header}>Normal Meal Alerts</Text>
+                        <Text style={styles.header}>🍴 Choice Meal Alerts</Text>
                         <Text style={styles.info}>
                             Be in the know about our regular meal updates!
                             Receive timely notifications whenever we refresh our standard lunch or dinner menu.

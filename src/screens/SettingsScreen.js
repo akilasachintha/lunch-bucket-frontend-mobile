@@ -1,18 +1,27 @@
 import React from 'react';
-import {ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+    ImageBackground,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import DynamicTopBar from '../components/topBar/DynamicTopBar';
 import {SelectedTab} from '../helpers/enums/enums';
 import TopHeader from "../components/topHeader/TopHeader";
 import PATHS from "../helpers/paths/paths";
 
 const tileData = [
+    {title: 'Registering', source: PATHS.payment, navigateTo: 'RegisterDetails'},
     {title: 'Ordering', source: PATHS.ordering, navigateTo: 'OrderingDetails'},
     // {title: 'Payment', source: PATHS.payment, navigateTo: 'PaymentDetails'},
     {title: 'Delivery', source: PATHS.delivery, navigateTo: 'DeliveryDetails'},
-    {title: 'Contact Us', source: PATHS.contact, navigateTo: 'ContactDetails'},
-    {title: 'Registering', source: PATHS.payment, navigateTo: 'RegisterDetails'},
     {title: 'Tricks', source: PATHS.tricks, navigateTo: 'TricksDetails'},
     {title: 'Notifications', source: PATHS.notifications, navigateTo: 'NotificationDetails'},
+    {title: 'Contact Us', source: PATHS.contact, navigateTo: 'ContactDetails'},
     // {title: 'Feedback', source: PATHS.feedback, navigateTo: 'FeedbackDetails', disabled: true},
     // {title: 'Promotions', source: PATHS.promotion, navigateTo: 'PromotionsDetails', disabled: true},
 ];
@@ -26,7 +35,7 @@ export default function SettingsScreen({navigation}) {
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <DynamicTopBar selectedTab={SelectedTab.PROFILE}/>
+            <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
             <TopHeader headerText="Instructions" backButtonPath="Menu"/>
             <View style={styles.bodyContainer}>
                 <ScrollView
@@ -55,10 +64,24 @@ export default function SettingsScreen({navigation}) {
                     ))}
                     <TouchableOpacity
                         onPress={() => navigation.navigate('Instruction')}
-                        style={styles.button}>
-                        <Text style={styles.buttonText}>
-                            About Us
-                        </Text>
+                        activeOpacity={0.7}
+                        style={[
+                            styles.button,
+                            Platform.OS === 'android'
+                                ? {elevation: 10}
+                                : {
+                                    shadowColor: 'black',
+                                    shadowOffset: {width: 2, height: -10},
+                                    shadowOpacity: 0.9,
+                                    shadowRadius: 3,
+                                },
+                        ]}
+                    >
+                        <View style={styles.glowButton}>
+                            <Text style={[styles.buttonText, styles.glowText]}>
+                                About Us
+                            </Text>
+                        </View>
                     </TouchableOpacity>
                 </ScrollView>
             </View>
@@ -109,7 +132,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignItems: 'center',
-        backgroundColor: '#8a1b1b',
+        backgroundColor: '#e3a715',
         padding: 10,
         borderRadius: 10,
         margin: 10,
@@ -118,5 +141,16 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    glowButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 10,
+        overflow: 'hidden',
+    },
+    glowText: {
+        textShadowColor: 'rgba(255, 255, 255, 0.5)',
+        textShadowOffset: {width: 0, height: 0},
+        textShadowRadius: 10,
     },
 });
