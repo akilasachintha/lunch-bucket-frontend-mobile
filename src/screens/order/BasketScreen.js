@@ -11,10 +11,9 @@ import {log} from "../../helpers/logs/log";
 import {useToast} from "../../helpers/toast/Toast";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
-import moment from "moment/moment";
 import {useDispatch} from "react-redux";
 import {setIsEditMenuFalseReducer} from "../../redux/menuSlice";
-import useFetchRemainingTimes from "../../services/timeService";
+import useMenuHook from "../../services/useMenuHook";
 
 export default function BasketScreen() {
     const {showToast} = useToast();
@@ -25,7 +24,12 @@ export default function BasketScreen() {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedMealId, setSelectedMealId] = useState(null);
 
-    const {getUTCDateTime} = useFetchRemainingTimes();
+    const {
+        disableLunchCheckbox,
+        disableDinnerCheckbox,
+        fetchDisableLunchCheckbox,
+        fetchDisableDinnerCheckbox
+    } = useMenuHook();
 
     const navigation = useNavigation();
     const plusIcon = <Fontisto name="plus-a" size={18} color="#7E1F24"/>;
@@ -70,47 +74,28 @@ export default function BasketScreen() {
     );
 
     const handleProceedToOrder = async () => {
-        const response = await getUTCDateTime();
-        const {utc_time, utc_date} = response;
+        const isLunch = basket.venue === "Lunch";
 
-        const trimmedUtcDate = utc_date.trim();
-        const currentTime = moment.utc(`${trimmedUtcDate} ${utc_time}`);
+        fetchDisableDinnerCheckbox().catch((error) =>
+            log("error", "BasketScreen", "useEffect | fetchBasket", error.message, "BasketScreen.js")
+        );
+        fetchDisableLunchCheckbox().catch((error) =>
+            log("error", "BasketScreen", "useEffect | fetchBasket", error.message, "BasketScreen.js")
+        );
 
-        let currentUTCHours = currentTime.hours() + 5;
-        let currentUTCMinutes = currentTime.minutes() + 30;
+        if (disableLunchCheckbox && isLunch) {
+            showToast("error", "You cannot order lunch at this time.");
+            basket.meal = basket.meal.filter(meal => meal.venue !== "Dinner");
 
-        if (currentUTCMinutes >= 60) {
-            currentUTCHours += 1;
-            currentUTCMinutes -= 60;
-        }
-
-        const hasLunchItems = basket.meal.some(meal => meal.venue === "Lunch");
-        const hasDinnerItems = basket.meal.some(meal => meal.venue === "Dinner");
-        const isLunch = basket.venue === "Dinner";
-
-        // 11 AM to 5 PM
-        if (isLunch && hasLunchItems && (currentUTCHours > 11 || (currentUTCHours === 11 && currentUTCMinutes >= 0)) &&
-            (currentUTCHours < 17 || (currentUTCHours === 17 && currentUTCMinutes < 0))) {
-            showToast("error", "Lunch orders are closed now. Please order for dinner.");
-            await addDataToLocalStorage("basket", "{}");
+            await addDataToLocalStorage("basket", JSON.stringify(basket));
             await fetchBasket();
             return;
         }
 
-        // 5 PM to 12 AM
-        if (isLunch && hasDinnerItems && (currentUTCHours > 17 || (currentUTCHours === 17 && currentUTCMinutes >= 0)) &&
-            (currentUTCHours < 24 || (currentUTCHours === 0 && currentUTCMinutes < 0))) {
-            showToast("error", "Dinner orders are closed now. Please order for lunch.");
-            await addDataToLocalStorage("basket", "{}");
-            await fetchBasket();
-            return;
-        }
-
-        // 12 AM to 11 AM
-        if (isLunch && hasDinnerItems && (currentUTCHours > 0 || (currentUTCHours === 0 && currentUTCMinutes >= 0)) &&
-            (currentUTCHours < 11 || (currentUTCHours === 11 && currentUTCMinutes < 0))) {
-            showToast("error", "Dinner orders are closed now. Please order for lunch.");
-            await addDataToLocalStorage("basket", "{}");
+        if (disableDinnerCheckbox && !isLunch) {
+            showToast("error", "You cannot order dinner at this time.");
+            basket.meal = basket.meal.filter(meal => meal.venue !== "Lunch");
+            await addDataToLocalStorage("basket", JSON.stringify(basket));
             await fetchBasket();
             return;
         }

@@ -20,7 +20,6 @@ import {
 import {log} from "../../helpers/logs/log";
 import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
-import moment from "moment/moment";
 import Timer from "../../components/timer/Timer";
 import {useDispatch, useSelector} from "react-redux";
 import {useFocusEffect} from "@react-navigation/native";
@@ -30,7 +29,7 @@ import {
     fetchMenuPercentageLunchForThreeIDs,
     fetchMenuPercentageLunchForTwoIDs
 } from "../../redux/menuPercentageSlice";
-import useFetchRemainingTimes from "../../services/timeService";
+import useMenuHook from "../../services/useMenuHook";
 
 export default function MenuScreen({route}) {
     const {showToast} = useToast();
@@ -52,7 +51,6 @@ export default function MenuScreen({route}) {
 
     // Lunch
     const [isLunch, setIsLunch] = useState(true);
-    const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
     const [lunchSpecialItems, setLunchSpecialItems] = useState([]);
     const [lunchRiceItems, setLunchRiceItems] = useState([]);
     const [lunchVegetableItems, setLunchVegetableItems] = useState(null);
@@ -62,12 +60,16 @@ export default function MenuScreen({route}) {
     // Dinner
     const [dinnerSpecialItems, setDinnerSpecialItems] = useState([]);
     const [dinnerRiceItems, setDinnerRiceItems] = useState([]);
-    const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState(false);
     const [dinnerVegetableItems, setDinnerVegetableItems] = useState([]);
     const [dinnerStewItems, setDinnerStewItems] = useState([]);
     const [dinnerMeatItems, setDinnerMeatItems] = useState([]);
 
-    const {getUTCDateTime} = useFetchRemainingTimes();
+    const {
+        disableLunchCheckbox,
+        disableDinnerCheckbox,
+        fetchDisableLunchCheckbox,
+        fetchDisableDinnerCheckbox
+    } = useMenuHook();
 
     const fetchMealById = async (mealId) => {
         const result = await getByMealIdFromBasketService(mealId);
@@ -367,23 +369,9 @@ export default function MenuScreen({route}) {
 
     const handleDisabledMenu = async () => {
         try {
-            const response = await getUTCDateTime();
-            const {utc_time, utc_date} = response;
+            // await fetchDisableLunchCheckbox();
+            await fetchDisableDinnerCheckbox();
 
-            const trimmedUtcDate = utc_date.trim();
-            const currentTime = moment.utc(`${trimmedUtcDate} ${utc_time}`);
-
-            const currentUTCHours = currentTime.hours();
-            const currentUTCMinutes = currentTime.minutes();
-
-            if ((currentUTCHours > 5 || (currentUTCHours === 5 && currentUTCMinutes >= 30)) &&
-                (currentUTCHours < 11 || (currentUTCHours === 11 && currentUTCMinutes < 30))) {
-                setDisableLunchCheckbox(true);
-                setDisableDinnerCheckbox(false);
-            } else {
-                setDisableDinnerCheckbox(true);
-                setDisableLunchCheckbox(false);
-            }
         } catch (error) {
             log('error', 'MenuScreen', 'handleDisabledMenu', error.message, 'MenuScreen.js');
         }
@@ -515,7 +503,7 @@ export default function MenuScreen({route}) {
                 log('error', 'MenuScreen', 'useEffect 3', error.message, 'MenuScreen.js');
             }
         );
-    }, []);
+    }, [isLunch, disableLunchCheckbox, disableDinnerCheckbox]);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>

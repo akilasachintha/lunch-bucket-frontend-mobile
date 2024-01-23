@@ -13,6 +13,7 @@ import DynamicTopBar from "../../components/topBar/DynamicTopBar";
 import {SelectedTab} from "../../helpers/enums/enums";
 import {getUserPointsService} from "../../services/userProfileService";
 import ClaimPointsModal from "../../components/modals/ClaimPointsModal";
+import useMenuHook from "../../services/useMenuHook";
 
 export default function Checkout() {
     const [successResult, setSuccessResult] = useState({});
@@ -26,6 +27,16 @@ export default function Checkout() {
     const [pointsCopy, setPointsCopy] = useState(0);
     const [isPointsApplied, setIsPointsApplied] = useState(false);
     const {showToast} = useToast();
+    const {
+        disableLunchCheckbox,
+        disableDinnerCheckbox,
+        lunchPacketLimit,
+        dinnerPacketLimit,
+        checkPacketLimitLunch,
+        checkPacketLimitDinner,
+        fetchDisableLunchCheckbox,
+        fetchDisableDinnerCheckbox
+    } = useMenuHook();
 
     const fetchCheckout = async () => {
         try {
@@ -52,7 +63,38 @@ export default function Checkout() {
             let basketItems = await getDataFromLocalStorage('basket');
             if (!basketItems) return;
 
+            await checkPacketLimitLunch();
+            await checkPacketLimitDinner();
+            await fetchDisableLunchCheckbox();
+            await fetchDisableDinnerCheckbox();
+
             basketItems = JSON.parse(basketItems);
+            console.log(lunchPacketLimit, dinnerPacketLimit, basketItems.venue);
+
+            if (lunchPacketLimit && basketItems.venue === 'Lunch') {
+                showToast('error', 'Sorry, Lunch box limit reached.');
+                setIsPlacingOrder(false);
+                return;
+            }
+
+            if (dinnerPacketLimit && basketItems.venue === 'Dinner') {
+                showToast('error', 'Sorry, Dinner box limit reached.');
+                setIsPlacingOrder(false);
+                return;
+            }
+
+            if (disableLunchCheckbox && basketItems.venue === 'Lunch') {
+                showToast('error', 'You cannot order lunch at this time.');
+                setIsPlacingOrder(false);
+                return;
+            }
+
+            if (disableDinnerCheckbox && basketItems.venue === 'Dinner') {
+                showToast('error', 'You cannot order dinner at this time.');
+                setIsPlacingOrder(false);
+                return;
+            }
+
             basketItems.isCash = !!(basketItems && basketItems.isCash);
 
             await addDataToLocalStorage('basket', JSON.stringify(basketItems));
