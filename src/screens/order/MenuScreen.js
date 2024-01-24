@@ -369,9 +369,8 @@ export default function MenuScreen({route}) {
 
     const handleDisabledMenu = async () => {
         try {
-            // await fetchDisableLunchCheckbox();
+            await fetchDisableLunchCheckbox();
             await fetchDisableDinnerCheckbox();
-
         } catch (error) {
             log('error', 'MenuScreen', 'handleDisabledMenu', error.message, 'MenuScreen.js');
         }
