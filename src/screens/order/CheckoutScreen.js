@@ -43,7 +43,6 @@ export default function Checkout() {
             const result = await handleCheckoutService();
             if (result === ERROR_STATUS.ERROR) {
                 log("error", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");
-                showToast("error", "Order Limit is over. Please try again later.");
             } else {
                 log("success", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");
                 setSuccessResult(result);
