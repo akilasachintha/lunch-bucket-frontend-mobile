@@ -83,6 +83,15 @@ export default function BasketScreen() {
         fetchDisableDinnerCheckbox().catch((error) =>
             log("error", "BasketScreen", "useEffect | fetchDisableDinnerCheckbox", error.message, "BasketScreen.js")
         );
+
+        if (disableLunchCheckbox) {
+            console.log("disableLunchCheckbox", disableLunchCheckbox);
+            setIsLunch(false);
+        } else if (disableDinnerCheckbox) {
+            console.log("disableDinnerCheckbox", disableDinnerCheckbox);
+            setIsLunch(true);
+        }
+
     }, [disableLunchCheckbox, disableDinnerCheckbox]);
 
     const handleProceedToOrder = async () => {
@@ -92,11 +101,9 @@ export default function BasketScreen() {
         await fetchDisableLunchCheckbox();
 
         if (disableLunchCheckbox) {
-            console.log("Hello1");
             console.log("disableLunchCheckbox", disableLunchCheckbox);
             setIsLunch(false);
         } else if (disableDinnerCheckbox) {
-            console.log("Hello2");
             console.log("disableDinnerCheckbox", disableDinnerCheckbox);
             setIsLunch(true);
         }
@@ -104,11 +111,31 @@ export default function BasketScreen() {
         console.log("disableLunchCheckbox", disableLunchCheckbox);
         console.log("disableDinnerCheckbox", disableDinnerCheckbox);
 
-        const isLunchItems = basket.meal.filter(meal => meal.venue === "Lunch");
-        const isDinnerItems = basket.meal.filter(meal => meal.venue === "Dinner");
+        console.log("basket", basket);
+
+        if (!basket || !basket.meal || basket.meal.length === 0) {
+            showToast("error", "Please add at least one meal to proceed.");
+            setIsButtonLoading(false);
+            return;
+        }
+
+        if (basket && basket.meal && basket.meal.length === 0) {
+            showToast("error", "Please add at least one meal to proceed.");
+            setIsButtonLoading(false);
+            return;
+        }
+
+        const isLunchItems = basket && basket.meal && basket?.meal.filter(meal => meal.venue === "Lunch");
+        const isDinnerItems = basket && basket.meal && basket?.meal.filter(meal => meal.venue === "Dinner");
+
+        if (isLunchItems.length === 0 && isDinnerItems.length === 0) {
+            showToast("error", "Please add at least one meal to proceed.");
+            setIsButtonLoading(false);
+            return;
+        }
 
         if (isLunch && isDinnerItems.length !== 0) {
-            basket.meal = basket.meal.filter(meal => meal.venue !== "Dinner");
+            basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Dinner");
             await addDataToLocalStorage("basket", JSON.stringify(basket));
             await fetchBasket();
             showToast("error", "You can't order lunch and dinner at the same time.");
@@ -117,7 +144,7 @@ export default function BasketScreen() {
         }
 
         if (!isLunch && isLunchItems.length !== 0) {
-            basket.meal = basket.meal.filter(meal => meal.venue !== "Lunch");
+            basket.meal = basket && basket.meal && basket.meal.filter(meal => meal.venue !== "Lunch");
             await addDataToLocalStorage("basket", JSON.stringify(basket));
             await fetchBasket();
             showToast("error", "You can't order lunch and dinner at the same time.");
@@ -127,8 +154,10 @@ export default function BasketScreen() {
 
         if (basket && basket.meal && basket.meal.length > 0) {
             navigation.navigate('Checkout');
+            setIsButtonLoading(false);
         } else {
             showToast("error", "Please add at least one meal to proceed.");
+            setIsButtonLoading(false);
         }
 
         setIsButtonLoading(false);

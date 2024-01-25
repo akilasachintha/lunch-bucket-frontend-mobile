@@ -1,8 +1,5 @@
 import {log} from "../helpers/logs/log";
-import {
-    addDataToLocalStorage,
-    getDataFromLocalStorage
-} from "../helpers/storage/asyncStorage";
+import {addDataToLocalStorage, getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {setOderTimeController, setOrderController} from "../controllers/checkoutController";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {setMenuBasketService, updateBasketFromId} from '../../services/menuService';
@@ -36,6 +36,14 @@ const BasketButton = ({
         fetchDisableLunchCheckbox,
     } = useMenuHook();
 
+    useEffect(() => {
+        checkPacketLimitDinner().catch((error) => console.error('Error checking dinner packet limit:', error));
+        checkPacketLimitLunch().catch((error) => console.error('Error checking lunch packet limit:', error));
+        fetchDisableDinnerCheckbox().catch((error) => console.error('Error fetching disable dinner checkbox:', error));
+        fetchDisableLunchCheckbox().catch((error) => console.error('Error fetching disable lunch checkbox:', error));
+
+    }, [lunchPacketLimit, dinnerPacketLimit, disableDinnerCheckbox, disableLunchCheckbox]);
+
     const handleBasketPress = async () => {
         setIsLoading(true);
         if (isButtonDisabled) return;
@@ -45,13 +53,13 @@ const BasketButton = ({
         await fetchDisableLunchCheckbox();
         await fetchDisableDinnerCheckbox();
 
-        if (lunchPacketLimit && venue === 'Lunch') {
+        if (lunchPacketLimit && !disableLunchCheckbox) {
             showToast('error', 'Sorry, Lunch box limit reached.');
             setIsLoading(false);
             return;
         }
 
-        if (dinnerPacketLimit && venue === 'Dinner') {
+        if (dinnerPacketLimit && !disableDinnerCheckbox) {
             showToast('error', 'Sorry, Dinner box limit reached.');
             setIsLoading(false);
             return;
@@ -68,7 +76,6 @@ const BasketButton = ({
             setIsLoading(false);
             return;
         }
-
 
         if (isEditMenu) {
             totalCheckedSpecialItemsCount = 0;
@@ -88,7 +95,7 @@ const BasketButton = ({
 
         if (totalCheckedSpecialItemsCount > 0 && totalCheckedItemsCount <= 0) {
             // Handle special meals
-            const basketItems = totalCheckedSpecialItems.filter(item => item.checked === true);
+            const basketItems = totalCheckedSpecialItems && totalCheckedSpecialItems.filter(item => item.checked === true);
 
             try {
                 if (isEditMenu && mealId > 0) {
@@ -106,7 +113,7 @@ const BasketButton = ({
 
         if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5)) {
             // Handle normal meals
-            const basketItems = totalCheckedItems.filter(item => item.checked === true);
+            const basketItems = totalCheckedItems && totalCheckedItems.filter(item => item.checked === true);
 
             try {
                 if (isEditMenu && mealId > 0) {
@@ -128,6 +135,7 @@ const BasketButton = ({
         if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount < 5)) {
             console.log("New");
             showToast('error', 'Please select 5 items to proceed.');
+            setIsLoading(false);
         }
 
         setTimeout(() => {

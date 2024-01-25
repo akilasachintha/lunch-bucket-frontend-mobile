@@ -38,8 +38,29 @@ export default function Checkout() {
         fetchDisableDinnerCheckbox
     } = useMenuHook();
 
+    useEffect(() => {
+        checkPacketLimitDinner().catch((error) => console.error('Error checking dinner packet limit:', error));
+        checkPacketLimitLunch().catch((error) => console.error('Error checking lunch packet limit:', error));
+        fetchDisableDinnerCheckbox().catch((error) => console.error('Error fetching disable dinner checkbox:', error));
+        fetchDisableLunchCheckbox().catch((error) => console.error('Error fetching disable lunch checkbox:', error));
+
+    }, [lunchPacketLimit, dinnerPacketLimit, disableDinnerCheckbox, disableLunchCheckbox]);
+
     const fetchCheckout = async () => {
         try {
+            console.log("Lunch packet limit: ", lunchPacketLimit);
+            console.log("Dinner packet limit: ", dinnerPacketLimit);
+
+            if (lunchPacketLimit && !disableLunchCheckbox) {
+                showToast('error', 'You cannot order lunch at this time.');
+                return false;
+            }
+
+            if (dinnerPacketLimit && !disableDinnerCheckbox) {
+                showToast('error', 'You cannot order dinner at this time.');
+                return false;
+            }
+
             const result = await handleCheckoutService();
             if (result === ERROR_STATUS.ERROR) {
                 log("error", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");

@@ -75,12 +75,14 @@ export default function useMenuHook() {
                 }
             });
 
-            if (result?.data?.data?.state) {
+            if (result?.data?.data?.state === false) {
+                setLunchPacketLimit(true);
+            } else {
                 setLunchPacketLimit(false);
             }
 
         } catch (e) {
-            setLunchPacketLimit(true);
+            setLunchPacketLimit(false);
             showToast('error', 'Something went wrong!');
             console.warn(e);
         }
@@ -100,12 +102,15 @@ export default function useMenuHook() {
                 }
             });
 
-            if (result?.data?.data?.state) {
+            if (result?.data?.data?.state === false) {
+                setDinnerPacketLimit(true);
+            } else {
                 setDinnerPacketLimit(false);
             }
 
+
         } catch (e) {
-            setDinnerPacketLimit(true);
+            setDinnerPacketLimit(false);
             showToast('Something went wrong!', 'error');
             console.warn(e);
         }
