@@ -32,14 +32,13 @@ export default function useMenuHook() {
 
         } catch (e) {
             setDisableLunchCheckbox(true);
-            console.warn(e);
+            console.log(e.message);
         }
     }
 
     const fetchDisableDinnerCheckbox = async () => {
         try {
-            const token = await getDataFromLocalStorage('token');
-            console.log(token);
+            const token = await getDataFromLocalStorage('token')
             if (!token) {
                 setDisableLunchCheckbox(true);
                 setDisableDinnerCheckbox(true);
@@ -52,15 +51,13 @@ export default function useMenuHook() {
                 }
             });
 
-            console.log(result);
-
             if (result?.data?.data?.state) {
                 setDisableDinnerCheckbox(false);
             }
 
         } catch (e) {
             setDisableDinnerCheckbox(true);
-            console.log(e);
+            console.log(e.message);
         }
     }
 

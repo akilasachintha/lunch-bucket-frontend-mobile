@@ -1,7 +1,12 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 export default function BottomButton({buttonText, onPress, isLoading}) {
+
+    useEffect(() => {
+
+    }, [isLoading]);
+
     return (
         <View style={styles.viewItemContainer}>
             <TouchableOpacity

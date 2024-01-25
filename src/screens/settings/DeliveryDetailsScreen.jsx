@@ -54,9 +54,9 @@ export default function DeliveryDetailsScreen() {
                             <Text style={{fontWeight: 'bold'}}>11am - 3pm:</Text> Place your order, Receive at 7:30pm or
                             8:30pm.{'\n'}
                             <Text style={{fontWeight: 'bold'}}>3pm - 4pm:</Text> Place your order, Receive at
-                            8:30pm.{'\n'}
+                            7:30pm.{'\n'}
                             <Text style={{fontWeight: 'bold'}}>4pm - 5pm:</Text> Place your order, Receive at
-                            7:30pm{' '}
+                            8:30pm{' '}
                             <Text style={{fontStyle: 'italic'}}>(Extra 10% will be charged).</Text>
                         </Text>
 

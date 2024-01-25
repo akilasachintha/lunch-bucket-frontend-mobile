@@ -28,8 +28,12 @@ const BasketButton = ({
     const {
         lunchPacketLimit,
         dinnerPacketLimit,
+        disableDinnerCheckbox,
+        disableLunchCheckbox,
         checkPacketLimitLunch,
         checkPacketLimitDinner,
+        fetchDisableDinnerCheckbox,
+        fetchDisableLunchCheckbox,
     } = useMenuHook();
 
     const handleBasketPress = async () => {
@@ -38,7 +42,8 @@ const BasketButton = ({
 
         await checkPacketLimitLunch();
         await checkPacketLimitDinner();
-
+        await fetchDisableLunchCheckbox();
+        await fetchDisableDinnerCheckbox();
 
         if (lunchPacketLimit && venue === 'Lunch') {
             showToast('error', 'Sorry, Lunch box limit reached.');
@@ -51,6 +56,19 @@ const BasketButton = ({
             setIsLoading(false);
             return;
         }
+
+        if (venue === 'Lunch' && disableLunchCheckbox) {
+            showToast('error', 'Sorry, Lunch time exceeded.');
+            setIsLoading(false);
+            return;
+        }
+
+        if (venue === 'Dinner' && disableDinnerCheckbox) {
+            showToast('error', 'Sorry, Dinner time exceeded.');
+            setIsLoading(false);
+            return;
+        }
+
 
         if (isEditMenu) {
             totalCheckedSpecialItemsCount = 0;
@@ -87,7 +105,7 @@ const BasketButton = ({
         }
 
         if (totalCheckedSpecialItemsCount <= 0 && (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5)) {
-            console.log("Old");
+            // Handle normal meals
             const basketItems = totalCheckedItems.filter(item => item.checked === true);
 
             try {
@@ -95,6 +113,7 @@ const BasketButton = ({
                     await updateBasketFromId(mealId, basketItems);
                     showToast('success', 'Basket updated successfully');
                     navigation.navigate('Basket');
+
                 } else if (totalCheckedItemsCount > 0 && totalCheckedItemsCount === 5) {
                     await setMenuBasketService(basketItems, totalAmount, venue, isVeg, false, getUTCDateTime);
                     navigation.navigate('Basket');

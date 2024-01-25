@@ -136,28 +136,6 @@ export default function BasketItem({
                             <Text style={styles.bucketItemNameText}>{mealName}</Text>
                             <Text style={styles.subMenuBasketItemText}>{items && items[0].type}</Text>
                         </View>
-                        {
-                            count && count === 2 ? (
-                                <TouchableOpacity style={styles.switchStyles}>
-                                    {isSwitchOn ? (
-                                        <Text style={styles.switchTextStyles}>Potion</Text>
-                                    ) : (
-                                        <Text style={styles.switchTextStyles}>Packs</Text>
-                                    )}
-                                    <Switch
-                                        onValueChange={() => toggleSwitch()}
-                                        value={isSwitchOn}
-                                        style={styles.switchItemStyles}
-                                        trackColor={{false: '#767577', true: '#2C984A'}}
-                                        thumbColor={isSwitchOn ? '#f4f3f4' : '#f4f3f4'}
-                                    />
-                                </TouchableOpacity>
-                            ) : (
-                                <View style={styles.switchStyles}>
-                                    <Text style={styles.switchTextStyles}>{count === 1 ? "Pack" : "Packs"}</Text>
-                                </View>
-                            )
-                        }
                         <TouchableOpacity style={styles.minusButtonTextContainer} onPress={handleMinusPress}>
                             <Fontisto name="minus-a" size={14} color="black"/>
                         </TouchableOpacity>

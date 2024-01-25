@@ -22,7 +22,9 @@ export default function BasketScreen() {
     const [basket, setBasket] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isButtonLoading, setIsButtonLoading] = useState(false);
     const [selectedMealId, setSelectedMealId] = useState(null);
+    const [isLunch, setIsLunch] = useState(false);
 
     const {
         disableLunchCheckbox,
@@ -73,30 +75,53 @@ export default function BasketScreen() {
         }, [])
     );
 
-    const handleProceedToOrder = async () => {
-        const isLunch = basket.venue === "Lunch";
+    useEffect(() => {
+        fetchDisableLunchCheckbox().catch((error) =>
+            log("error", "BasketScreen", "useEffect | fetchDisableLunchCheckbox", error.message, "BasketScreen.js")
+        );
 
         fetchDisableDinnerCheckbox().catch((error) =>
-            log("error", "BasketScreen", "useEffect | fetchBasket", error.message, "BasketScreen.js")
+            log("error", "BasketScreen", "useEffect | fetchDisableDinnerCheckbox", error.message, "BasketScreen.js")
         );
-        fetchDisableLunchCheckbox().catch((error) =>
-            log("error", "BasketScreen", "useEffect | fetchBasket", error.message, "BasketScreen.js")
-        );
+    }, [disableLunchCheckbox, disableDinnerCheckbox]);
 
-        if (disableLunchCheckbox && isLunch) {
-            showToast("error", "You cannot order lunch at this time.");
+    const handleProceedToOrder = async () => {
+        setIsButtonLoading(true);
+
+        await fetchDisableDinnerCheckbox();
+        await fetchDisableLunchCheckbox();
+
+        if (disableLunchCheckbox) {
+            console.log("Hello1");
+            console.log("disableLunchCheckbox", disableLunchCheckbox);
+            setIsLunch(false);
+        } else if (disableDinnerCheckbox) {
+            console.log("Hello2");
+            console.log("disableDinnerCheckbox", disableDinnerCheckbox);
+            setIsLunch(true);
+        }
+
+        console.log("disableLunchCheckbox", disableLunchCheckbox);
+        console.log("disableDinnerCheckbox", disableDinnerCheckbox);
+
+        const isLunchItems = basket.meal.filter(meal => meal.venue === "Lunch");
+        const isDinnerItems = basket.meal.filter(meal => meal.venue === "Dinner");
+
+        if (isLunch && isDinnerItems.length !== 0) {
             basket.meal = basket.meal.filter(meal => meal.venue !== "Dinner");
-
             await addDataToLocalStorage("basket", JSON.stringify(basket));
             await fetchBasket();
+            showToast("error", "You can't order lunch and dinner at the same time.");
+            setIsButtonLoading(false);
             return;
         }
 
-        if (disableDinnerCheckbox && !isLunch) {
-            showToast("error", "You cannot order dinner at this time.");
+        if (!isLunch && isLunchItems.length !== 0) {
             basket.meal = basket.meal.filter(meal => meal.venue !== "Lunch");
             await addDataToLocalStorage("basket", JSON.stringify(basket));
             await fetchBasket();
+            showToast("error", "You can't order lunch and dinner at the same time.");
+            setIsButtonLoading(false);
             return;
         }
 
@@ -105,6 +130,8 @@ export default function BasketScreen() {
         } else {
             showToast("error", "Please add at least one meal to proceed.");
         }
+
+        setIsButtonLoading(false);
     }
 
     const handleAddMeal = () => {
@@ -140,7 +167,7 @@ export default function BasketScreen() {
                                 setLoading={setIsLoading}
                                 loading={isLoading}
                                 totalAmount={meal.totalPrice}
-                                venue={basket.venue}
+                                venue={meal.venue}
                                 setIsModalVisible={setIsModalVisible}
                                 isModalVisible={isModalVisible}
                                 setSelectedMealId={setSelectedMealId}
@@ -159,7 +186,7 @@ export default function BasketScreen() {
                     }
                 </ScrollView>
                 <BorderButton text="Add Meal" onPress={handleAddMeal} icon={plusIcon}/>
-                <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder} isLoading={isLoading}/>
+                <BottomButton buttonText="Proceed to Order" onPress={handleProceedToOrder} isLoading={isButtonLoading}/>
             </View>
         </SafeAreaView>
     );

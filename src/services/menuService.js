@@ -254,6 +254,7 @@ export async function setMenuBasketService(totalCheckedItems, totalAmount, venue
         const currentTime = moment.utc(`${trimmedUtcDate} ${utc_time}`);
 
         let existingBasket = JSON.parse(await getDataFromLocalStorage('basket') || '{}');
+        console.log("existingBasket", existingBasket);
 
         if (totalCheckedItems.length > 0) {
             let mealNumber = existingBasket.meal?.length > 0 ? existingBasket.meal.length + 1 : 1;
@@ -357,6 +358,7 @@ export async function getByMealIdFromBasketService(mealId) {
 export async function updateBasketFromId(mealId, updatedMeal) {
     try {
         let existingBasket = JSON.parse(await getDataFromLocalStorage('basket') || '{}');
+        console.log("existingBasket", existingBasket);
 
         if (existingBasket.meal && existingBasket.meal.length > 0) {
             const mealIndex = existingBasket.meal.findIndex((meal) => meal.id === mealId);
