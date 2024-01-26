@@ -1,9 +1,9 @@
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {ERROR_STATUS} from "../errorLogs/errorStatus";
-import {EXPERT_API, lunchBucketAPI} from "../apis/lunchBucketAPI";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 import {log} from "../helpers/logs/log";
 
-export async function getLunchAdminNotificationsController() {
+export async function getLunchAdminFrontNotifyController() {
     try {
         const token = await getDataFromLocalStorage('token');
 
@@ -11,7 +11,7 @@ export async function getLunchAdminNotificationsController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const response = await lunchBucketAPI.get('informArrival/Lunch', {
+        const response = await lunchBucketAPI.get('informArrival/Lunch/Front', {
             headers: {
                 'token': token,
             }
@@ -25,7 +25,7 @@ export async function getLunchAdminNotificationsController() {
     }
 }
 
-export async function getDinnerAdminNotificationsController() {
+export async function getLunchAdminBackNotifyController() {
     try {
         const token = await getDataFromLocalStorage('token');
 
@@ -33,7 +33,7 @@ export async function getDinnerAdminNotificationsController() {
             return ERROR_STATUS.ERROR;
         }
 
-        const response = await lunchBucketAPI.get('informArrival/Dinner', {
+        const response = await lunchBucketAPI.get('informArrival/Lunch/Back', {
             headers: {
                 'token': token,
             }
@@ -47,9 +47,19 @@ export async function getDinnerAdminNotificationsController() {
     }
 }
 
-export async function getLunchReportController() {
+export async function getDinnerAdminFrontNotifyController() {
     try {
-        const response = await EXPERT_API.get('getReport/Lunch');
+        const token = await getDataFromLocalStorage('token');
+
+        if (!token) {
+            return ERROR_STATUS.ERROR;
+        }
+
+        const response = await lunchBucketAPI.get('informArrival/Dinner/Front', {
+            headers: {
+                'token': token,
+            }
+        });
 
         if (response.status === 200) return response.data;
 
@@ -59,9 +69,19 @@ export async function getLunchReportController() {
     }
 }
 
-export async function getDinnerReportController() {
+export async function getDinnerAdminBackNotifyController() {
     try {
-        const response = await EXPERT_API.get('getReport/Dinner');
+        const token = await getDataFromLocalStorage('token');
+
+        if (!token) {
+            return ERROR_STATUS.ERROR;
+        }
+
+        const response = await lunchBucketAPI.get('informArrival/Dinner/Back', {
+            headers: {
+                'token': token,
+            }
+        });
 
         if (response.status === 200) return response.data;
 

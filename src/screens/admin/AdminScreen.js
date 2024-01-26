@@ -4,12 +4,13 @@ import React, {useState} from "react";
 import {logoutService} from "../../services/authService";
 import {useNavigation} from "@react-navigation/native";
 import {
-    getDinnerAdminNotificationsController,
-    getDinnerReportController,
-    getLunchAdminNotificationsController,
-    getLunchReportController
+    getDinnerAdminBackNotifyController,
+    getDinnerAdminFrontNotifyController,
+    getLunchAdminBackNotifyController,
+    getLunchAdminFrontNotifyController
 } from "../../controllers/adminController";
 import {useToast} from "../../helpers/toast/Toast";
+import {addDataToLocalStorage, removeDataFromLocalStorage} from "../../helpers/storage/asyncStorage";
 
 export default function AdminScreen() {
     const navigation = useNavigation();
@@ -20,18 +21,35 @@ export default function AdminScreen() {
         lunchReport: false,
         dinnerReport: false,
     });
+
     const [responseData, setResponseData] = useState(null);
 
     const handleLogout = async () => {
         await logoutService();
+
+        await addDataToLocalStorage('token', "");
+        await addDataToLocalStorage('@visited', "");
+        await addDataToLocalStorage('customerId', "");
+        await addDataToLocalStorage('loginStatus', "false");
+        await addDataToLocalStorage('expoPushToken', "");
+        await addDataToLocalStorage('basket', "");
+
+        await removeDataFromLocalStorage('token');
+        await removeDataFromLocalStorage('@visited');
+        await removeDataFromLocalStorage('customerId');
+        await removeDataFromLocalStorage('loginStatus');
+        await removeDataFromLocalStorage('expoPushToken');
+        await removeDataFromLocalStorage('basket');
+
         navigation.navigate('Initial');
     };
 
     const handleNotification = async (notificationFunction, buttonKey) => {
         setLoading({...loading, [buttonKey]: true});
         const response = await notificationFunction();
+        const res = response.message;
         setResponseData(response);
-        showToast('success', JSON.stringify(response));
+        showToast('success', JSON.stringify(res));
         setLoading({...loading, [buttonKey]: false});
     };
 
@@ -49,24 +67,17 @@ export default function AdminScreen() {
     return (
         <SafeAreaView style={{flex: 1, marginVertical: "12%", marginHorizontal: "8%"}}>
             <Text style={styles.titleText}>Admin Panel</Text>
-            <Text style={styles.subtitleText}>Notifications</Text>
+            <Text style={styles.subtitleText}>Lunch</Text>
             <View style={{height: 8, backgroundColor: "#630A10", borderRadius: 10, marginVertical: "10%"}}/>
-            {renderButton("Send Lunch Notifications", getLunchAdminNotificationsController, "lunchNotification")}
-            {renderButton("Send Dinner Notifications", getDinnerAdminNotificationsController, "dinnerNotification")}
-            <View style={{height: 8, backgroundColor: "#630A10", borderRadius: 10, marginVertical: "10%"}}/>
-
-            <Text style={styles.subtitleText}>Report</Text>
-            <View style={{height: 8, backgroundColor: "#630A10", borderRadius: 10, marginVertical: "10%"}}/>
-            {renderButton("Lunch Report", getLunchReportController, "lunchReport")}
-            {renderButton("Dinner Report", getDinnerReportController, "dinnerReport")}
+            {renderButton("Notify Lunch Front Gate", getLunchAdminFrontNotifyController, "lunchFront")}
+            {renderButton("Notify Lunch Back Gate", getLunchAdminBackNotifyController, "lunchBack")}
             <View style={{height: 8, backgroundColor: "#630A10", borderRadius: 10, marginVertical: "10%"}}/>
 
-            {responseData ? (
-                <View>
-                    {/* Render the response data here */}
-                    <Text>{JSON.stringify(responseData)}</Text>
-                </View>
-            ) : null}
+            <Text style={styles.subtitleText}>Dinner</Text>
+            <View style={{height: 8, backgroundColor: "#630A10", borderRadius: 10, marginVertical: "10%"}}/>
+            {renderButton("Notify Dinner Front Gate", getDinnerAdminFrontNotifyController, "dinnerFront")}
+            {renderButton("Notify Dinner Back Gate", getDinnerAdminBackNotifyController, "dinnerBack")}
+            <View style={{height: 8, backgroundColor: "#630A10", borderRadius: 10, marginVertical: "10%"}}/>
 
             <View style={styles.container}>
                 <BottomButton onPress={handleLogout} buttonText="Logout"/>
