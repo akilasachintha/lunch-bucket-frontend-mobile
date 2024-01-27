@@ -2,6 +2,7 @@ import {useState} from "react";
 import axios from "axios";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {useToast} from "../helpers/toast/Toast";
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 export default function useMenuHook() {
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
@@ -20,7 +21,7 @@ export default function useMenuHook() {
                 return;
             }
 
-            const result = await axios.get("https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/checkmealstatus/Lunch", {
+            const result = await lunchBucketAPI.get("checkmealstatus/Lunch", {
                 headers: {
                     'token': token,
                 }
@@ -45,7 +46,7 @@ export default function useMenuHook() {
                 return;
             }
 
-            const result = await axios.get("https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/checkmealstatus/Dinner", {
+            const result = await lunchBucketAPI.get("checkmealstatus/Dinner", {
                 headers: {
                     'token': token,
                 }
@@ -69,7 +70,7 @@ export default function useMenuHook() {
                 return;
             }
 
-            const result = await axios.get("https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/checkpacketlimit/Lunch", {
+            const result = await lunchBucketAPI.get("checkpacketlimit/Lunch", {
                 headers: {
                     'token': token,
                 }
@@ -96,7 +97,7 @@ export default function useMenuHook() {
                 return;
             }
 
-            const result = await axios.get("https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/checkpacketlimit/Dinner", {
+            const result = await lunchBucketAPI.get("checkpacketlimit/Dinner", {
                 headers: {
                     'token': token,
                 }
