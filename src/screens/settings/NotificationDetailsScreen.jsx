@@ -22,6 +22,10 @@ export default function NotificationDetailsScreen() {
                             Stay informed about your meal's journey.
                             Receive a notification when your packet arrives at the designated delivery location.
                         </Text>
+                        <Text style={styles.info}>
+                            Your delicious meal is currently being packaged and be ready to indulge once you receive the
+                            arrival notification.
+                        </Text>
 
                         {/* Order Confirmation Alert Section */}
                         <Text style={styles.header}>🔔 Order Confirmation Alert</Text>

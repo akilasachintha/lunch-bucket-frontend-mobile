@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {AntDesign, Fontisto} from '@expo/vector-icons';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
 import {log} from '../../helpers/logs/log';
@@ -121,9 +121,12 @@ export default function BasketItem({
                                 )
                             }
                             {
-                                isVeg ? (
+                                !isSpecial && isVeg && (
                                     <Text style={styles.foodTypeText}>Veg</Text>
-                                ) : (
+                                )
+                            }
+                            {
+                                !isSpecial && !isVeg && (
                                     <Text style={styles.foodTypeText}>Non-Veg</Text>
                                 )
                             }
@@ -154,28 +157,6 @@ export default function BasketItem({
                         <View style={styles.bucketItemNameContainer}>
                             <Text style={styles.bucketItemNameText}>{mealName}</Text>
                         </View>
-                        {
-                            count && count === 2 ? (
-                                <TouchableOpacity style={styles.switchStyles}>
-                                    {isSwitchOn ? (
-                                        <Text style={styles.switchTextStyles}>Potion</Text>
-                                    ) : (
-                                        <Text style={styles.switchTextStyles}>{count === 1 ? "Pack" : "Packs"}</Text>
-                                    )}
-                                    <Switch
-                                        onValueChange={() => toggleSwitch()}
-                                        value={isSwitchOn}
-                                        style={styles.switchItemStyles}
-                                        trackColor={{false: '#767577', true: '#2C984A'}}
-                                        thumbColor={isSwitchOn ? '#f4f3f4' : '#f4f3f4'}
-                                    />
-                                </TouchableOpacity>
-                            ) : (
-                                <View style={styles.switchStyles}>
-                                    <Text style={styles.switchTextStyles}>Packs</Text>
-                                </View>
-                            )
-                        }
                         <TouchableOpacity style={styles.plusButtonTextContainer} onPress={handleMinusPress}>
                             <Fontisto name="minus-a" size={14} color="black"/>
                         </TouchableOpacity>
