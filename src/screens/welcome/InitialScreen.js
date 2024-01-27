@@ -4,6 +4,7 @@ import {useFocusEffect, useIsFocused, useNavigation} from '@react-navigation/nat
 import PATHS from '../../helpers/paths/paths';
 import {StatusBar} from 'expo-status-bar';
 import {addDataToLocalStorage, getDataFromLocalStorage} from '../../helpers/storage/asyncStorage';
+import {validateTokenController} from "../../controllers/authController";
 
 const InitialScreen = () => {
     const slideAnim = useRef(new Animated.Value(0)).current;
@@ -12,10 +13,22 @@ const InitialScreen = () => {
 
     const checkIfVisited = async () => {
         try {
+
+            const validate = await validateTokenController();
+            if (validate === "error") {
+                await addDataToLocalStorage('token', "");
+                await addDataToLocalStorage('@visited', "");
+                await addDataToLocalStorage('customerId', "");
+                await addDataToLocalStorage('loginStatus', "false");
+                await addDataToLocalStorage('expoPushToken', "");
+                await addDataToLocalStorage('basket', "");
+            }
+
             let visited = await getDataFromLocalStorage('@visited');
             if (!visited) visited = 'false';
 
             let loginStatus = await getDataFromLocalStorage('loginStatus');
+            if (!loginStatus) loginStatus = 'false';
 
             const role = await getDataFromLocalStorage('role');
 
@@ -29,6 +42,7 @@ const InitialScreen = () => {
                 if (visited === 'true') {
                     setTimeout(() => {
                         slideAnim.setValue(0);
+
                         if (loginStatus.toString() === 'true' && role && role.toString() === "user") {
                             navigation.navigate('Menu');
                         } else if (loginStatus.toString() === 'true' && role && role.toString() === "admin") {
