@@ -1,6 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import {useEffect, useState} from 'react';
+import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 
 const useFetchRemainingTimes = () => {
     const [remainingTimeLunch, setRemainingTimeLunch] = useState('00:00:00');
@@ -8,7 +9,7 @@ const useFetchRemainingTimes = () => {
 
     const getUTCDateTime = async () => {
         try {
-            const response = await axios.get('https://1p8cy9d7v2.execute-api.ap-south-1.amazonaws.com/dev/getUtcTime');
+            const response = await lunchBucketAPI.get('getUtcTime');
             if (response.status === 200) {
                 return response.data?.data;
             }
