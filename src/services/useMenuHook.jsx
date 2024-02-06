@@ -1,5 +1,4 @@
-import {useState} from "react";
-import axios from "axios";
+import {useEffect, useState} from "react";
 import {getDataFromLocalStorage} from "../helpers/storage/asyncStorage";
 import {useToast} from "../helpers/toast/Toast";
 import {lunchBucketAPI} from "../apis/lunchBucketAPI";
@@ -7,10 +6,15 @@ import {lunchBucketAPI} from "../apis/lunchBucketAPI";
 export default function useMenuHook() {
     const [disableLunchCheckbox, setDisableLunchCheckbox] = useState(false);
     const [disableDinnerCheckbox, setDisableDinnerCheckbox] = useState(false);
-    const [lunchPacketLimit, setLunchPacketLimit] = useState(false);
-    const [dinnerPacketLimit, setDinnerPacketLimit] = useState(false);
+    const [packetLimit, setPacketLimit] = useState(false);
+    const [isLunchHook, setIsLunchHook] = useState(false);
+    const [orderTypeHook, setOrderTypeHook] = useState("vegi");
 
     const {showToast} = useToast();
+
+    useEffect(() => {
+
+    }, [isLunchHook, setIsLunchHook, orderTypeHook, setOrderTypeHook]);
 
     const fetchDisableLunchCheckbox = async () => {
         try {
@@ -62,69 +66,54 @@ export default function useMenuHook() {
         }
     }
 
-    const checkPacketLimitLunch = async () => {
+    const checkPacketLimit = async (isLunch, isVeg, isSpecial, ids) => {
         try {
             const token = await getDataFromLocalStorage('token');
             if (!token) {
-                setLunchPacketLimit(true);
+                setPacketLimit(true);
                 return;
             }
 
-            const result = await lunchBucketAPI.get("checkpacketlimit/Lunch", {
-                headers: {
-                    'token': token,
-                }
-            });
+            console.log(isLunch, isVeg, isSpecial, ids);
+            const result = await lunchBucketAPI.post("checkpacketlimit", {
+                    meal_type: isLunch ? "Lunch" : "Dinner",
+                    order_type: isSpecial ? "special" : isVeg ? "vegi" : "nonvegi",
+                    id: ids
+                },
+                {
+                    headers: {
+                        'token': token,
+                    },
+                },
+            );
 
-            if (result?.data?.data?.state === false) {
-                setLunchPacketLimit(true);
+            console.log(isSpecial);
+
+            console.log(result.data);
+
+            if (result?.data?.data?.state === true) {
+                setPacketLimit(false);
             } else {
-                setLunchPacketLimit(false);
+                setPacketLimit(true);
             }
 
         } catch (e) {
-            setLunchPacketLimit(false);
-            showToast('error', 'Something went wrong!');
-            console.warn(e);
-        }
-    }
-
-    const checkPacketLimitDinner = async () => {
-        try {
-            const token = await getDataFromLocalStorage('token');
-            if (!token) {
-                setDinnerPacketLimit(true);
-                return;
-            }
-
-            const result = await lunchBucketAPI.get("checkpacketlimit/Dinner", {
-                headers: {
-                    'token': token,
-                }
-            });
-
-            if (result?.data?.data?.state === false) {
-                setDinnerPacketLimit(true);
-            } else {
-                setDinnerPacketLimit(false);
-            }
-
-
-        } catch (e) {
-            setDinnerPacketLimit(false);
-            showToast('Something went wrong!', 'error');
-            console.warn(e);
+            console.log(e?.response?.data?.data?.message);
+            setPacketLimit(true);
+            showToast('error', e && e.response && e.response.data && e.response.data.data && e?.response?.data?.data?.message);
         }
     }
 
     return {
         disableLunchCheckbox,
         disableDinnerCheckbox,
-        lunchPacketLimit,
-        dinnerPacketLimit,
         fetchDisableLunchCheckbox,
         fetchDisableDinnerCheckbox,
-        checkPacketLimitLunch,
-        checkPacketLimitDinner,
+        checkPacketLimit,
+        isLunchHook,
+        setIsLunchHook,
+        orderTypeHook,
+        setOrderTypeHook,
+        packetLimit,
     };
 }

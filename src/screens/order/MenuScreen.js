@@ -30,6 +30,7 @@ import {
     fetchMenuPercentageLunchForTwoIDs
 } from "../../redux/menuPercentageSlice";
 import useMenuHook from "../../services/useMenuHook";
+import specialMenu from "../../components/menu/SpecialMenu";
 
 export default function MenuScreen({route}) {
     const {showToast} = useToast();
@@ -68,7 +69,7 @@ export default function MenuScreen({route}) {
         disableLunchCheckbox,
         disableDinnerCheckbox,
         fetchDisableLunchCheckbox,
-        fetchDisableDinnerCheckbox
+        fetchDisableDinnerCheckbox,
     } = useMenuHook();
 
     const fetchMealById = async (mealId) => {
@@ -504,6 +505,10 @@ export default function MenuScreen({route}) {
         );
     }, [isLunch, disableLunchCheckbox, disableDinnerCheckbox]);
 
+    useEffect(() => {
+
+    }, [specialMenu]);
+
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <View style={styles.mainContainer}>
@@ -523,6 +528,7 @@ export default function MenuScreen({route}) {
                            disableTime={isLunch ? disableLunchCheckbox : disableDinnerCheckbox}/>
                     <Menu
                         loading={loading}
+                        isLunch={isLunch}
                         setLoading={setLoading}
                         title={isLunch ? "Lunch" : "Dinner"}
                         specialMenu={isLunch ? lunchSpecialItems : dinnerSpecialItems}

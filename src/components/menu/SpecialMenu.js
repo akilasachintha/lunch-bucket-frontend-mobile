@@ -1,9 +1,19 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Switch, Text, View} from 'react-native';
 import {AntDesign, MaterialIcons} from "@expo/vector-icons";
 import toTitleCase from "../../helpers/strings/stringFormatter";
+import {log} from "../../helpers/logs/log";
 
-const SpecialMenu = ({specialMenu, setSpecialMenu, totalCheckedItemsCount, disableTime, setTotalSpecialPrice}) => {
+const SpecialMenu = ({
+                         specialMenu,
+                         setSpecialMenu,
+                         totalCheckedItemsCount,
+                         disableTime,
+                         setTotalSpecialPrice,
+                         isVeg,
+                         setIsVeg,
+                         clearAndFetchData
+                     }) => {
 
     const handleItemPress = (mainIndex, subIndex) => {
         setSpecialMenu((prevMenuItems) => {
@@ -30,9 +40,31 @@ const SpecialMenu = ({specialMenu, setSpecialMenu, totalCheckedItemsCount, disab
         return totalPrice;
     };
 
+    const toggleSwitch = () => {
+        clearAndFetchData().catch(
+            (error) => {
+                log('error', 'Menu', 'toggleSwitch', error.message, 'Menu.js');
+            }
+        );
+
+        setIsVeg((previousState) => !previousState);
+    };
+
     return (
         <View>
             <View style={styles.specialMenu}>
+                {
+                    <View style={styles.descriptionContainer}>
+                        <View style={styles.vegSwitchContainer}>
+                            <Switch onValueChange={toggleSwitch} value={isVeg}
+                                    style={styles.vegTextSwitch}
+                                    trackColor={{false: '#767577', true: '#2C984A'}}
+                                    thumbColor={isVeg ? '#f4f3f4' : '#f4f3f4'}
+                            />
+                            <Text style={styles.vegText}>I am {!isVeg && "not "}a Vegetarian</Text>
+                        </View>
+                    </View>
+                }
                 {totalCheckedItemsCount <= 0 && specialMenu && specialMenu.length > 0 && specialMenu.map((item, index) => (
                     <View key={index} style={styles.specialMenuItemContainer}>
                         <View style={styles.specialItemLeftContainer}>
@@ -301,4 +333,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    vegSwitchContainer: {
+        flexDirection: 'row',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    vegText: {
+        fontSize: 14,
+        paddingRight: 10,
+        fontStyle: 'italic',
+    },
+    vegTextSwitch: {}
 });

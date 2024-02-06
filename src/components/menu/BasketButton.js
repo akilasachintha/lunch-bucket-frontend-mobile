@@ -17,6 +17,7 @@ const BasketButton = ({
                           isVeg,
                           totalCheckedSpecialItemsCount,
                           totalCheckedSpecialItems,
+                          isLunch
                       }) => {
     const navigation = useNavigation();
     const {showToast} = useToast();
@@ -26,41 +27,46 @@ const BasketButton = ({
 
     const {getUTCDateTime} = useFetchRemainingTimes();
     const {
-        lunchPacketLimit,
-        dinnerPacketLimit,
+        packetLimit,
+        checkPacketLimit,
         disableDinnerCheckbox,
         disableLunchCheckbox,
-        checkPacketLimitLunch,
-        checkPacketLimitDinner,
         fetchDisableDinnerCheckbox,
         fetchDisableLunchCheckbox,
     } = useMenuHook();
-
     useEffect(() => {
-        checkPacketLimitDinner().catch((error) => console.error('Error checking dinner packet limit:', error));
-        checkPacketLimitLunch().catch((error) => console.error('Error checking lunch packet limit:', error));
         fetchDisableDinnerCheckbox().catch((error) => console.error('Error fetching disable dinner checkbox:', error));
         fetchDisableLunchCheckbox().catch((error) => console.error('Error fetching disable lunch checkbox:', error));
 
-    }, [lunchPacketLimit, dinnerPacketLimit, disableDinnerCheckbox, disableLunchCheckbox]);
+    }, [disableDinnerCheckbox, disableLunchCheckbox]);
 
     const handleBasketPress = async () => {
         setIsLoading(true);
         if (isButtonDisabled) return;
 
-        await checkPacketLimitLunch();
-        await checkPacketLimitDinner();
-        await fetchDisableLunchCheckbox();
-        await fetchDisableDinnerCheckbox();
+        console.log("totalCheckedItemsCount", totalCheckedItemsCount);
+        console.log("totalCheckedSpecialItemsCount", totalCheckedSpecialItemsCount);
 
-        if (lunchPacketLimit && !disableLunchCheckbox) {
-            showToast('error', 'Sorry, Lunch box limit reached.');
+        if (totalCheckedItemsCount <= 0 && totalCheckedSpecialItemsCount <= 0) {
             setIsLoading(false);
+            console.log("Basket is empty");
+            navigation.navigate('Basket');
             return;
         }
 
-        if (dinnerPacketLimit && !disableDinnerCheckbox) {
-            showToast('error', 'Sorry, Dinner box limit reached.');
+        await fetchDisableLunchCheckbox();
+        await fetchDisableDinnerCheckbox();
+
+        const isSpecial = totalCheckedSpecialItemsCount > 0;
+        console.log("isSpecial", isSpecial);
+        console.log("totalCheckedSpecialItemsCount", totalCheckedSpecialItems);
+        const ids = totalCheckedSpecialItems.map(item => item.id);
+
+        if (totalCheckedSpecialItemsCount > 0 || totalCheckedItemsCount > 0) {
+            await checkPacketLimit(isLunch, isVeg, isSpecial, ids);
+        }
+
+        if ((totalCheckedItemsCount > 0 || totalCheckedSpecialItemsCount > 0) && packetLimit) {
             setIsLoading(false);
             return;
         }
