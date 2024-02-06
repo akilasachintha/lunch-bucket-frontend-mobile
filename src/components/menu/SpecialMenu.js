@@ -50,6 +50,11 @@ const SpecialMenu = ({
         setIsVeg((previousState) => !previousState);
     };
 
+    const filteredMenuData = specialMenu.map(category => ({
+        ...category,
+        category: category.category.filter(item => item.vegetarian === isVeg)
+    }));
+
     return (
         <View>
             <View style={styles.specialMenu}>
@@ -65,7 +70,7 @@ const SpecialMenu = ({
                         </View>
                     </View>
                 }
-                {totalCheckedItemsCount <= 0 && specialMenu && specialMenu.length > 0 && specialMenu.map((item, index) => (
+                {totalCheckedItemsCount <= 0 && filteredMenuData && filteredMenuData.length > 0 && filteredMenuData.map((item, index) => (
                     <View key={index} style={styles.specialMenuItemContainer}>
                         <View style={styles.specialItemLeftContainer}>
                             <View style={styles.specialMenuItem}>
