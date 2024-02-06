@@ -95,7 +95,7 @@ export async function handleCheckoutService() {
         }
     } catch (error) {
         log("error", "checkoutService", "handleCheckoutService", error.message, "checkoutService.js");
-        return ERROR_STATUS.ERROR;
+        throw new Error(error.message);
     }
 }
 

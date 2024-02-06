@@ -37,6 +37,7 @@ const Menu = ({
                   onRefresh,
                   loading,
                   clearAndFetchData,
+                  isLunch
               }) => {
 
     const isEditMenu = useSelector(state => state.menu.isEditMenu);
@@ -98,6 +99,7 @@ const Menu = ({
                 editMenu={isEditMenu}
                 mealId={mealId}
                 isVeg={isVeg}
+                isLunch={isLunch}
             />
         </View>
     );
@@ -145,6 +147,9 @@ const Menu = ({
                                      setSpecialMenu={setSpecialMenu}
                                      totalCheckedItemsCount={totalCheckedItemsCount}
                                      disableTime={disableTime}
+                                     setIsVeg={setIsVeg}
+                                     isVeg={isVeg}
+                                     clearAndFetchData={clearAndFetchData}
                                      setTotalSpecialPrice={setTotalSpecialPrice}/>
                     )}
                     {(!showSpecialMenu || isEditMenu) && (
@@ -194,6 +199,7 @@ const Menu = ({
                 totalSpecialPrice={totalSpecialPrice}
                 totalAmount={totalAmount}
                 venue={title}
+                isLunch={isLunch}
                 editMenu={isEditMenu}
                 mealId={mealId}
                 isVeg={isVeg}

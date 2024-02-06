@@ -30,38 +30,22 @@ export default function Checkout() {
     const {
         disableLunchCheckbox,
         disableDinnerCheckbox,
-        lunchPacketLimit,
-        dinnerPacketLimit,
-        checkPacketLimitLunch,
-        checkPacketLimitDinner,
+        packetLimit,
+        checkPacketLimit,
         fetchDisableLunchCheckbox,
         fetchDisableDinnerCheckbox
     } = useMenuHook();
 
     useEffect(() => {
-        checkPacketLimitDinner().catch((error) => console.error('Error checking dinner packet limit:', error));
-        checkPacketLimitLunch().catch((error) => console.error('Error checking lunch packet limit:', error));
         fetchDisableDinnerCheckbox().catch((error) => console.error('Error fetching disable dinner checkbox:', error));
         fetchDisableLunchCheckbox().catch((error) => console.error('Error fetching disable lunch checkbox:', error));
 
-    }, [lunchPacketLimit, dinnerPacketLimit, disableDinnerCheckbox, disableLunchCheckbox]);
+    }, [disableDinnerCheckbox, disableLunchCheckbox]);
 
     const fetchCheckout = async () => {
         try {
-            console.log("Lunch packet limit: ", lunchPacketLimit);
-            console.log("Dinner packet limit: ", dinnerPacketLimit);
-
-            if (lunchPacketLimit && !disableLunchCheckbox) {
-                showToast('error', 'You cannot order lunch at this time.');
-                return false;
-            }
-
-            if (dinnerPacketLimit && !disableDinnerCheckbox) {
-                showToast('error', 'You cannot order dinner at this time.');
-                return false;
-            }
-
             const result = await handleCheckoutService();
+
             if (result === ERROR_STATUS.ERROR) {
                 log("error", "CheckoutScreen", "fetchCheckout | result", result, "CheckoutScreen.js");
             } else {
@@ -70,7 +54,8 @@ export default function Checkout() {
                 return true;
             }
         } catch (error) {
-            log("error", "CheckoutScreen", "fetchCheckout", error.message, "CheckoutScreen.js");
+            showToast('error', error.message);
+            log("warn", "CheckoutScreen", "fetchCheckout", error.message, "CheckoutScreen.js");
             return false;
         }
     }
@@ -83,25 +68,10 @@ export default function Checkout() {
             let basketItems = await getDataFromLocalStorage('basket');
             if (!basketItems) return;
 
-            await checkPacketLimitLunch();
-            await checkPacketLimitDinner();
             await fetchDisableLunchCheckbox();
             await fetchDisableDinnerCheckbox();
 
             basketItems = JSON.parse(basketItems);
-            console.log(lunchPacketLimit, dinnerPacketLimit, basketItems.venue);
-
-            if (lunchPacketLimit && basketItems.venue === 'Lunch') {
-                showToast('error', 'Sorry, Lunch box limit reached.');
-                setIsPlacingOrder(false);
-                return;
-            }
-
-            if (dinnerPacketLimit && basketItems.venue === 'Dinner') {
-                showToast('error', 'Sorry, Dinner box limit reached.');
-                setIsPlacingOrder(false);
-                return;
-            }
 
             if (disableLunchCheckbox && basketItems.venue === 'Lunch') {
                 showToast('error', 'You cannot order lunch at this time.');
@@ -127,6 +97,7 @@ export default function Checkout() {
 
         } catch (error) {
             log("error", "CheckoutScreen", "handleCheckout", error.message, "CheckoutScreen.js");
+            showToast('warn', error);
         } finally {
             setIsPlacingOrder(false);
         }
@@ -156,7 +127,8 @@ export default function Checkout() {
             }
             setBasket(basketItems);
         } catch (error) {
-            log("error", "CheckoutScreen", "fetchBasket", error.message, "CheckoutScreen.js");
+            showToast('warn', error);
+            log("warn", "CheckoutScreen", "fetchBasket", error.message, "CheckoutScreen.js");
         }
     };
 

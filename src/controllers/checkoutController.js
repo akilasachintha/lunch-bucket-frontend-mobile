@@ -21,15 +21,12 @@ export async function setOrderController(data) {
         if (response.status === 200) {
             return response.data;
         }
-        if (response && response.data && response.data.state === false) {
-            log("error", "controller", "setOrderController", response.data, "checkoutController.js");
-            return ERROR_STATUS.ERROR;
-        }
 
     } catch (error) {
-        const errorMessage = error.response?.data?.message || error.message;
+        console.log(error.response.data.data.message);
+        const errorMessage = error?.response?.data?.data?.message || error.message;
         log("error", "controller", "setOrderController", errorMessage, "checkoutController.js");
-        return ERROR_STATUS.ERROR;
+        throw new Error(errorMessage);
     }
 }
 
