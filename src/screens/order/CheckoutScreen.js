@@ -168,7 +168,8 @@ export default function Checkout() {
                 <ClaimPointsModal points={points} isPointsApplied={isPointsApplied} setPoints={setPoints}
                                   pointsCopy={pointsCopy}
                                   setIsPointsApplied={setIsPointsApplied} setPointsCopy={setPointsCopy}
-                                  totalAmount={totalAmount}/>}
+                                  totalAmount={totalAmount}/>
+            }
             <DynamicTopBar selectedTab={SelectedTab.MAIN}/>
             <TopHeader headerText="Order Details" backButtonPath="Basket"/>
             <View style={styles.bodyContainer}>
