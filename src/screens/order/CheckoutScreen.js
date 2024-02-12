@@ -176,6 +176,7 @@ export default function Checkout() {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {basket && basket.meal && basket.meal.length > 0 && basket.meal.map((meal, index) => (
                         <CheckoutItem key={index} index={meal.id} mealName={meal.name} mealId={meal.id}
+                                      isSpecial={meal.isSpecial}
                                       count={meal.count} price={meal.totalPrice}/>
                     ))}
                 </ScrollView>
