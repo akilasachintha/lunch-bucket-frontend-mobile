@@ -81,7 +81,7 @@ export default function ListOrdersScreen() {
                 >
                     {orders && orders.length > 0 && orders.map((order) => (
                         <OrderItem key={order.id}
-                                   mealName={order.order_type === "non_vegi" || order.order_type === "vegi" ? "Main Meal" : "Special Meal"}
+                                   mealName={order.order_type === "non_vegi" || order.order_type === "vegi" ? "Choice Meal" : "Special Meal"}
                                    items={order.items}
                                    id={order.id}
                                    orderCode={order.order_code}

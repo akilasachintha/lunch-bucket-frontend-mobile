@@ -136,7 +136,7 @@ export default function BasketItem({
                     </View>
                     <View style={styles.bucketContainer}>
                         <View style={styles.bucketItemNameContainer}>
-                            <Text style={styles.bucketItemNameText}>{mealName}</Text>
+                            <Text style={styles.bucketItemNameText}>{isSpecial ? mealName : 'Choice Meal'}</Text>
                             <Text style={styles.subMenuBasketItemText}>{items && items[0].type}</Text>
                         </View>
                         <TouchableOpacity style={styles.minusButtonTextContainer} onPress={handleMinusPress}>
@@ -155,7 +155,7 @@ export default function BasketItem({
                 <View>
                     <TouchableOpacity style={styles.bucketItemExpandContainer} onPress={() => setOnClicked(true)}>
                         <View style={styles.bucketItemNameContainer}>
-                            <Text style={styles.bucketItemNameText}>{mealName}</Text>
+                            <Text style={styles.bucketItemNameText}>{isSpecial ? mealName : 'Choice Meal'}</Text>
                         </View>
                         <TouchableOpacity style={styles.plusButtonTextContainer} onPress={handleMinusPress}>
                             <Fontisto name="minus-a" size={14} color="black"/>

@@ -1,11 +1,11 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-export default function CheckoutItem({mealName, count, price}) {
+export default function CheckoutItem({mealName, count, price, isSpecial}) {
     return (
         <View>
             <TouchableOpacity style={[styles.checkoutItemContainer, styles.elevation, styles.shadowProp]}>
                 <View style={styles.checkoutItemNameContainer}>
-                    <Text style={styles.checkoutItemNameText}>{mealName}</Text>
+                    <Text style={styles.checkoutItemNameText}>{isSpecial ? mealName : 'Choice Meal'}</Text>
                 </View>
                 <TouchableOpacity style={styles.circleCountTextContainer}>
                     <Text style={styles.countText}> {count} </Text>
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
         marginVertical: 10,
         marginHorizontal: 20,
-        borderRadius: 30,
+        borderRadius: 20,
         alignItems: 'center',
     },
     checkoutItemNameContainer: {
