@@ -32,7 +32,7 @@ const useFetchRemainingTimes = () => {
 
             const updateRemainingTime = () => {
                 const currentTime = moment.utc();
-                const lunchTimeEnd = moment.utc().set({hour: 11, minute: 30, second: 0}); // 5 PM Local
+                const lunchTimeEnd = moment.utc().set({hour: 13, minute: 30, second: 0}); // 5 PM Local
                 const dinnerTimeStart = moment.utc().set({hour: 5, minute: 30, second: 0}); // 11 AM Local
 
                 let remainingTime;

@@ -20,7 +20,7 @@ export default function Timer({title, disableTime}) {
     ];
 
     const renderTimerText = () => {
-        const time = title === 'Lunch' ? (disableTime ? '5 PM' : '11 AM') : disableTime ? '11 AM' : '5 PM';
+        const time = title === 'Lunch' ? (disableTime ? '7 PM' : '11 AM') : disableTime ? '11 AM' : '7 PM';
         return (
             <Text style={timerContainerStyle}>
                 You can{disableTime ? ' not' : ''} place {title} orders until {time}
