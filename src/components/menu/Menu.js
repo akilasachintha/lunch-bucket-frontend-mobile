@@ -67,7 +67,7 @@ const Menu = ({
                                     onPress={() => setShowSpecialMenu(false)}
                                 >
                                     <Image source={PATHS.foodcup} style={styles.chooseTypeIcon}/>
-                                    <Text style={[styles.chooseTypeText, !showSpecialMenu && styles.selectedMenuText]}>Today's
+                                    <Text style={[styles.chooseTypeText, !showSpecialMenu && styles.selectedMenuText]}>Choice
                                         Menu</Text>
                                 </TouchableOpacity>
                             )
