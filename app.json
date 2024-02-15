@@ -28,7 +28,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.lunchbucket",
-      "buildNumber": "2"
+      "buildNumber": "8"
     },
     "android": {
       "adaptiveIcon": {
