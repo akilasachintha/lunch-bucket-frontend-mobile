@@ -71,8 +71,12 @@ export default function Login({navigation}) {
             }
 
             const result = await loginService(values.email, values.password);
+            console.log("login result", result);
 
-            if (result && !result.device_token && result.state) {
+            const expoPushNotificationToken = await getDataFromLocalStorage('expoPushToken');
+            console.log(expoPushNotificationToken);
+
+            if (result && !result.device_token && result.state && expoPushNotificationToken !== undefined) {
                 setDeviceToken(true);
             }
 
@@ -89,6 +93,13 @@ export default function Login({navigation}) {
                 showToast('success', 'You have Successfully Logged In');
                 return;
             }
+
+            if (result && !result.device_token && result.state && result.type && result.type === "user" && expoPushNotificationToken === undefined) {
+                navigation.navigate('Menu');
+                showToast('success', 'You have Successfully Logged In');
+                return;
+                }
+
 
             if (result && result.type && result.type === "admin") {
                 navigation.navigate('Admin');
@@ -258,7 +269,7 @@ export default function Login({navigation}) {
                 </View>
             </View>
             {
-                role && role === "user" && deviceToken && (
+                role && role === "user" && deviceToken  && (
                     <PushNotificationDeviceChangeModal deviceToken={deviceToken}
                                                        setDeviceToken={setDeviceToken}
                                                        isDeviceTokenChanged={isDeviceTokenChanged}
